@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    public: true
+
+  fop.latest_products.command:
+    class: FOP\Commands\LatestProducts
+    tags:
+      - { name: console.command }
+
+  fop.export.command:
+    class: FOP\Commands\Export
+    tags:
+      - { name: console.command }

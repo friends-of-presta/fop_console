@@ -1,0 +1,24 @@
+{
+  "name": "friends-of-prestashop/commands",
+  "description": "Learn how to use the Symfony Console in PrestaShop",
+  "authors": [
+    {
+      "name": "Mickaël Andrieu",
+      "email": "andrieu.travail@gmail.com"
+    },
+    {
+      "name": "Friends of PrestaShop Community",
+      "homepage": "https://github.com/friends-of-prestashop/developer_tools/graphs/contributors"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "FOP\\Commands\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.1"
+  },
+  "license": "MIT",
+  "type": "prestashop-module"
+}
