@@ -11,3 +11,8 @@ services:
     class: FOP\Commands\Export
     tags:
       - { name: console.command }
+
+  fop.status.command:
+    class: FOP\Commands\ShopStatus
+    tags:
+      - { name: console.command }
