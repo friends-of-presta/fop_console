@@ -16,3 +16,8 @@ services:
     class: FOP\Commands\ShopStatus
     tags:
       - { name: console.command }
+
+  fop.check_service_container.command:
+    class: FOP\Commands\CheckServiceContainer
+    tags:
+      - { name: console.command }
