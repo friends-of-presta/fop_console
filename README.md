@@ -25,7 +25,7 @@ php bin/console pr:mo install console
 
 These arguments are available to all commands that extends `FOP\Console\Command` class.
 
-* `employee`: the current Employee ID, _null_ by default;
+* `employee`: the current Employee ID, __null__ by default;
 * `id_shop`: the selected Shop ID, set to __1__ by default;
 * `id_shop_group`: the selected Group Shop ID, set to __null__ by default;
 
