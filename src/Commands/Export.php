@@ -1,11 +1,11 @@
 <?php
 
-namespace FOP\Commands;
+namespace FOP\Console\Commands;
 
 use Customer;
 use Product;
 use Order;
-use PrestaShop\PrestaShop\Core\Console\Command;
+use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +23,7 @@ final class Export extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:commands:export')
+            ->setName('fop:console:export')
             ->setDescription('Allows to export data in XML')
             ->setHelp('This command allows you to export most of your data in XML')
             ->addArgument('model', InputArgument::OPTIONAL, 'The Object Model to export', 'Product')

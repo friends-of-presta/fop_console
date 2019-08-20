@@ -1,9 +1,9 @@
 <?php
 
-namespace FOP\Commands;
+namespace FOP\Console\Commands;
 
 use Product;
-use PrestaShop\PrestaShop\Core\Console\Command;
+use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -19,7 +19,7 @@ final class LatestProducts extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:commands:latest-products')
+            ->setName('fop:console:latest-products')
             ->setDescription('Displays the latest products')
             ->setHelp('This command allows you to display the latest products')
         ;

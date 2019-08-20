@@ -7,18 +7,18 @@
 
 require_once 'vendor/autoload.php';
 
-class Commands extends Module
+class Console extends Module
 {
     public function __construct()
     {
-        $this->name = 'commands';
+        $this->name = 'console';
         $this->version = '1.0.0';
         $this->author = 'Mickaël Andrieu';
 
-        $this->displayName = 'Commands';
-        $this->description = 'Learn commands the right way';
+        $this->displayName = 'console';
+        $this->description = 'A better console support for PrestaShop 1.7';
         $this->ps_versions_compliancy = [
-            'min' => '1.7.6.0',
+            'min' => '1.7.0.0',
             'max' => _PS_VERSION_,
         ];
 

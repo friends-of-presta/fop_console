@@ -2,22 +2,29 @@ services:
   _defaults:
     public: true
 
-  fop.latest_products.command:
-    class: FOP\Commands\LatestProducts
+  fop.console.console_loader:
+    class: FOP\Console\Context\ConsoleLoader
+    arguments:
+      - '@prestashop.adapter.legacy.context'
+      - '@prestashop.adapter.shop.context'
+      - '%kernel.root_dir%'
+
+  fop.console.latest_products.command:
+    class: FOP\Console\Commands\LatestProducts
     tags:
       - { name: console.command }
 
-  fop.export.command:
-    class: FOP\Commands\Export
+  fop.console.export.command:
+    class: FOP\Console\Commands\Export
     tags:
       - { name: console.command }
 
-  fop.status.command:
-    class: FOP\Commands\ShopStatus
+  fop.console.status.command:
+    class: FOP\Console\Commands\ShopStatus
     tags:
       - { name: console.command }
 
-  fop.check_service_container.command:
-    class: FOP\Commands\CheckServiceContainer
+  fop.console.check_service_container.command:
+    class: FOP\Console\Commands\CheckServiceContainer
     tags:
       - { name: console.command }

@@ -1,6 +1,7 @@
-# Learn how to write PrestaShop Commands
+# Console for PrestaShop 1.7+
 
-This repository contains a collection of commands (that will works only with PrestaShop 1.7.7+).
+This repository provides a Command that better support legacy classes in PrestaShop Console and a list
+of useful commands that you can use and reuse for learning purposes.
 
 This module is released under MIT license.
 
@@ -8,10 +9,10 @@ This module is released under MIT license.
 
 ```
 cd modules 
-git clone https://github.com/mickaelandrieu/commands
+git clone https://github.com/friends-of-presta/console
 composer install
 cd ..
-php bin/console pr:mo install commands
+php bin/console pr:mo install console
 ```
 
 ## Contribute

@@ -1,10 +1,10 @@
 <?php
 
-namespace FOP\Commands;
+namespace FOP\Console\Commands;
 
 use Exception;
 use Throwable;
-use PrestaShop\PrestaShop\Core\Console\Command;
+use FOP\Console\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -24,7 +24,7 @@ final class CheckServiceContainer extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:commands:check-container')
+            ->setName('fop:console:check-container')
             ->setDescription('Health check of the Service Container')
             ->setHelp('This command instantiate every service of Symfony in Console Context: will it works as expected ?')
         ;

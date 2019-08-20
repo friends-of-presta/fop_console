@@ -1,9 +1,9 @@
 <?php
 
-namespace FOP\Commands;
+namespace FOP\Console\Commands;
 
 use Shop;
-use PrestaShop\PrestaShop\Core\Console\Command;
+use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -20,7 +20,7 @@ final class ShopStatus extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:commands:shop-status')
+            ->setName('fop:console:shop-status')
             ->setDescription('Display shop(s) status(es)')
             ->setHelp('Use the "--all" option to display all shops information')
             ->addOption('all', '-a', InputOption::VALUE_NONE, 'Allows to display all shops information')
