@@ -17,6 +17,7 @@ php bin/console pr:mo install console
 
 ## Current commands
 
+* `fop:console:shop-status` Display shop(s) status(es)
 * `fop:console:export`: Exports object models in XML;
 * `fop:console:latest-products`: Displays the latest products;
 * `fop:console:check-container`: List the services we can't use in Symfony commands (for now);
@@ -78,5 +79,5 @@ This works well but we like to make it more configurable from the Console argume
 
 ## Contribute
 
-Feel free to add more commands :-) contributions are very welcome!
+Feel free to add more commands, post some issues or new PR : contributions are very welcome.
 
