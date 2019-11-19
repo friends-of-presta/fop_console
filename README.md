@@ -9,7 +9,7 @@ This module is released under MIT license.
 
 ```
 cd modules 
-git clone https://github.com/friends-of-presta/console
+git clone https://github.com/friends-of-presta/fop_console.git
 composer install
 cd ..
 php bin/console pr:mo install console
