@@ -15,7 +15,7 @@ class DebugMode extends Command
     /**
      * @var array possible allowed dev mode passed in command
      */
-    private $allowed_command_states = ['enable', 'disable', 'toggle'];
+    const ALLOWED_COMMAND_STATES = ['enable', 'disable', 'toggle'];
 
     /**
      * {@inheritdoc}
@@ -27,7 +27,7 @@ class DebugMode extends Command
             ->setDescription('Configure debug mode')
             ->setHelp('This command allows you to enable,disable or toggle debug mode')
             ->addArgument('action', InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . implode(",", $this->allowed_command_states) . ') ' . PHP_EOL,
+                'enable or disable debug mode ( possible values : ' . implode(",", self::ALLOWED_COMMAND_STATES) . ') ' . PHP_EOL,
                 'toggle'
             );
     }
@@ -43,7 +43,7 @@ class DebugMode extends Command
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
         //check if action is allowed
-        if ( !in_array($action,$this->allowed_command_states)){
+        if ( !in_array($action,self::ALLOWED_COMMAND_STATES)){
             $io->error('Action not allowed');
             return false;
         }
