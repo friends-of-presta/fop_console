@@ -1,6 +1,6 @@
 {
   "name": "friends-of-prestashop/console",
-  "description": "Add some console commands for PrestaShop 1.7+",
+  "description": "Add some console commands for PrestaShop 1.7.5+",
   "authors": [
     {
       "name": "Mickaël Andrieu",
@@ -20,7 +20,7 @@
     "php": "^7.1"
   },
   "license": "MIT",
-  "type": "prestashop-library",
+  "type": "prestashop-module",
   "require-dev": {
     "prestashop/php-dev-tools": "^2.2"
   }
