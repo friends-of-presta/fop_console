@@ -12,11 +12,13 @@ cd modules
 git clone https://github.com/friends-of-presta/fop_console.git
 composer install
 cd ..
-php bin/console pr:mo install console
+php bin/console pr:mo install fop_console
 ```
 
 ## Current commands
 
+* `fop:console:debug:mode` change debug mode
+* `fop:console:maintenance` get status or change maintenance mode
 * `fop:console:shop-status` Display shop(s) status(es)
 * `fop:console:export`: Exports object models in XML;
 * `fop:console:latest-products`: Displays the latest products;

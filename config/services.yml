@@ -33,3 +33,8 @@ services:
     class: FOP\Console\Commands\Debug\DebugMode
     tags:
       - { name: console.command }
+
+  fop.console.maintenance.command:
+    class: FOP\Console\Commands\Maintenance
+    tags:
+      - { name: console.command }      
