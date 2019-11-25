@@ -3,9 +3,9 @@
 namespace FOP\Console\Commands;
 
 use Customer;
-use Product;
-use Order;
 use FOP\Console\Command;
+use Order;
+use Product;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

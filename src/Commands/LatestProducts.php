@@ -2,8 +2,8 @@
 
 namespace FOP\Console\Commands;
 
-use Product;
 use FOP\Console\Command;
+use Product;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;

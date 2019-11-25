@@ -3,15 +3,14 @@
 namespace FOP\Console\Commands\Debug;
 
 use FOP\Console\Command;
+use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 
 class DebugMode extends Command
 {
-
     /**
      * @var array possible allowed dev mode passed in command
      */
@@ -27,7 +26,7 @@ class DebugMode extends Command
             ->setDescription('Configure debug mode')
             ->setHelp('This command allows you to enable,disable or toggle debug mode')
             ->addArgument('action', InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . implode(",", $this->allowed_command_states) . ') ' . PHP_EOL,
+                'enable or disable debug mode ( possible values : ' . implode(',', $this->allowed_command_states) . ') ' . PHP_EOL,
                 'toggle'
             );
     }
@@ -43,8 +42,9 @@ class DebugMode extends Command
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
         //check if action is allowed
-        if ( !in_array($action,$this->allowed_command_states)){
+        if (!in_array($action, $this->allowed_command_states)) {
             $io->error('Action not allowed');
+
             return false;
         }
 
