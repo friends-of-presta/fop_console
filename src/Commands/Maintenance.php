@@ -67,12 +67,12 @@ final class Maintenance extends Command
 
         //Enable maintenance mode
         if ($action == 'enable') {
-            Configuration::set('PS_SHOP_ENABLE', 0);
+            Configuration::updateValue('PS_SHOP_ENABLE', 0);
             $io->success('Maintenance mode enabled');
-        } 
+        }
         //Disable maintenance mode
         if ($action == 'disable') {
-            Configuration::set('PS_SHOP_ENABLE', 1);
+            Configuration::updateValue('PS_SHOP_ENABLE', 1);
             $io->success('Maintenance mode disabled');
         }
     }
