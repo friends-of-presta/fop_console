@@ -2,19 +2,18 @@
 
 namespace FOP\Console\Commands;
 
+use Configuration;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Configuration;
 
 /**
  * This command display and change maintenance status.
  */
 final class Maintenance extends Command
 {
-
     /**
      * @var array possible allowed maintenance mode passed in command
      */
@@ -32,7 +31,7 @@ final class Maintenance extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'get status or change maintenance mode ( possible values : ' . implode(",", $this->allowed_command_states) . ') ' . PHP_EOL,
+                'get status or change maintenance mode ( possible values : ' . implode(',', $this->allowed_command_states) . ') ' . PHP_EOL,
                 'status'
             );
     }
@@ -45,10 +44,11 @@ final class Maintenance extends Command
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
         $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
-        
+
         //check if action is allowed
         if (!in_array($action, $this->allowed_command_states)) {
             $io->error('Action not allowed');
+
             return false;
         }
 

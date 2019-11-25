@@ -4,7 +4,6 @@
  *
  * This module explore Symfony commands the right way.
  */
-
 require_once 'vendor/autoload.php';
 
 class Fop_Console extends Module

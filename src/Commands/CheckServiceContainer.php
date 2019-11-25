@@ -3,13 +3,13 @@
 namespace FOP\Console\Commands;
 
 use Exception;
-use Throwable;
 use FOP\Console\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use PrestaShopBundle\Exception\NotImplementedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use PrestaShopBundle\Exception\NotImplementedException;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Throwable;
 
 /**
  * This command is an health check of our Service Container.
@@ -51,12 +51,12 @@ final class CheckServiceContainer extends Command
                 try {
                     $this->getContainer()->get($serviceId);
                 } catch (NotImplementedException $notImplementedException) {
-                    $services[] =  [$serviceId, '<comment>' . $this->formatException($notImplementedException) . '</comment>'];
+                    $services[] = [$serviceId, '<comment>' . $this->formatException($notImplementedException) . '</comment>'];
                 } catch (Exception $exception) {
-                    $services[] =  [$serviceId, '<fg=red>' . $this->formatException($exception) . '</>'];
+                    $services[] = [$serviceId, '<fg=red>' . $this->formatException($exception) . '</>'];
                 } catch (Throwable $error) {
-                    $services[] =  [$serviceId, '<fg=red>' . $this->formatException($error) . '</>'];
-                    $errors++;
+                    $services[] = [$serviceId, '<fg=red>' . $this->formatException($error) . '</>'];
+                    ++$errors;
                 }
             }
         }
@@ -77,8 +77,8 @@ final class CheckServiceContainer extends Command
 
     private function formatException($exception)
     {
-        /** @var Exception $exception */
-        return $exception->getMessage(). PHP_EOL . ' at ' . $exception->getFile() . ':' . $exception->getLine();
+        /* @var Exception $exception */
+        return $exception->getMessage() . PHP_EOL . ' at ' . $exception->getFile() . ':' . $exception->getLine();
     }
 
     /**
@@ -103,7 +103,6 @@ final class CheckServiceContainer extends Command
         $container->getCompilerPassConfig()->setRemovingPasses([]);
         $container->compile();
         self::$containerBuilder = $container;
-
 
         return self::$containerBuilder;
     }

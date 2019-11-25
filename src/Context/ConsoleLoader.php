@@ -6,10 +6,9 @@ use Currency;
 use Employee;
 use FOP\Console\Controllers\ConsoleController;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Exception\LogicException;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
-use PrestaShop\PrestaShop\Core\Console\ContextLoaderInterface;
+use Symfony\Component\Console\Exception\LogicException;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * PrestaShop Context in Console Application
@@ -19,6 +18,7 @@ final class ConsoleLoader
     private $legacyContext;
     private $shopContext;
     private $rootDir;
+
     public function __construct(LegacyContext $legacyContext, ShopContext $shopContext, $rootDir)
     {
         $this->legacyContext = $legacyContext;
@@ -26,9 +26,7 @@ final class ConsoleLoader
         $this->rootDir = $rootDir;
         require_once $rootDir . '/../config/config.inc.php';
     }
-    /**
-     * {@inheritdoc}
-     */
+
     public function loadConsoleContext(InputInterface $input)
     {
         if (!defined('_PS_ADMIN_DIR_')) {
