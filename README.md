@@ -18,7 +18,7 @@ php bin/console pr:mo install fop_console
 ## Current commands
 
 * `fop:console:debug:mode` change debug mode
-* `fop:console:maintenance` get status or change maintenance mode
+* `fop:console:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:console:shop-status` Display shop(s) status(es)
 * `fop:console:export`: Exports object models in XML;
 * `fop:console:latest-products`: Displays the latest products;
