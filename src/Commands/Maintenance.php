@@ -77,34 +77,42 @@ final class Maintenance extends Command
             Configuration::updateValue('PS_SHOP_ENABLE', 1);
             $io->success('Maintenance mode disabled');
         }
+
+        // maintenance ip managment
+        if ($action == 'addip' || $action == 'addmyip' || $action == 'ips') {
+            $ips = explode(',', str_replace(' ','', Configuration::get('PS_MAINTENANCE_IP')));
+        }
+        
         // list ips
         if ($action == 'ips') {
-            $ips = Configuration::get('PS_MAINTENANCE_IP');
             if (!$ips) {
                 $io->text('No maintenance ip for now.');
             } else {
-                $io->text($ips);
+                $io->listing($ips);
             }
         }
-
+        
         // add ip
         if ($action == 'addip') {
-            $ips = Configuration::get('PS_MAINTENANCE_IP');
             if (!$ipaddress) {
-                $ipaddress = $io->ask('IP address to add?');
+                $ipaddress = $io->ask('IP address to add');
             }
             if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
-                $io->error('Missing or incorrect ip address.');
+                $io->error('Incorrect ip address.');
+            } elseif (in_array($ipaddress, $ips)) {
+                $io->error('Ip address '.$ipaddress.' already there');
             } else {
-                Configuration::updateValue('PS_MAINTENANCE_IP', $ips.','.$ipaddress);
+                // all good, add ip to the list
+                $ips[] = $ipaddress;
+                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
                 $io->success('Ip address '.$ipaddress.' added');
             }
         }
+
         // add my ip
         if ($action == 'addmyip') {
-            $ips = Configuration::get('PS_MAINTENANCE_IP');
             // try to guess ssh client ip address
-            //$ipaddress = shell_exec('echo "${SSH_CLIENT%% *}"');
+            $ipaddress = @shell_exec('echo "${SSH_CLIENT%% *}"');
             if(!filter_var($ipaddress,FILTER_VALIDATE_IP)){
                 $ipaddress = null;
             }
@@ -113,11 +121,14 @@ final class Maintenance extends Command
             }
             if (!$ipaddress || !filter_var($ipaddress,FILTER_VALIDATE_IP)) {
                 $io->error('Unable to guess your Ip address. Please use addip command.');
+            } elseif (in_array($ipaddress, $ips)) {
+                $io->warning('Ip address '.$ipaddress.' already there');
             } else {
-                Configuration::updateValue('PS_MAINTENANCE_IP', $ips.','.$ipaddress);
+                // all good, add ip to the list
+                $ips[] = $ipaddress;
+                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
                 $io->success('Ip address '.$ipaddress.' added');
             }
         }
-        
     }
 }
