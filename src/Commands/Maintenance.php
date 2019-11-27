@@ -80,7 +80,7 @@ final class Maintenance extends Command
 
         // maintenance ip managment
         if ($action == 'addip' || $action == 'addmyip' || $action == 'ips') {
-            $ips = explode(',', str_replace(' ','', Configuration::get('PS_MAINTENANCE_IP')));
+            $ips = explode(',', str_replace(' ', '', Configuration::get('PS_MAINTENANCE_IP')));
         }
         
         // list ips
@@ -113,13 +113,13 @@ final class Maintenance extends Command
         if ($action == 'addmyip') {
             // try to guess ssh client ip address
             $ipaddress = @shell_exec('echo "${SSH_CLIENT%% *}"');
-            if(!filter_var($ipaddress,FILTER_VALIDATE_IP)){
+            if (!filter_var($ipaddress, FILTER_VALIDATE_IP)) {
                 $ipaddress = null;
             }
             if (!$ipaddress) {
                 $ipaddress = gethostbyname(gethostname());
             }
-            if (!$ipaddress || !filter_var($ipaddress,FILTER_VALIDATE_IP)) {
+            if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
                 $io->error('Unable to guess your Ip address. Please use addip command.');
             } elseif (in_array($ipaddress, $ips)) {
                 $io->warning('Ip address '.$ipaddress.' already there');
