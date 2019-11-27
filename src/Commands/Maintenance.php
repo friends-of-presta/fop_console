@@ -2,19 +2,18 @@
 
 namespace FOP\Console\Commands;
 
+use Configuration;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Configuration;
 
 /**
  * This command display and change maintenance status.
  */
 final class Maintenance extends Command
 {
-
     /**
      * @var array possible allowed maintenance mode passed in command
      */
@@ -32,7 +31,7 @@ final class Maintenance extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'get status or change maintenance mode ( possible values : ' . implode(",", $this->allowed_command_states) . ') ' . PHP_EOL,
+                'get status or change maintenance mode ( possible values : ' . implode(',', $this->allowed_command_states) . ') ' . PHP_EOL,
                 'status'
             )
             ->addArgument('ipaddress', InputArgument::OPTIONAL, 'ip address to add');
@@ -47,10 +46,11 @@ final class Maintenance extends Command
         $action = $input->getArgument('action');
         $ipaddress = trim($input->getArgument('ipaddress'));
         $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
-        
+
         //check if action is allowed
         if (!in_array($action, $this->allowed_command_states)) {
             $io->error('Action not allowed');
+
             return false;
         }
 
@@ -82,7 +82,7 @@ final class Maintenance extends Command
         if ($action == 'addip' || $action == 'addmyip' || $action == 'ips') {
             $ips = explode(',', str_replace(' ', '', Configuration::get('PS_MAINTENANCE_IP')));
         }
-        
+
         // list ips
         if ($action == 'ips') {
             if (!$ips) {
@@ -91,7 +91,7 @@ final class Maintenance extends Command
                 $io->listing($ips);
             }
         }
-        
+
         // add ip
         if ($action == 'addip') {
             if (!$ipaddress) {
@@ -100,12 +100,12 @@ final class Maintenance extends Command
             if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
                 $io->error('Incorrect ip address.');
             } elseif (in_array($ipaddress, $ips)) {
-                $io->error('Ip address '.$ipaddress.' already there');
+                $io->error('Ip address ' . $ipaddress . ' already there');
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
                 Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
-                $io->success('Ip address '.$ipaddress.' added');
+                $io->success('Ip address ' . $ipaddress . ' added');
             }
         }
 
@@ -122,12 +122,12 @@ final class Maintenance extends Command
             if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
                 $io->error('Unable to guess your Ip address. Please use addip command.');
             } elseif (in_array($ipaddress, $ips)) {
-                $io->warning('Ip address '.$ipaddress.' already there');
+                $io->warning('Ip address ' . $ipaddress . ' already there');
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
                 Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
-                $io->success('Ip address '.$ipaddress.' added');
+                $io->success('Ip address ' . $ipaddress . ' added');
             }
         }
     }
