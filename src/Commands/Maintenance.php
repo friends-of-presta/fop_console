@@ -112,7 +112,7 @@ final class Maintenance extends Command
         // add my ip
         if ($action == 'addmyip') {
             // try to guess ssh client ip address
-            $ipaddress = @shell_exec('echo "${SSH_CLIENT%% *}"');
+            $ipaddress = strtok(getenv('SSH_CLIENT'), ' ');
             if (!filter_var($ipaddress, FILTER_VALIDATE_IP)) {
                 $ipaddress = null;
             }
