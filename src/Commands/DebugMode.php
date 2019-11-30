@@ -15,7 +15,7 @@ class DebugMode extends Command
     /**
      * @var array possible allowed dev mode passed in command
      */
-    const ALLOWED_COMMAND_STATES = ['status', 'enable', 'disable', 'toggle'];
+    const ALLOWED_COMMAND = ['status', 'enable', 'disable', 'toggle'];
 
     /**
      * {@inheritdoc}
@@ -29,7 +29,7 @@ class DebugMode extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND_STATES) . ') ',
+                'enable or disable debug mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ',
                 'status'
             );
     }
@@ -44,14 +44,14 @@ class DebugMode extends Command
         $debugMode = new DebugAdapter();
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
-        if (!in_array($action, self::ALLOWED_COMMAND_STATES)) {
+        if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
             return false;
         }
 
         //Status
         if ($action == 'status') {
-            $io->note('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+            $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
             return 0;
         }
 
