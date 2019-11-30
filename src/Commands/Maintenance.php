@@ -17,7 +17,7 @@ final class Maintenance extends Command
     /**
      * @var array possible allowed maintenance mode passed in command
      */
-    private $allowed_command_states = ['enable', 'disable', 'toggle', 'status', 'ips', 'addip', 'addmyip'];
+    const ALLOWED_COMMAND = ['enable', 'disable', 'toggle', 'status', 'ips', 'addip', 'addmyip'];
 
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ final class Maintenance extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'get status or change maintenance mode ( possible values : ' . implode(',', $this->allowed_command_states) . ') ' . PHP_EOL,
+                'get status or change maintenance mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ' . PHP_EOL,
                 'status'
             )
             ->addArgument('ipaddress', InputArgument::OPTIONAL, 'ip address to add');
@@ -48,7 +48,7 @@ final class Maintenance extends Command
         $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
 
         //check if action is allowed
-        if (!in_array($action, $this->allowed_command_states)) {
+        if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
 
             return false;
