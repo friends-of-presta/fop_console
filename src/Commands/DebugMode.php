@@ -3,15 +3,14 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
+use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 
 class DebugMode extends Command
 {
-
     /**
      * @var array possible allowed dev mode passed in command
      */
@@ -46,6 +45,7 @@ class DebugMode extends Command
 
         if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
+
             return false;
         }
 
