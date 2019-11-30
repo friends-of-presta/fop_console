@@ -30,6 +30,6 @@ services:
       - { name: console.command }
 
   fop.console.debug_mod.command:
-    class: FOP\Console\Commands\Debug\DebugMode
+    class: FOP\Console\Commands\DebugMode
     tags:
       - { name: console.command }
