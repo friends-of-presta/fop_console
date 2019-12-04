@@ -37,7 +37,7 @@ services:
   fop.console.maintenance.command:
     class: FOP\Console\Commands\Maintenance
     tags:
-      - { name: console.command }      
+      - { name: console.command }
 
   fop.console.generate_module.command:
     class: FOP\Console\Commands\GenerateModule
