@@ -38,3 +38,8 @@ services:
     class: FOP\Console\Commands\Maintenance
     tags:
       - { name: console.command }      
+
+  fop.console.generate_module.command:
+    class: FOP\Console\Commands\GenerateModule
+    tags:
+      - { name: console.command }
