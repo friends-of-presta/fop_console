@@ -36,8 +36,8 @@ final class ShopStatus extends Command
         $this
             ->setName('fop:shop-status')
             ->setDescription('Display shops statuses')
-            ->addArgument('id_shop', InputArgument::OPTIONAL, 'Specify an id_shop')
-            ->addArgument('action', InputArgument::OPTIONAL, 'enable or disable');
+            //->setHelp('Use the "--all" option to display all shops information')
+            ->addArgument('id_shop', InputArgument::OPTIONAL, 'Specify an id_shop');
     }
 
     /**
@@ -47,7 +47,6 @@ final class ShopStatus extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $id_shop = (int) $input->getArgument('id_shop');
-        $action = $input->getArgument('action');
 
         if (!$id_shop) {
             $io->title('Shops statuses report');
