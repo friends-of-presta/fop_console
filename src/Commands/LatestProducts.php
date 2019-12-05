@@ -19,7 +19,7 @@ final class LatestProducts extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:latest-products')
+            ->setName('fop:latest-products')
             ->setDescription('Displays the latest products')
             ->setHelp('This command allows you to display the latest products')
         ;

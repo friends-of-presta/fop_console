@@ -22,7 +22,7 @@ class DebugMode extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:debug')
+            ->setName('fop:debug')
             ->setDescription('Configure debug mode')
             ->setHelp('This command allows you to get or change debug mode')
             ->addArgument(

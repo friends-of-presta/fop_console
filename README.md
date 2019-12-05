@@ -17,12 +17,12 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:console:debug:mode` change debug mode
-* `fop:console:maintenance` get status or change maintenance mode, list or add maintenance ip address
-* `fop:console:shop-status` Display shop(s) status(es)
-* `fop:console:export`: Exports object models in XML;
-* `fop:console:latest-products`: Displays the latest products;
-* `fop:console:check-container`: List the services we can't use in Symfony commands (for now);
+* `fop:debug:mode` change debug mode
+* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
+* `fop:shop-status` Display shop(s) status(es)
+* `fop:export`: Exports object models in XML;
+* `fop:latest-products`: Displays the latest products;
+* `fop:check-container`: List the services we can't use in Symfony commands (for now);
 
 ## Current Console arguments
 

@@ -24,7 +24,7 @@ final class CheckServiceContainer extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:check-container')
+            ->setName('fop:check-container')
             ->setDescription('Health check of the Service Container')
             ->setHelp('This command instantiate every service of Symfony in Console Context: will it works as expected ?')
         ;
