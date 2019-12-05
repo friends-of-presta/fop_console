@@ -6,7 +6,6 @@ use FOP\Console\Command;
 use Shop;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -25,8 +24,6 @@ final class ShopStatus extends Command
             ->setDescription('Display shops statuses')
             //->setHelp('Use the "--all" option to display all shops information')
             ->addArgument('id_shop', InputArgument::OPTIONAL, 'Specify an id_shop');
-
-        ;
     }
 
     /**
@@ -35,8 +32,8 @@ final class ShopStatus extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-        $id_shop = (int)$input->getArgument('id_shop');
-        
+        $id_shop = (int) $input->getArgument('id_shop');
+
         if (!$id_shop) {
             $io->title('Shops statuses report');
             $shops = $this->getContainer()->get('prestashop.core.admin.shop.repository')->findAll();
@@ -44,6 +41,7 @@ final class ShopStatus extends Command
                 ['ID', 'Name', 'Theme', 'Activated?', 'Deleted?'],
                 $this->formatShopsInformation($shops)
             );
+
             return 0;
         } else {
             $shop = new Shop($id_shop);

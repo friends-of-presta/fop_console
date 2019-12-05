@@ -52,6 +52,7 @@ class DebugMode extends Command
         //Status
         if ($action == 'status') {
             $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+
             return 0;
         }
 
