@@ -37,7 +37,7 @@ final class Export extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:export')
+            ->setName('fop:export')
             ->setDescription('Allows to export data in XML')
             ->setHelp('This command allows you to export most of your data in XML')
             ->addArgument('model', InputArgument::OPTIONAL, 'The Object Model to export', 'Product')

@@ -39,13 +39,13 @@ final class Maintenance extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:maintenance')
+            ->setName('fop:maintenance')
             ->setDescription('Configure maintenance mode')
             ->setHelp('This command allows you to get status or change maintenance mode')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'get status or change maintenance mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ' . PHP_EOL,
+                'get status or change maintenance mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ',
                 'status'
             )
             ->addArgument('ipaddress', InputArgument::OPTIONAL, 'ip address to add');
