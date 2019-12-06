@@ -22,7 +22,6 @@ final class ShopStatus extends Command
         $this
             ->setName('fop:shop-status')
             ->setDescription('Display shops statuses')
-            //->setHelp('Use the "--all" option to display all shops information')
             ->addArgument('id_shop', InputArgument::OPTIONAL, 'Specify an id_shop');
     }
 
