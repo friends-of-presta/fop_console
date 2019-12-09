@@ -15,6 +15,7 @@ class ConsoleController extends Controller
         $this->id = 0;
         $this->controller_type = 'console';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -22,6 +23,7 @@ class ConsoleController extends Controller
     {
         // TODO: Implement checkAccess() method.
     }
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +31,7 @@ class ConsoleController extends Controller
     {
         // TODO: Implement viewAccess() method.
     }
+
     /**
      * {@inheritdoc}
      */
@@ -36,6 +39,7 @@ class ConsoleController extends Controller
     {
         // TODO: Implement postProcess() method.
     }
+
     /**
      * {@inheritdoc}
      */
@@ -43,6 +47,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -50,6 +55,7 @@ class ConsoleController extends Controller
     {
         return null;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -57,6 +63,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -64,6 +71,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -71,6 +79,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -78,6 +87,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */
@@ -85,6 +95,7 @@ class ConsoleController extends Controller
     {
         return '';
     }
+
     /**
      * {@inheritdoc}
      */

@@ -2,8 +2,8 @@
 
 namespace FOP\Console\Commands;
 
-use Shop;
 use FOP\Console\Command;
+use Shop;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,7 +33,6 @@ final class ShopStatus extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-
 
         if ($input->getOption('all')) {
             $io->title('Shops statuses report');
@@ -82,6 +81,7 @@ final class ShopStatus extends Command
                 $shop->getDeleted() ? '✔' : '✘',
             ];
         }
+
         return $shopsInformation;
     }
 }
