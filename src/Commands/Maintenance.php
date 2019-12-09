@@ -1,4 +1,18 @@
 <?php
+/**
+ * 2019-present Friends of Presta community
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the MIT License
+ * that is bundled with this package in the file LICENSE
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/MIT
+ *
+ * @author Friends of Presta community
+ * @copyright 2019-present Friends of Presta community
+ * @license https://opensource.org/licenses/MIT MIT
+ */
 
 namespace FOP\Console\Commands;
 
@@ -17,7 +31,7 @@ final class Maintenance extends Command
     /**
      * @var array possible allowed maintenance mode passed in command
      */
-    private $allowed_command_states = ['enable', 'disable', 'toggle', 'status'];
+    const ALLOWED_COMMAND = ['enable', 'disable', 'toggle', 'status', 'ips', 'addip', 'addmyip'];
 
     /**
      * {@inheritdoc}
@@ -25,15 +39,16 @@ final class Maintenance extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:console:maintenance')
+            ->setName('fop:maintenance')
             ->setDescription('Configure maintenance mode')
             ->setHelp('This command allows you to get status or change maintenance mode')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'get status or change maintenance mode ( possible values : ' . implode(',', $this->allowed_command_states) . ') ' . PHP_EOL,
+                'get status or change maintenance mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ',
                 'status'
-            );
+            )
+            ->addArgument('ipaddress', InputArgument::OPTIONAL, 'ip address to add');
     }
 
     /**
@@ -43,10 +58,11 @@ final class Maintenance extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
+        $ipaddress = trim($input->getArgument('ipaddress'));
         $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
 
         //check if action is allowed
-        if (!in_array($action, $this->allowed_command_states)) {
+        if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
 
             return false;
@@ -54,9 +70,9 @@ final class Maintenance extends Command
 
         if ($action == 'status') {
             if ($isMaintenanceModeEnabled) {
-                $io->title('Maintenance mode is on');
+                $io->text('Maintenance mode is on');
             } else {
-                $io->title('Maintenance mode is off');
+                $io->text('Maintenance mode is off');
             }
         }
 
@@ -74,6 +90,59 @@ final class Maintenance extends Command
         if ($action == 'disable') {
             Configuration::updateValue('PS_SHOP_ENABLE', 1);
             $io->success('Maintenance mode disabled');
+        }
+
+        // maintenance ip managment
+        if ($action == 'addip' || $action == 'addmyip' || $action == 'ips') {
+            $ips = explode(',', str_replace(' ', '', Configuration::get('PS_MAINTENANCE_IP')));
+        }
+
+        // list ips
+        if ($action == 'ips') {
+            if (!$ips) {
+                $io->text('No maintenance ip for now.');
+            } else {
+                $io->listing($ips);
+            }
+        }
+
+        // add ip
+        if ($action == 'addip') {
+            if (!$ipaddress) {
+                $ipaddress = $io->ask('IP address to add');
+            }
+            if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
+                $io->error('Incorrect ip address.');
+            } elseif (in_array($ipaddress, $ips)) {
+                $io->error('Ip address ' . $ipaddress . ' already there');
+            } else {
+                // all good, add ip to the list
+                $ips[] = $ipaddress;
+                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
+                $io->success('Ip address ' . $ipaddress . ' added');
+            }
+        }
+
+        // add my ip
+        if ($action == 'addmyip') {
+            // try to guess ssh client ip address
+            $ipaddress = strtok(getenv('SSH_CLIENT'), ' ');
+            if (!filter_var($ipaddress, FILTER_VALIDATE_IP)) {
+                $ipaddress = null;
+            }
+            if (!$ipaddress) {
+                $ipaddress = gethostbyname(gethostname());
+            }
+            if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
+                $io->error('Unable to guess your Ip address. Please use addip command.');
+            } elseif (in_array($ipaddress, $ips)) {
+                $io->warning('Ip address ' . $ipaddress . ' already there');
+            } else {
+                // all good, add ip to the list
+                $ips[] = $ipaddress;
+                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
+                $io->success('Ip address ' . $ipaddress . ' added');
+            }
         }
     }
 }
