@@ -64,12 +64,14 @@ final class ShopStatus extends Command
                 if ($action == 'enable') {
                     $shop->active = true;
                     $shop->save();
-                    $io->text('Shop '.$shop->id.' enabled');
+                    $io->text('Shop ' . $shop->id . ' enabled');
+
                     return 0;
                 } elseif ($action == 'disable') {
                     $shop->active = false;
                     $shop->save();
-                    $io->text('Shop '.$shop->id.' disabled');
+                    $io->text('Shop ' . $shop->id . ' disabled');
+
                     return 0;
                 } else {
                     $io->title(sprintf('Information for shop "%s"', $shop->name));
