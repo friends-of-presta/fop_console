@@ -35,8 +35,6 @@ final class GenerateModule extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $filesystem = new Filesystem();
-
-        $io->text(sprintf("\033\143"));
         
         $io->title('This program was carried out by FriendsOfPresta');
         $io->warning('Be careful if you run this program it may erase data, be sure to specify an unused module name or you know what you are doing');
@@ -59,46 +57,44 @@ final class GenerateModule extends Command
         $color = $helper->ask($input, $output, $question);
         $output->writeln('You have just selected: '.$color);
 
-        $io->text(sprintf("\033\143"));
         $io->section('Edition of the entry point');
-        
         $name = $io->ask('Give a name to your module', 'fop_examplemodule');
-        $name = str_replace(' ', '_', $name);
         $fileName = strtolower($name);
         $filenameFirstletterCaps = ucfirst($name);
         $filenameCamel = ucwords(strtolower($name));
         $description = $io->ask("Give the description of the module");
-        $author = $io->ask("Give the author of the module", 'OHweb');
+        $author = $io->ask("Give the author of the module", 'FOP');
 
-        $io->text(sprintf("\033\143"));
         $io->section('File generation');
 
+        $fileDirectories = array();
         try {
-            $filesystem->mkdir(_PS_MODULE_DIR_."".$fileName, 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/config", 0755);
-            $filesystem->touch(_PS_MODULE_DIR_."/".$fileName."/config/services.yml");
-            $filesystem->touch(_PS_MODULE_DIR_."/".$fileName."/config/routes.yml");
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/controller/admin", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/controller/front", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/cache", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Controller/Admin/Improve/Design", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Core/Grid/Definition/Factory", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Core/Grid/Query", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Core/Search/Filters", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Form/ChoiceProvider", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Form/Type", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/img/banner", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/img/gerant", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/img/slider", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Model", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Presenter", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/src/Repository", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/views/js/form", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/views/js/grid", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/views/public", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/views/templates/admin", 0755);
-            $filesystem->mkdir(_PS_MODULE_DIR_."/".$fileName."/views/templates/hook", 0755);
-            $rows = 24;
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."".$fileName;
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/config";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/controller/admin";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/controller/front";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/cache";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Controller/Admin/Improve/Design";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Core/Grid/Definition/Factory";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Core/Grid/Query";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Core/Search/Filters";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Form/ChoiceProvider";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Form/Type";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/img/banner";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/img/gerant";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/img/slider";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Model";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Presenter";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/src/Repository";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/views/js/form";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/views/js/grid";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/views/public";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/views/templates/admin";
+            $fileDirectories["dir"][] = _PS_MODULE_DIR_."/".$fileName."/views/templates/hook";
+            $fileDirectories["file"][] = _PS_MODULE_DIR_."/".$fileName."/config/services.yml";
+            $fileDirectories["file"][] = _PS_MODULE_DIR_."/".$fileName."/config/routes.yml";
+            $fileDirectories["file"][] = _PS_MODULE_DIR_."/".$fileName."/".$fileName.".php";
+            $rows = (count($fileDirectories["dir"])+count($fileDirectories["file"]));
             $progressBar = new ProgressBar($output, $rows);
             $progressBar->setFormat(
                 "<fg=white;bg=cyan> %status:-45s%</>\n%current%/%max% [%bar%] %percent:3s%%"
@@ -106,17 +102,32 @@ final class GenerateModule extends Command
             $progressBar->setBarCharacter('<fg=magenta>=</>');
             $progressBar->setProgressCharacter("<fg=green>➤</>");
             $progressBar->start();
-            for ($i = 0; $i<$rows; $i++) {
-                if ($i < 2) {
+            $i = 0;
+            foreach ($fileDirectories["dir"] as $directory) {
+                $filesystem->mkdir($directory, 0755);
+                if ($i = 0) {
                     $progressBar->setMessage("Starting...", 'status');
-                } elseif ($i < 22) {
-                    $progressBar->setMessage("In progress...", 'status');
                 } else {
-                    $progressBar->setMessage("Almost finished...", 'status');
+                    $progressBar->setMessage("In progress...", 'status');
                 }
+
                 $progressBar->advance();
-                usleep(20000);
+                usleep(100000);
+                $i++;
             }
+            foreach ($fileDirectories["file"] as $file) {
+                $filesystem->touch($file);
+                if ($i < $rows-1) {
+                    $progressBar->setMessage("Almost finished...", 'status');
+                } else {
+                    $progressBar->setMessage("In progress...", 'status');
+                }
+
+                $progressBar->advance();
+                usleep(100000);
+                $i++;
+            }
+
             $progressBar->finish();
             $io->newLine(2);
             $io->success('Generation finished');
@@ -124,7 +135,6 @@ final class GenerateModule extends Command
             $io->error('An error as occurred in the directory path at '.$exception->getPath());
         }
 
-        $io->text(sprintf("\033\143"));
         $io->section('Menu for generating hooks');
         $this->menuHook($io);
 
