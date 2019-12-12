@@ -37,22 +37,31 @@ final class GenerateModule extends Command
         $filesystem = new Filesystem();
 
         $io->text(sprintf("\033\143"));
-
-        $io->title('This program was carried out by FriendsOfPresta and OHweb');
-        $io->note("It work better on unix system");
+        
+        $io->title('This program was carried out by FriendsOfPresta');
         $io->warning('Be careful if you run this program it may erase data, be sure to specify an unused module name or you know what you are doing');
-        $confirm = $io->ask('Would like to continue ? (yes/no)', 'no');
-        while ($confirm != "yes" && $confirm != "no") {
-            $confirm = $io->ask('Please answer with "yes" or no "no"', 'no');
-        }
-        if ($confirm == "no") {
-            $io->text("End of the program ...");
-            return;
-        }
+//        $confirm = $io->ask('Would like to continue ? (yes/no)', 'no');
+//        while ($confirm != "yes" && $confirm != "no") {
+//            $confirm = $io->ask('Please answer with "yes" or no "no"', 'no');
+//        }
+//        if ($confirm == "no") {
+//            $io->text("End of the program ...");
+//            return;
+//        }
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion(
+            'Please select your favorite color (defaults to red)',
+            ['red', 'blue', 'yellow'],
+            0
+        );
+        $question->setErrorMessage('Color %s is invalid.');
+
+        $color = $helper->ask($input, $output, $question);
+        $output->writeln('You have just selected: '.$color);
 
         $io->text(sprintf("\033\143"));
         $io->section('Edition of the entry point');
-
+        
         $name = $io->ask('Give a name to your module', 'fop_examplemodule');
         $name = str_replace(' ', '_', $name);
         $fileName = strtolower($name);
@@ -120,12 +129,12 @@ final class GenerateModule extends Command
         $this->menuHook($io);
 
         $hookStringInstall="";
-        foreach (self::$tabHook as $hookname) {
+        foreach ($this->tabHook as $hookname) {
             $hookStringInstall .= "
             && \$this->registerHook('".$hookname."')";
         }
         $hookStringFunction="";
-        foreach (self::$tabHook as $hookfunction) {
+        foreach ($this->tabHook as $hookfunction) {
             $hookfunction = ucfirst($hookfunction);
             $hookStringFunction .= "
     public function hook".$hookfunction."(\$params) {
@@ -250,23 +259,23 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
 
         switch ($numMenu) {
             case 1:
-                self::$tabHook[] = $io->ask('Give the name of the hook', 'displayAfterFooter');
+                $this->tabHook[] = $io->ask('Give the name of the hook', 'displayAfterFooter');
                 $io->text("Hook created");
                 $io->newLine();
                 $this->menuHook($io);
                 break;
             case 2:
-                if (sizeof(self::$tabHook) <= 0) {
+                if (sizeof($this->tabhook) <= 0) {
                     $io->text("You have to add a hook to modify one");
                     $io->newLine();
                 } else {
-                    foreach (self::$tabHook as $number=>$hookname) {
+                    foreach ($this->tabhook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
                     $numMenu = $io->ask("Give the number of the hook to modify");
-                    if (isset(self::$tabHook[$numMenu])) {
-                        self::$tabHook[$numMenu] = $io->ask('Give the new name of the hook', self::$tabHook[$numMenu]);
+                    if (isset($this->tabhook[$numMenu])) {
+                        $this->tabhook[$numMenu] = $io->ask('Give the new name of the hook', $this->tabhook[$numMenu]);
                         $io->text("Hook modified");
                         $io->newLine();
                     } else {
@@ -277,17 +286,17 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
                 $this->menuHook($io);
                 break;
             case 3:
-                if (sizeof(self::$tabHook) <= 0) {
+                if (sizeof($this->tabhook) <= 0) {
                     $io->text("You have to add a hook to delete one");
                     $io->newLine();
                 } else {
-                    foreach (self::$tabHook as $number=>$hookname) {
+                    foreach ($this->tabhook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
                     $numMenu = $io->ask("Give the number of the hook to delete");
-                    if (isset(self::$tabHook[$numMenu])) {
-                        unset(self::$tabHook[$numMenu]);
+                    if (isset($this->tabhook[$numMenu])) {
+                        unset($this->tabhook[$numMenu]);
                         $io->text("Hook deleted");
                         $io->newLine();
                     } else {
@@ -298,11 +307,11 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
                 $this->menuHook($io);
                 break;
             case 4:
-                if (sizeof(self::$tabHook) <= 0) {
+                if (sizeof($this->tabhook) <= 0) {
                     $io->text("There is no Hook for the moment");
                     $io->newLine();
                 } else {
-                    foreach (self::$tabHook as $number=>$hookname) {
+                    foreach ($this->tabhook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
@@ -319,3 +328,4 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
         }
     }
 }
+
