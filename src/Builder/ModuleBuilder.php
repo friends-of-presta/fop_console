@@ -16,7 +16,7 @@ namespace FOP\Console\Builder;
  * versions in the future. If you wish to customize PrestaShop for your
  * needs please refer to https://www.prestashop.com for more information.
  *
- * @author    FriendsOfPresta <contact@prestashop.com>
+ * @author    FriendsOfPresta https://github.com/friends-of-presta/who-we-are
  * @copyright 2019-2020 FriendsOfPresta
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of FriendsOfPresta
