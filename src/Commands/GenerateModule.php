@@ -3,26 +3,32 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
+use FOP\Console\Builder\ModuleBuilder;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * This command is a working exemple.
  */
 final class GenerateModule extends Command
 {
-    protected static $tabHook=array();
+    private $tabHook=array();
+    private $hookStringInstall="";
+    private $hookStringFunction="";
+    
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
         $this
-            ->setName('fop:console:generate-module')
+            ->setName('fop:module:generate')
             ->setDescription('create a new module')
             ->setHelp('This command instantiate every files and directores of Symfony/Prestashop in Console Context')
         ;
@@ -38,27 +44,24 @@ final class GenerateModule extends Command
         
         $io->title('This program was carried out by FriendsOfPresta');
         $io->warning('Be careful if you run this program it may erase data, be sure to specify an unused module name or you know what you are doing');
-//        $confirm = $io->ask('Would like to continue ? (yes/no)', 'no');
-//        while ($confirm != "yes" && $confirm != "no") {
-//            $confirm = $io->ask('Please answer with "yes" or no "no"', 'no');
-//        }
-//        if ($confirm == "no") {
-//            $io->text("End of the program ...");
-//            return;
-//        }
+
         $helper = $this->getHelper('question');
         $question = new ChoiceQuestion(
-            'Please select your favorite color (defaults to red)',
-            ['red', 'blue', 'yellow'],
+            'Would like to continue (defaults to No)',
+            ['No', 'Yes'],
             0
         );
-        $question->setErrorMessage('Color %s is invalid.');
+        $question->setErrorMessage('Incorrect number, enter 0 for No and 1 for Yes.');
+        $confirm = $helper->ask($input, $output, $question);
+        if ($confirm == "No") {
+            $io->text("End of the program ...");
+            return;
+        }
 
-        $color = $helper->ask($input, $output, $question);
-        $output->writeln('You have just selected: '.$color);
-
+        $io->newLine(1);
         $io->section('Edition of the entry point');
         $name = $io->ask('Give a name to your module', 'fop_examplemodule');
+        $displayName = $io->ask('Give a display name to your module', 'FOP Exemple Module');
         $fileName = strtolower($name);
         $filenameFirstletterCaps = ucfirst($name);
         $filenameCamel = ucwords(strtolower($name));
@@ -112,7 +115,6 @@ final class GenerateModule extends Command
                 }
 
                 $progressBar->advance();
-                usleep(100000);
                 $i++;
             }
             foreach ($fileDirectories["file"] as $file) {
@@ -124,7 +126,6 @@ final class GenerateModule extends Command
                 }
 
                 $progressBar->advance();
-                usleep(100000);
                 $i++;
             }
 
@@ -136,109 +137,14 @@ final class GenerateModule extends Command
         }
 
         $io->section('Menu for generating hooks');
-        $this->menuHook($io);
+        $this->menuHook($io,$input,$output);
 
-        $hookStringInstall="";
-        foreach ($this->tabHook as $hookname) {
-            $hookStringInstall .= "
-            && \$this->registerHook('".$hookname."')";
-        }
-        $hookStringFunction="";
-        foreach ($this->tabHook as $hookfunction) {
-            $hookfunction = ucfirst($hookfunction);
-            $hookStringFunction .= "
-    public function hook".$hookfunction."(\$params) {
-        //TODO
-    }
-    ";
-        }
+        $this->hookStringInstall = Modulebuilder::getInstallString($this->tabHook);
+        $this->hookStringFunction = ModuleBuilder::getFunctionString($this->tabHook);
 
-        $stringEntryPoint = "";
-        $stringEntryPoint.= "<?php
-if (!defined('_CAN_LOAD_FILES_')) {
-    exit;
-}
-
-require_once __DIR__ . '/vendor/autoload.php';
-
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-
-/**
-* Class ".$filenameFirstletterCaps."
-*/
-
-class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
-{
-
-    const MODULE_NAME = '".$fileName."';
-
-    public \$templateFile;
-
-    public function __construct()
-    {
-        \$this->name = '".$filenameCamel."';
-        \$this->author = '".$author."';
-        \$this->version = '1.0.0';
-        \$this->need_instance = 0;
-        \$this->bootstrap = true;
-        parent::__construct();
-
-        \$this->displayName = '".$filenameCamel."';
-        \$this->description = '".$description."';
-        \$this->secure_key = Tools::encrypt(\$this->name);
-
-        \$this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => _PS_VERSION_);
-        \$this->templateFile = 'module:".$filenameCamel."/views/templates/hook/';
-
-        \$this->tabs = [
-        ];
-    }
-
-    public function install()
-    {
-        return parent::install()".$hookStringInstall."
-            && \$this->installTab();
-    }
-
-    public function uninstall()
-    {
-        return parent::uninstall()
-            && \$this->uninstallTab();
-    }
-
-    public function installTab()
-    {
-        //TODO
-    }
-
-    public function uninstallTab()
-    {
-        //TODO
-    }
-
-    public function enable(\$force_all = false)
-    {
-        return parent::enable(\$force_all)
-            && \$this->installTab();
-    }
-
-    public function disable(\$force_all = false)
-    {
-        return parent::disable(\$force_all)
-            && \$this->uninstallTab();
-    }
-    ".$hookStringFunction."
-    public function renderWidget(\$hookName, array \$configuration)
-    {
-        //TODO
-    }
-
-    public function getWidgetVariables(\$hookName, array \$configuration)
-    {
-        //TODO
-    }
-}";
-        $this->whriteCode($filesystem, $fileName, $stringEntryPoint);
+        ModuleBuilder::getEntryPointString($filenameFirstletterCaps,$fileName,$filenameCamel,
+            $author,$displayName,$description,$this->hookStringInstall,
+            $this->hookStringFunction,$filesystem);
 
 //        $io->text("table 1");
 //        $io->table(
@@ -251,41 +157,39 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
 //        );
     }
 
-    protected function whriteCode($filesystem, $fileName, $string)
+    /*
+     * This function ask the user which hook he want add to the module and build the code consequently
+     */
+    protected function menuHook($io,$input,$output)
     {
-        $filesystem->dumpFile(_PS_MODULE_DIR_."/".$fileName."/".$fileName.".php", $string);
-    }
+        $helper = $this->getHelper('question');
+        $question = new ChoiceQuestion(
+            'Please select a menu entry (defaults to 4)',
+            ['Add a hook', 'Modify a hook', 'Delete a hook', 'Display the list of hooks', 'Leave'],
+            4
+        );
+        $question->setErrorMessage('Color %s is invalid.');
+        $color = $helper->ask($input, $output, $question);
 
-    protected function menuHook($io)
-    {
-        $io->listing([
-            '1. Add a hook',
-            '2. Modify a hook',
-            '3. Delete a hook',
-            '4. Display the list of hooks',
-            '5. Leave',
-        ]);
-        $numMenu = $io->ask('Enter a number');
-
-        switch ($numMenu) {
-            case 1:
+        switch ($color) {
+            case 'Add a hook':
                 $this->tabHook[] = $io->ask('Give the name of the hook', 'displayAfterFooter');
                 $io->text("Hook created");
                 $io->newLine();
-                $this->menuHook($io);
+                $this->menuHook($io,$input,$output);
                 break;
-            case 2:
-                if (sizeof($this->tabhook) <= 0) {
+            case 'Modify a hook':
+                if (sizeof($this->tabHook) <= 0) {
                     $io->text("You have to add a hook to modify one");
                     $io->newLine();
                 } else {
-                    foreach ($this->tabhook as $number=>$hookname) {
+                    foreach ($this->tabHook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
                     $numMenu = $io->ask("Give the number of the hook to modify");
-                    if (isset($this->tabhook[$numMenu])) {
-                        $this->tabhook[$numMenu] = $io->ask('Give the new name of the hook', $this->tabhook[$numMenu]);
+                    if (isset($this->tabHook[$numMenu])) {
+                        $this->tabHook[$numMenu] = $io->ask('Give the new name of the hook', $this->tabHook[$numMenu]);
                         $io->text("Hook modified");
                         $io->newLine();
                     } else {
@@ -293,20 +197,20 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
                         $io->newLine();
                     }
                 }
-                $this->menuHook($io);
+                $this->menuHook($io,$input,$output);
                 break;
-            case 3:
-                if (sizeof($this->tabhook) <= 0) {
+            case 'Delete a hook':
+                if (sizeof($this->tabHook) <= 0) {
                     $io->text("You have to add a hook to delete one");
                     $io->newLine();
                 } else {
-                    foreach ($this->tabhook as $number=>$hookname) {
+                    foreach ($this->tabHook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
                     $numMenu = $io->ask("Give the number of the hook to delete");
-                    if (isset($this->tabhook[$numMenu])) {
-                        unset($this->tabhook[$numMenu]);
+                    if (isset($this->tabHook[$numMenu])) {
+                        unset($this->tabHook[$numMenu]);
                         $io->text("Hook deleted");
                         $io->newLine();
                     } else {
@@ -314,26 +218,26 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
                         $io->newLine();
                     }
                 }
-                $this->menuHook($io);
+                $this->menuHook($io,$input,$output);
                 break;
-            case 4:
-                if (sizeof($this->tabhook) <= 0) {
+            case 'Display the list of hooks':
+                if (sizeof($this->tabHook) <= 0) {
                     $io->text("There is no Hook for the moment");
                     $io->newLine();
                 } else {
-                    foreach ($this->tabhook as $number=>$hookname) {
+                    foreach ($this->tabHook as $number=>$hookname) {
                         $io->text($number.'. '.$hookname);
                     }
                     $io->newLine();
                 }
-                $this->menuHook($io);
+                $this->menuHook($io,$input,$output);
                 break;
-            case 5:
+            case 'Leave':
                 break;
             default:
                 $io->text("That's not a correct number");
                 $io->newLine();
-                $this->menuHook($io);
+                $this->menuHook($io,$input,$output);
                 break;
         }
     }
