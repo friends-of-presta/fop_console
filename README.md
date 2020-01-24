@@ -10,8 +10,9 @@ This module is released under MIT license.
 ```
 cd modules 
 git clone https://github.com/friends-of-presta/fop_console.git
+cd fop_console
 composer install
-cd ..
+cd ../../
 php bin/console pr:mo install fop_console
 ```
 
