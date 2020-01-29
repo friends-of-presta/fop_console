@@ -12,8 +12,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - name: PHP syntax checker 5.6
-        uses: prestashop/github-action-php-lint/5.6@master
       - name: PHP syntax checker 7.2
         uses: prestashop/github-action-php-lint/7.2@master
       - name: PHP syntax checker 7.3
