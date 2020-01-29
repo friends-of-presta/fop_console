@@ -44,6 +44,7 @@ class GenerateHtaccess extends Command
             $io->success('htaccess file generated with success');
         } else {
             $io->error('An error occurs while generating .htaccess file');
+
             return 1;
         }
     }
