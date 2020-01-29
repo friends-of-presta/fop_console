@@ -18,20 +18,14 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:debug:mode` change debug mode
-* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
+* `fop:latest-products`: Displays the latest products
+* `fop:export`: Exports object models in XML
 * `fop:shop-status` Display shop(s) status(es)
-* `fop:export`: Exports object models in XML;
-* `fop:latest-products`: Displays the latest products;
-* `fop:check-container`: List the services we can't use in Symfony commands (for now);
-
-## Current Console arguments
-
-These arguments are available to all commands that extends `FOP\Console\Command` class.
-
-* `employee`: the current Employee ID, __null__ by default;
-* `id_shop`: the selected Shop ID, set to __1__ by default;
-* `id_shop_group`: the selected Group Shop ID, set to __null__ by default;
+* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands 
+* `fop:debug` Configure debug mode
+* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
+* `fop:generate:htaccess` Generate the .htaccess file
+* `fop:generate:robots`   Generate the robots.txt file
 
 ## Create your owns Commands
 
