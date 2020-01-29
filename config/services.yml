@@ -37,4 +37,9 @@ services:
   fop.console.maintenance.command:
     class: FOP\Console\Commands\Maintenance
     tags:
-      - { name: console.command }      
+      - { name: console.command }
+
+  fop.console.generate_htaccess.command:
+    class: FOP\Console\Commands\GenerateHtaccess
+    tags:
+      - { name: console.command }
