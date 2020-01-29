@@ -43,3 +43,8 @@ services:
     class: FOP\Console\Commands\GenerateHtaccess
     tags:
       - { name: console.command }
+
+  fop.console.generate_robots.command:
+    class: FOP\Console\Commands\GenerateRobots
+    tags:
+      - { name: console.command }
