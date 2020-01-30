@@ -17,9 +17,7 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -46,8 +44,25 @@ final class ClearCacheFiles extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $io->error('Implement me.');
+        $this->createFuturCacheDirectory();
+        $this->renameCurrentCacheDirectory();
+        $this->renameFuturCacheDirectoryAsCurrent();
+
+        $io->error('New Empty cache directory created.');
     }
 
+    private function createFuturCacheDirectory()
+    {
+        throw new \Exception('Implement me'); // @todo Implement me
+    }
 
+    private function renameCurrentCacheDirectory()
+    {
+        throw new \Exception('Implement me'); // @todo Implement me
+    }
+
+    private function renameFuturCacheDirectoryAsCurrent()
+    {
+        throw new \Exception('Implement me'); // @todo Implement me
+    }
 }
