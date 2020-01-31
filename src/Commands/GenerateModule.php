@@ -698,14 +698,6 @@ final class GenerateModule extends Command
 		}
 		echo $process->getOutput();
 		
-		//enable
-		$process->setCommandLine('php bin/console prestashop:module enable '.$filename);
-		$process->run();
-		// executes after the command finishes
-		if (!$process->isSuccessful()) {
-			throw new ProcessFailedException($process);
-		}
-		echo $process->getOutput();
 	}
 }
 

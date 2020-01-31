@@ -201,16 +201,12 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
 
     public function install()
     {
-        return parent::install()".$hookStringInstall."
-            ".$sqlTableStringInstall."
-            && \$this->installTab();
+        return parent::install()".$hookStringInstall."".$sqlTableStringInstall."". ($tabStringInstall != "" ? '&& $this->installTab()' : '') .";
     }
 
     public function uninstall()
     {
-        return parent::uninstall()
-            ".$sqlTableStringUninstall."
-            && \$this->uninstallTab();
+        return parent::uninstall()".$sqlTableStringUninstall."". ($tabStringInstall != "" ? '&& $this->uninstallTab()' : '') .";
     }
 
     public function installTab()
@@ -225,14 +221,12 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
 
     public function enable(\$force_all = false)
     {
-        return parent::enable(\$force_all)
-            && \$this->installTab();
+        return parent::enable(\$force_all)". ($tabStringInstall != "" ? '&& \$this->installTab()' : '') .";
     }
 
     public function disable(\$force_all = false)
     {
-        return parent::disable(\$force_all)
-            && \$this->uninstallTab();
+        return parent::disable(\$force_all)". ($tabStringInstall != "" ? '&& $this->uninstallTab()' : '') .";
     }
     ".$hookStringFunction."
     public function renderWidget(\$hookName, array \$configuration)
