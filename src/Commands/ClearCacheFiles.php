@@ -17,6 +17,7 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
+use http\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -44,16 +45,20 @@ final class ClearCacheFiles extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->createFuturCacheDirectory();
+        $this->processChecks();
         $this->renameCurrentCacheDirectory();
-        $this->renameFuturCacheDirectoryAsCurrent();
+        $this->createNewCacheDirectory();
+        $this->deleteOldCacheDirectory();
 
-        $io->error('New Empty cache directory created.');
+        $io->success('New Empty cache directory created. Old cache directory deleted.');
     }
 
-    private function createFuturCacheDirectory()
+    private function processChecks(): void
     {
-        throw new \Exception('Implement me'); // @todo Implement me
+        $cache_directory = $this->getCacheDirectoryPath();
+        if (!is_writable($cache_directory)) {
+            throw new RuntimeException("Cache directory not writable : [$cache_directory]");
+        }
     }
 
     private function renameCurrentCacheDirectory()
@@ -61,7 +66,12 @@ final class ClearCacheFiles extends Command
         throw new \Exception('Implement me'); // @todo Implement me
     }
 
-    private function renameFuturCacheDirectoryAsCurrent()
+    private function deleteOldCacheDirectory()
+    {
+        throw new \Exception('Implement me'); // @todo Implement me
+    }
+
+    private function createNewCacheDirectory()
     {
         throw new \Exception('Implement me'); // @todo Implement me
     }
