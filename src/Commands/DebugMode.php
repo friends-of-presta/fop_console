@@ -60,7 +60,7 @@ class DebugMode extends Command
         if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
 
-            return false;
+            return 1;
         }
 
         //Status
