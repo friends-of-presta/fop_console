@@ -48,3 +48,8 @@ services:
     class: FOP\Console\Commands\GenerateRobots
     tags:
       - { name: console.command }
+
+  fop.console.clear_cache_files.command:
+    class: FOP\Console\Commands\ClearCacheFiles
+    tags:
+      - { name: console.command }
