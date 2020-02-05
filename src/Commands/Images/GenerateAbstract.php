@@ -17,6 +17,11 @@
 namespace FOP\Console\Commands\Images;
 
 use FOP\Console\Command;
+use Configuration;
+use Image;
+use ImageType;
+use Language;
+use Module;
 
 abstract class GenerateAbstract extends Command
 {
