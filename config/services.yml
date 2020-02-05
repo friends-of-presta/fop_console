@@ -48,3 +48,8 @@ services:
     class: FOP\Console\Commands\GenerateRobots
     tags:
       - { name: console.command }
+
+  fop.console.images_generate_product.command:
+    class: FOP\Console\Commands\Images\GenerateProduct
+    tags:
+      - { name: console.command }
