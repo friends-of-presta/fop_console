@@ -52,7 +52,7 @@ final class Export extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $objectModel = $input->getArgument('model');
-        $limit = $input->getOption('limit');
+        $limit = (int) $input->getOption('limit');
 
         switch ($objectModel) {
             case 'Product':
