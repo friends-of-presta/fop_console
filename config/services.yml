@@ -49,8 +49,28 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.images_generate_product.command:
-    class: FOP\Console\Commands\Images\GenerateProduct
+  fop.console.images_generate_products.command:
+    class: FOP\Console\Commands\Images\GenerateProducts
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_categories.command:
+    class: FOP\Console\Commands\Images\GenerateCategories
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_manufacturers.command:
+    class: FOP\Console\Commands\Images\GenerateManufacturers
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_suppliers.command:
+    class: FOP\Console\Commands\Images\GenerateSuppliers
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_stores.command:
+    class: FOP\Console\Commands\Images\GenerateStores
     tags:
       - { name: console.command }
 

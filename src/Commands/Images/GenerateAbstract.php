@@ -16,16 +16,21 @@
 
 namespace FOP\Console\Commands\Images;
 
-use FOP\Console\Command;
 use Configuration;
+use FOP\Console\Command;
 use Image;
+use ImageManager;
 use ImageType;
 use Language;
 use Module;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class GenerateAbstract extends Command
 {
-
     /** @var array */
     protected $errors = [];
 
@@ -33,33 +38,83 @@ abstract class GenerateAbstract extends Command
     protected $output;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
+
         return parent::initialize($input, $output);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
+    {
+        $this
+            ->setName('fop:images:generate:' . static::IMAGE_TYPE)
+            ->setDescription('Regenerate ' . static::IMAGE_TYPE . ' thumbnails')
+            ->addArgument(
+                'format',
+                InputArgument::OPTIONAL,
+                'images formats comma separated',
+                'all'
+            )
+            ->addOption(
+                'delete',
+                'd',
+                InputOption::VALUE_OPTIONAL,
+                'Delete current thumbnails',
+                true
+            );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $formats = explode(',', $input->getArgument('format'));
+        $delete = (bool) $input->getOption('delete');
+        $io = new SymfonyStyle($input, $output);
+
+        if (true !== $this->_regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats)) {
+            $io->error('Unable to generate thumbnails');
+
+            return 1;
+        }
+
+        if (count($this->errors)) {
+            $io->error('The generation generate the folowing errors');
+            foreach ($this->errors as $error) {
+                $io->error($error);
+            }
+        }
+
+        $io->success('Thumbnails generated with success for ' . static::IMAGE_TYPE);
+    }
 
     /**
      * The whole logic of this file comes from controllers/admin/AdminImagesController.php
      * with some light adaptations
+     *
      * @param string $type
      * @param bool $deleteOldImages
-     * @param array $formats
+     * @param array $imagesFormats
+     *
      * @return bool
      */
-    protected function _regenerateThumbnails($type = 'all', $deleteOldImages = true, $formats = ['all'])
+    protected function _regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
     {
         $languages = Language::getLanguages(false);
-        $process = array(
-            array('type' => 'categories', 'dir' => _PS_CAT_IMG_DIR_),
-            array('type' => 'manufacturers', 'dir' => _PS_MANU_IMG_DIR_),
-            array('type' => 'suppliers', 'dir' => _PS_SUPP_IMG_DIR_),
-            array('type' => 'products', 'dir' => _PS_PROD_IMG_DIR_),
-            array('type' => 'stores', 'dir' => _PS_STORE_IMG_DIR_),
-        );
+        $process = [
+            ['type' => 'categories', 'dir' => _PS_CAT_IMG_DIR_],
+            ['type' => 'manufacturers', 'dir' => _PS_MANU_IMG_DIR_],
+            ['type' => 'suppliers', 'dir' => _PS_SUPP_IMG_DIR_],
+            ['type' => 'products', 'dir' => _PS_PROD_IMG_DIR_],
+            ['type' => 'stores', 'dir' => _PS_STORE_IMG_DIR_],
+        ];
 
         // Launching generation process
         foreach ($process as $proc) {
@@ -72,17 +127,27 @@ abstract class GenerateAbstract extends Command
 
             // Getting format generation
             $formats = ImageType::getImagesTypes($proc['type']);
-            if ($type != 'all') {
 
-                //@Todo : Manage Format
-                $format = (string)(Tools::getValue('format_' . $type));
-                if ($format != 'all') {
+            if (!count($formats)) {
+                $this->output->writeln('<error>No format for ' . $proc['type'] . '</error>');
+
+                return false;
+            }
+
+            if ($type != 'all') {
+                if (!in_array('all', $imagesFormats)) {
                     foreach ($formats as $k => $form) {
-                        if ($form['id_image_type'] != $format) {
+                        if (!in_array($form['name'], $imagesFormats)) {
                             unset($formats[$k]);
                         }
                     }
                 }
+            }
+
+            if (!count($formats)) {
+                $this->output->writeln('No valid format for ' . $proc['type']);
+
+                return false;
             }
 
             if ($deleteOldImages) {
@@ -115,13 +180,6 @@ abstract class GenerateAbstract extends Command
      */
     protected function _deleteOldImages($dir, $type, $product = false)
     {
-        $this->output->writeln('Deleteting old images for type ' . $type);
-
-        if (!is_dir($dir)) {
-            $this->errors[] = 'Unable to delete old images for type ' . $type . ' : ' . $dir . ' does not exists';
-            return false;
-        }
-
         $toDel = scandir($dir, SCANDIR_SORT_NONE);
 
         foreach ($toDel as $d) {
@@ -169,13 +227,20 @@ abstract class GenerateAbstract extends Command
      */
     protected function _regenerateNewImages($dir, $type, $productsImages = false)
     {
+        $processTypes = [];
+        array_map(function ($row) use (&$processTypes) {
+            $processTypes[] = $row['name'];
+        }, $type);
+
+        $this->output->writeln('Processing formats ' . implode(', ', $processTypes));
 
         if (!is_dir($dir)) {
-            $this->errors[] = 'Unable to regenerate new images for type ' . $type . ' : ' . $dir . ' does not exists';
+            $this->errors[] = 'Unable to regenerate new images for type ' . implode(',', $processTypes) . ' : ' . $dir . ' does not exists';
+
             return false;
         }
 
-        $generate_hight_dpi_images = (bool)Configuration::get('PS_HIGHT_DPI');
+        $generate_hight_dpi_images = (bool) Configuration::get('PS_HIGHT_DPI');
 
         if (!$productsImages) {
             $formated_medium = ImageType::getFormattedName('medium');
@@ -195,12 +260,12 @@ abstract class GenerateAbstract extends Command
                         if (!file_exists($newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '.jpg')) {
                             if (!file_exists($dir . $image) || !filesize($dir . $image)) {
                                 $this->errors[] = sprintf('Source file does not exist or is empty (%s)', $dir . $image);
-                            } elseif (!ImageManager::resize($dir . $image, $newDir . substr(str_replace('_thumb.', '.', $image), 0, -4) . '-' . stripslashes($imageType['name']) . '.jpg', (int)$imageType['width'], (int)$imageType['height'])) {
+                            } elseif (!ImageManager::resize($dir . $image, $newDir . substr(str_replace('_thumb.', '.', $image), 0, -4) . '-' . stripslashes($imageType['name']) . '.jpg', (int) $imageType['width'], (int) $imageType['height'])) {
                                 $this->errors[] = sprintf('Failed to resize image file (%s)', $dir . $image);
                             }
 
                             if ($generate_hight_dpi_images) {
-                                if (!ImageManager::resize($dir . $image, $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '2x.jpg', (int)$imageType['width'] * 2, (int)$imageType['height'] * 2)) {
+                                if (!ImageManager::resize($dir . $image, $newDir . substr($image, 0, -4) . '-' . stripslashes($imageType['name']) . '2x.jpg', (int) $imageType['width'] * 2, (int) $imageType['height'] * 2)) {
                                     $this->errors[] = sprintf('Failed to resize image file to high resolution %s', $dir . $image);
                                 }
                             }
@@ -215,20 +280,20 @@ abstract class GenerateAbstract extends Command
                 if (file_exists($existing_img) && filesize($existing_img)) {
                     foreach ($type as $imageType) {
                         if (!file_exists($dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg')) {
-                            if (!ImageManager::resize($existing_img, $dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg', (int)$imageType['width'], (int)$imageType['height'])) {
+                            if (!ImageManager::resize($existing_img, $dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '.jpg', (int) $imageType['width'], (int) $imageType['height'])) {
                                 $this->errors[] = sprintf(
                                     'Original image is corrupt %s for product ID %s or bad permission on folder.',
                                     $existing_img,
-                                    (int)$imageObj->id_product
+                                    (int) $imageObj->id_product
                                 );
                             }
 
                             if ($generate_hight_dpi_images) {
-                                if (!ImageManager::resize($existing_img, $dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '2x.jpg', (int)$imageType['width'] * 2, (int)$imageType['height'] * 2)) {
+                                if (!ImageManager::resize($existing_img, $dir . $imageObj->getExistingImgPath() . '-' . stripslashes($imageType['name']) . '2x.jpg', (int) $imageType['width'] * 2, (int) $imageType['height'] * 2)) {
                                     $this->errors[] = sprintf(
                                         'Original image is corrupt %s for product ID %s or bad permission on folder.',
                                         $existing_img,
-                                        (int)$imageObj->id_product
+                                        (int) $imageObj->id_product
                                     );
                                 }
                             }
@@ -238,13 +303,13 @@ abstract class GenerateAbstract extends Command
                     $this->errors[] = sprintf(
                         'Original image is missing or empty %s for product ID %s',
                         $existing_img,
-                        (int)$imageObj->id_product
+                        (int) $imageObj->id_product
                     );
                 }
             }
         }
 
-        return (bool)count($this->errors);
+        return (bool) count($this->errors);
     }
 
     /**
@@ -259,21 +324,21 @@ abstract class GenerateAbstract extends Command
     protected function _regenerateNoPictureImages($dir, $type, $languages)
     {
         $errors = false;
-        $generate_hight_dpi_images = (bool)Configuration::get('PS_HIGHT_DPI');
+        $generate_hight_dpi_images = (bool) Configuration::get('PS_HIGHT_DPI');
 
         foreach ($type as $image_type) {
             foreach ($languages as $language) {
                 $file = $dir . $language['iso_code'] . '.jpg';
                 if (!file_exists($file)) {
-                    $file = _PS_PROD_IMG_DIR_ . Language::getIsoById((int)Configuration::get('PS_LANG_DEFAULT')) . '.jpg';
+                    $file = _PS_PROD_IMG_DIR_ . Language::getIsoById((int) Configuration::get('PS_LANG_DEFAULT')) . '.jpg';
                 }
                 if (!file_exists($dir . $language['iso_code'] . '-default-' . stripslashes($image_type['name']) . '.jpg')) {
-                    if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($image_type['name']) . '.jpg', (int)$image_type['width'], (int)$image_type['height'])) {
+                    if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($image_type['name']) . '.jpg', (int) $image_type['width'], (int) $image_type['height'])) {
                         $errors = true;
                     }
 
                     if ($generate_hight_dpi_images) {
-                        if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($image_type['name']) . '2x.jpg', (int)$image_type['width'] * 2, (int)$image_type['height'] * 2)) {
+                        if (!ImageManager::resize($file, $dir . $language['iso_code'] . '-default-' . stripslashes($image_type['name']) . '2x.jpg', (int) $image_type['width'] * 2, (int) $image_type['height'] * 2)) {
                             $errors = true;
                         }
                     }
@@ -300,13 +365,12 @@ abstract class GenerateAbstract extends Command
                 if (file_exists($dir . $imageObj->getExistingImgPath() . '.jpg')) {
                     foreach ($result as $module) {
                         $moduleInstance = Module::getInstanceByName($module['name']);
-                        if ($moduleInstance && is_callable(array($moduleInstance, 'hookActionWatermark'))) {
-                            call_user_func(array($moduleInstance, 'hookActionWatermark'), array('id_image' => $imageObj->id, 'id_product' => $imageObj->id_product, 'image_type' => $type));
+                        if ($moduleInstance && is_callable([$moduleInstance, 'hookActionWatermark'])) {
+                            call_user_func([$moduleInstance, 'hookActionWatermark'], ['id_image' => $imageObj->id, 'id_product' => $imageObj->id_product, 'image_type' => $type]);
                         }
                     }
                 }
             }
         }
     }
-
 }
