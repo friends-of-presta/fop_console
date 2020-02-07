@@ -21,7 +21,8 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:shop-status` Display shop(s) status(es)
-* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands 
+* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
+* `fop:clear-cache` Clear the cache folder (using system file deletion instead of php deletion (slower))
 * `fop:debug` Configure debug mode
 * `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:generate:htaccess` Generate the .htaccess file
