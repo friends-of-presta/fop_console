@@ -79,17 +79,16 @@ abstract class GenerateAbstract extends Command
         $delete = (bool) $input->getOption('delete');
         $io = new SymfonyStyle($input, $output);
 
-        if (true !== $this->_regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats)) {
+        $sucess = $this->_regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
+
+        if (!$sucess || count($this->errors)) {
             $io->error('Unable to generate thumbnails');
-
-            return 1;
-        }
-
-        if (count($this->errors)) {
-            $io->error('The generation generate the folowing errors');
+            $io->warning('The generation generate the folowing errors : ');
             foreach ($this->errors as $error) {
                 $io->error($error);
             }
+
+            return 1;
         }
 
         $io->success('Thumbnails generated with success for ' . static::IMAGE_TYPE);
