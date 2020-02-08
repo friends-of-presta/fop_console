@@ -94,8 +94,8 @@ final class ClearCacheFiles extends Command
 
     private function createNewCacheDirectory()
     {
-        $cache_dir = $this->getCacheDirectoryBasePath() . ((new DebugAdapter())->isDebugModeEnabled() ? 'dev' : 'prod');
-        $process = new Process(['mkdir', $cache_dir]);
+        $cache_dir = $this->getCacheDirectoryBasePath() . DIRECTORY_SEPARATOR . ((new DebugAdapter())->isDebugModeEnabled() ? 'dev' : 'prod');
+        $process = new Process(['mkdir', $cache_dir, '-p']);
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
