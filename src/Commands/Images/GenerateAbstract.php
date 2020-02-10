@@ -17,6 +17,7 @@
 namespace FOP\Console\Commands\Images;
 
 use Configuration;
+use Db;
 use FOP\Console\Command;
 use Image;
 use ImageManager;
@@ -79,11 +80,11 @@ abstract class GenerateAbstract extends Command
         $delete = (bool) $input->getOption('delete');
         $io = new SymfonyStyle($input, $output);
 
-        $sucess = $this->_regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
+        $success = $this->regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
 
-        if (!$sucess || count($this->errors)) {
+        if (!$success || count($this->errors)) {
             $io->error('Unable to generate thumbnails');
-            $io->warning('The generation generate the folowing errors : ');
+            $io->warning('The generation generate the following errors : ');
             foreach ($this->errors as $error) {
                 $io->error($error);
             }
@@ -104,7 +105,7 @@ abstract class GenerateAbstract extends Command
      *
      * @return bool
      */
-    protected function _regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
+    protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
     {
         $languages = Language::getLanguages(false);
         $process = [
@@ -129,6 +130,7 @@ abstract class GenerateAbstract extends Command
 
             if (!count($formats)) {
                 $this->errors[] = 'No format for ' . $proc['type'];
+
                 return false;
             }
 
@@ -144,19 +146,23 @@ abstract class GenerateAbstract extends Command
 
             if (!count($formats)) {
                 $this->errors[] = 'No valid format for ' . $proc['type'];
+
                 return false;
             }
 
             if ($deleteOldImages) {
-                $this->_deleteOldImages($proc['dir'], $formats, ($proc['type'] == 'products' ? true : false));
+                $this->deleteOldImages($proc['dir'], $formats, ($proc['type'] == 'products' ? true : false));
             }
-            if (($return = $this->_regenerateNewImages($proc['dir'], $formats, ($proc['type'] == 'products' ? true : false))) === true) {
+            if (($return = $this->regenerateNewImages($proc['dir'], $formats, ($proc['type'] == 'products' ? true : false))) === true) {
                 if (!count($this->errors)) {
                     $this->errors[] = sprintf('Cannot write images for this type: %s. Please check the %s folder\'s writing permissions.', $proc['type'], $proc['dir']);
                 }
             } else {
+                if ($proc['type'] == 'products') {
+                    $this->regenerateWatermark($proc['dir'], $formats);
+                }
                 if (!count($this->errors)) {
-                    if ($this->_regenerateNoPictureImages($proc['dir'], $formats, $languages)) {
+                    if ($this->regenerateNoPictureImages($proc['dir'], $formats, $languages)) {
                         $this->errors[] = sprintf('Cannot write "No picture" image to %s images folder. Please check the folder\'s writing permissions.', $proc['type']);
                     }
                 }
@@ -175,7 +181,7 @@ abstract class GenerateAbstract extends Command
      *
      * @return bool
      */
-    protected function _deleteOldImages($dir, $type, $product = false)
+    protected function deleteOldImages($dir, $type, $product = false)
     {
         $toDel = scandir($dir, SCANDIR_SORT_NONE);
 
@@ -222,7 +228,7 @@ abstract class GenerateAbstract extends Command
      *
      * @return bool|string
      */
-    protected function _regenerateNewImages($dir, $type, $productsImages = false)
+    protected function regenerateNewImages($dir, $type, $productsImages = false)
     {
         $processTypes = [];
         array_map(function ($row) use (&$processTypes) {
@@ -318,7 +324,7 @@ abstract class GenerateAbstract extends Command
      *
      * @return bool
      */
-    protected function _regenerateNoPictureImages($dir, $type, $languages)
+    protected function regenerateNoPictureImages($dir, $type, $languages)
     {
         $errors = false;
         $generate_hight_dpi_images = (bool) Configuration::get('PS_HIGHT_DPI');
@@ -347,7 +353,7 @@ abstract class GenerateAbstract extends Command
     }
 
     /* Hook watermark optimization */
-    protected function _regenerateWatermark($dir, $type = null)
+    protected function regenerateWatermark($dir, $type = null)
     {
         $result = Db::getInstance()->executeS('
 		SELECT m.`name` FROM `' . _DB_PREFIX_ . 'module` m
