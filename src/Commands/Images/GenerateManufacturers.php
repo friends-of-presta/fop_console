@@ -18,6 +18,6 @@ namespace FOP\Console\Commands\Images;
 
 class GenerateManufacturers extends GenerateAbstract
 {
-    /** @var Thumbnail type string */
+    /** @var type string */
     const IMAGE_TYPE = 'manufacturers';
 }
