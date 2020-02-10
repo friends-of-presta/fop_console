@@ -128,8 +128,7 @@ abstract class GenerateAbstract extends Command
             $formats = ImageType::getImagesTypes($proc['type']);
 
             if (!count($formats)) {
-                $this->output->writeln('<error>No format for ' . $proc['type'] . '</error>');
-
+                $this->errors[] = 'No format for ' . $proc['type'];
                 return false;
             }
 
@@ -144,8 +143,7 @@ abstract class GenerateAbstract extends Command
             }
 
             if (!count($formats)) {
-                $this->output->writeln('No valid format for ' . $proc['type']);
-
+                $this->errors[] = 'No valid format for ' . $proc['type'];
                 return false;
             }
 
