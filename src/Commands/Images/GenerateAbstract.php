@@ -58,16 +58,15 @@ abstract class GenerateAbstract extends Command
             ->setDescription('Regenerate ' . static::IMAGE_TYPE . ' thumbnails')
             ->addArgument(
                 'format',
-                InputArgument::OPTIONAL,
-                'images formats comma separated',
-                'all'
+                InputArgument::IS_ARRAY,
+                'images formats separated by a space',
+                ['all']
             )
             ->addOption(
-                'delete',
-                'd',
-                InputOption::VALUE_OPTIONAL,
-                'Delete current thumbnails',
-                true
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                'Force delete of currents thumbnails'
             );
     }
 
@@ -76,9 +75,13 @@ abstract class GenerateAbstract extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $formats = explode(',', $input->getArgument('format'));
-        $delete = (bool) $input->getOption('delete');
+        $formats = $input->getArgument('format');
+        $delete = $input->getOption('force');
         $io = new SymfonyStyle($input, $output);
+
+        if ( false == $delete){
+            $io->note('Only new images will be generated, to delete existing images please use the --force option');
+        }
 
         $success = $this->regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
 
@@ -104,6 +107,7 @@ abstract class GenerateAbstract extends Command
      * @param array $imagesFormats
      *
      * @return bool
+     * @throws \PrestaShopDatabaseException
      */
     protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
     {
