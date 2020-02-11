@@ -1,0 +1,12 @@
+parameters:
+	bootstrap: tests/phpstan/bootstrap.php
+	paths:
+		- src
+		- fop_console.php
+	dynamicConstantNames:
+		- _PS_VERSION_
+	reportUnmatchedIgnoredErrors: false #remove this line when errors are properly fixed and ignored if necessary
+	ignoreErrors:
+		- '#Regex Example to match a reported error.#'
+
+	level: 5
