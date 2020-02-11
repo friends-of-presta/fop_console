@@ -79,7 +79,7 @@ abstract class GenerateAbstract extends Command
         $delete = $input->getOption('force');
         $io = new SymfonyStyle($input, $output);
 
-        if ( false == $delete){
+        if (false == $delete) {
             $io->note('Only new images will be generated, to delete existing images please use the --force option');
         }
 
@@ -107,6 +107,7 @@ abstract class GenerateAbstract extends Command
      * @param array $imagesFormats
      *
      * @return bool
+     *
      * @throws \PrestaShopDatabaseException
      */
     protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
@@ -127,7 +128,10 @@ abstract class GenerateAbstract extends Command
             }
 
             //Display which type currently processing
-            $this->output->writeln('Processing ' . $proc['type']);
+            $this->output->writeln(
+                'Processing ' . $proc['type'],
+                OutputInterface::VERBOSITY_VERBOSE
+            );
 
             // Getting format generation
             $formats = ImageType::getImagesTypes($proc['type']);
@@ -239,7 +243,10 @@ abstract class GenerateAbstract extends Command
             $processTypes[] = $row['name'];
         }, $type);
 
-        $this->output->writeln('Processing formats ' . implode(', ', $processTypes));
+        $this->output->writeln(
+            'Processing formats ' . implode(', ', $processTypes),
+            OutputInterface::VERBOSITY_VERBOSE
+        );
 
         if (!is_dir($dir)) {
             $this->errors[] = 'Unable to regenerate new images for type ' . implode(',', $processTypes) . ' : ' . $dir . ' does not exists';
