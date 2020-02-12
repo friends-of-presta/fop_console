@@ -86,11 +86,11 @@ abstract class GenerateAbstract extends Command
         $success = $this->regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
 
         if (!$success || count($this->errors)) {
-            $io->error('Unable to generate thumbnails');
-            $io->warning('The generation generate the following errors : ');
-            foreach ($this->errors as $error) {
-                $io->error($error);
+            $warningMessages = ['Unable to generate thumbnails, the generation generate the following errors : '];
+            if (count($this->errors)) {
+                $warningMessages = array_merge($warningMessages, $this->errors);
             }
+            $io->error($warningMessages);
 
             return 1;
         }
