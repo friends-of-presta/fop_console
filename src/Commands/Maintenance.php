@@ -65,7 +65,7 @@ final class Maintenance extends Command
         if (!in_array($action, self::ALLOWED_COMMAND)) {
             $io->error('Action not allowed');
 
-            return false;
+            return 1;
         }
 
         if ($action == 'status') {
@@ -144,5 +144,7 @@ final class Maintenance extends Command
                 $io->success('Ip address ' . $ipaddress . ' added');
             }
         }
+
+        return 0;
     }
 }
