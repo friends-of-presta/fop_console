@@ -48,3 +48,8 @@ services:
     class: FOP\Console\Commands\GenerateRobots
     tags:
       - { name: console.command }
+
+  fop.console.make_override.command:
+    class: FOP\Console\Commands\MakeOverride
+    tags:
+      - { name: console.command }
