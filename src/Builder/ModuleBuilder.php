@@ -21,145 +21,154 @@ namespace FOP\Console\Builder;
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  * International Registered Trademark & Property of FriendsOfPresta
  */
-
 class ModuleBuilder
 {
-
     /*
     * This function build a string to put in the php file
     */
-    public static function getInstallString($tabHook){
-        $hookStringInstall = "";
+    public static function getInstallString($tabHook)
+    {
+        $hookStringInstall = '';
         foreach ($tabHook as $hookname) {
             $hookStringInstall .= "
-            && \$this->registerHook('".$hookname."')";
+            && \$this->registerHook('" . $hookname . "')";
         }
+
         return $hookStringInstall;
     }
 
     /*
      * This function build a string to put in the php file
      */
-    public static function getFunctionString($tabHook){
-        $hookStringFunction = "";
+    public static function getFunctionString($tabHook)
+    {
+        $hookStringFunction = '';
         foreach ($tabHook as $hookfunction) {
             $hookfunction = ucfirst($hookfunction);
-            $hookStringFunction .= "
-    public function hook".$hookfunction."(\$params) {
+            $hookStringFunction .= '
+    public function hook' . $hookfunction . '($params) {
         //TODO
     }
-    ";
+    ';
         }
+
         return $hookStringFunction;
     }
 
     /*
      * This function build a string to put in the php file
      */
-    public static function getInstallSqlTableString(){
-        $sqlTableStringInstall="&& \$this->createTableSql()";
+    public static function getInstallSqlTableString()
+    {
+        $sqlTableStringInstall = '&& $this->createTableSql()';
+
         return $sqlTableStringInstall;
     }
 
     /*
      * This function build a string to put in the php file
      */
-    public static function getUninstallSqlTableString(){
-        $sqlTableStringUninstall="&& \$this->dropTableSql()";
+    public static function getUninstallSqlTableString()
+    {
+        $sqlTableStringUninstall = '&& $this->dropTableSql()';
+
         return $sqlTableStringUninstall;
     }
 
     /*
      * This function build a string to put in the php file
      */
-    public static function getFunctionSqlTableString($tabSql){
+    public static function getFunctionSqlTableString($tabSql)
+    {
         //building of the createTable function
-        $sqlTableStringFunction = "";
-        $sqlTableStringFunction=$sqlTableStringFunction."
+        $sqlTableStringFunction = '';
+        $sqlTableStringFunction = $sqlTableStringFunction . '
     /**
     * Table generated thanks to FOP
     */
     protected function createTableSql(){
-        \$sql = array();
-        ";
-        foreach($tabSql as $table) {
-            $sqlChampsString="";
-            $sqlChampsString=$sqlChampsString
-                ."`".$table['pk_constraint']."` int(11) NOT NULL AUTO_INCREMENT,";
+        $sql = array();
+        ';
+        foreach ($tabSql as $table) {
+            $sqlChampsString = '';
+            $sqlChampsString = $sqlChampsString
+                . '`' . $table['pk_constraint'] . '` int(11) NOT NULL AUTO_INCREMENT,';
             foreach ($table as $number => $field) {
                 if (is_array($field)) {
-	                $types = array("Date", "Time", "Blob");
-	                if (in_array($field['type'], $types)) {
-	                	$size = " ";
-	                }else{
-		                $size = "(".$field['size'].") ";
-	                }
-                    $sqlChampsString=$sqlChampsString."
-                `".$field['name']."` ".$field['type']."".$size."".$field['null'].",";
+                    $types = ['Date', 'Time', 'Blob'];
+                    if (in_array($field['type'], $types)) {
+                        $size = ' ';
+                    } else {
+                        $size = '(' . $field['size'] . ') ';
+                    }
+                    $sqlChampsString = $sqlChampsString . '
+                `' . $field['name'] . '` ' . $field['type'] . '' . $size . '' . $field['null'] . ',';
                 }
             }
-            $sqlTableStringFunction=$sqlTableStringFunction."
+            $sqlTableStringFunction = $sqlTableStringFunction . "
         \$sql[] = '
-            CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'".$table['tab_name']."` (
-                ".$sqlChampsString."
-                PRIMARY KEY (`".$table['pk_constraint']."`)
+            CREATE TABLE IF NOT EXISTS `'._DB_PREFIX_.'" . $table['tab_name'] . '` (
+                ' . $sqlChampsString . '
+                PRIMARY KEY (`' . $table['pk_constraint'] . "`)
             ) ENGINE='._MYSQL_ENGINE_.' DEFAULT CHARSET=UTF8;';
             ";
         }
-        $sqlTableStringFunction=$sqlTableStringFunction."
-        foreach (\$sql as \$query) {
-            if (Db::getInstance()->execute(\$query) == false) {
+        $sqlTableStringFunction = $sqlTableStringFunction . '
+        foreach ($sql as $query) {
+            if (Db::getInstance()->execute($query) == false) {
                 return false;
             }
         }
     }
-        ";
+        ';
 
         //building of the dropTable Function
-        $sqlTableStringFunction=$sqlTableStringFunction."
+        $sqlTableStringFunction = $sqlTableStringFunction . '
     /**
      * Table generated thanks to FOP
      */
     protected function dropTableSql(){
-        \$sql = array();";
-        foreach($tabSql as $table) {
-            $sqlTableStringFunction=$sqlTableStringFunction."
-        \$sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'".$table['tab_name']."`';";
+        $sql = array();';
+        foreach ($tabSql as $table) {
+            $sqlTableStringFunction = $sqlTableStringFunction . "
+        \$sql[] = 'DROP TABLE IF EXISTS `'._DB_PREFIX_.'" . $table['tab_name'] . "`';";
         }
-        $sqlTableStringFunction=$sqlTableStringFunction."
-        foreach (\$sql as \$query) {
-            if (Db::getInstance()->execute(\$query) == false) {
+        $sqlTableStringFunction = $sqlTableStringFunction . '
+        foreach ($sql as $query) {
+            if (Db::getInstance()->execute($query) == false) {
                 return false;
             }
         }
-    }";
+    }';
 
         return $sqlTableStringFunction;
     }
 
-	public static function getInstallTabString($tabtabs){
-		$tabStringInstall="\$this->tabs = [";
-    	foreach($tabtabs as $tab){
-		    $tabStringInstall=$tabStringInstall."
+    public static function getInstallTabString($tabtabs)
+    {
+        $tabStringInstall = '$this->tabs = [';
+        foreach ($tabtabs as $tab) {
+            $tabStringInstall = $tabStringInstall . "
 		    [
-                'name' => '".$tab['name']."',
+                'name' => '" . $tab['name'] . "',
                 'visible' => true,
-                'class_name' => '".$tab['class_name']."',
-                'parent_class_name' => '".$tab['parent_class_name']."',
+                'class_name' => '" . $tab['class_name'] . "',
+                'parent_class_name' => '" . $tab['parent_class_name'] . "',
             ],";
         }
-		$tabStringInstall=$tabStringInstall."
-		];";
-    	
-    	return $tabStringInstall;
-	}
+        $tabStringInstall = $tabStringInstall . '
+		];';
+
+        return $tabStringInstall;
+    }
 
     /*
      * This function build a string to put in the php file
      */
     public static function getEntryPointString($filenameFirstletterCaps, $fileName, $filenameCamel, $author, $displayName,
                                                $description, $hookStringInstall, $hookStringFunction, $sqlTableStringInstall,
-                                               $sqlTableStringUninstall, $sqlTableStringFunction, $tabStringInstall, $filesystem){
+                                               $sqlTableStringUninstall, $sqlTableStringFunction, $tabStringInstall, $filesystem)
+    {
         $stringEntryPoint = "<?php
 if (!defined('_CAN_LOAD_FILES_')) {
     exit;
@@ -170,43 +179,43 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
 /**
-* Class ".$filenameFirstletterCaps."
+* Class " . $filenameFirstletterCaps . '
 */
 
-class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
+class ' . $filenameFirstletterCaps . " extends Module implements WidgetInterface
 {
 
-    const MODULE_NAME = '".$fileName."';
+    const MODULE_NAME = '" . $fileName . "';
 
     public \$templateFile;
 
     public function __construct()
     {
-        \$this->name = '".$filenameCamel."';
-        \$this->author = '".$author."';
+        \$this->name = '" . $filenameCamel . "';
+        \$this->author = '" . $author . "';
         \$this->version = '1.0.0';
         \$this->need_instance = 0;
         \$this->bootstrap = true;
         parent::__construct();
 
-        \$this->displayName = '".$displayName."';
-        \$this->description = '".$description."';
+        \$this->displayName = '" . $displayName . "';
+        \$this->description = '" . $description . "';
         \$this->secure_key = Tools::encrypt(\$this->name);
 
         \$this->ps_versions_compliancy = array('min' => '1.7.5.0', 'max' => _PS_VERSION_);
-        \$this->templateFile = 'module:".$fileName."/views/templates/hook/';
+        \$this->templateFile = 'module:" . $fileName . "/views/templates/hook/';
 
-        ".$tabStringInstall."
+        " . $tabStringInstall . '
     }
 
     public function install()
     {
-        return parent::install()".$hookStringInstall."".$sqlTableStringInstall."". ($tabStringInstall != "" ? '&& $this->installTab()' : '') .";
+        return parent::install()' . $hookStringInstall . '' . $sqlTableStringInstall . '' . ($tabStringInstall != '' ? '&& $this->installTab()' : '') . ';
     }
 
     public function uninstall()
     {
-        return parent::uninstall()".$sqlTableStringUninstall."". ($tabStringInstall != "" ? '&& $this->uninstallTab()' : '') .";
+        return parent::uninstall()' . $sqlTableStringUninstall . '' . ($tabStringInstall != '' ? '&& $this->uninstallTab()' : '') . ';
     }
 
     public function installTab()
@@ -219,47 +228,48 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
         //TODO
     }
 
-    public function enable(\$force_all = false)
+    public function enable($force_all = false)
     {
-        return parent::enable(\$force_all)". ($tabStringInstall != "" ? '&& \$this->installTab()' : '') .";
+        return parent::enable($force_all)' . ($tabStringInstall != '' ? '&& \$this->installTab()' : '') . ';
     }
 
-    public function disable(\$force_all = false)
+    public function disable($force_all = false)
     {
-        return parent::disable(\$force_all)". ($tabStringInstall != "" ? '&& $this->uninstallTab()' : '') .";
+        return parent::disable($force_all)' . ($tabStringInstall != '' ? '&& $this->uninstallTab()' : '') . ';
     }
-    ".$hookStringFunction."
-    public function renderWidget(\$hookName, array \$configuration)
+    ' . $hookStringFunction . '
+    public function renderWidget($hookName, array $configuration)
     {
         //TODO
     }
 
-    public function getWidgetVariables(\$hookName, array \$configuration)
+    public function getWidgetVariables($hookName, array $configuration)
     {
         //TODO
     }
-    ".$sqlTableStringFunction."
-}";
-	    $filesystem->dumpFile(_PS_MODULE_DIR_."/".$fileName."/".$fileName.".php", $stringEntryPoint);
+    ' . $sqlTableStringFunction . '
+}';
+        $filesystem->dumpFile(_PS_MODULE_DIR_ . '/' . $fileName . '/' . $fileName . '.php', $stringEntryPoint);
     }
-	
-	/*
-	 * This function build a string to put in the json file
-	 */
-	public static function getJsonComposerString($fileName, $description, $author, $mailContact, $filesystem){
-		$stringJsonComposer ='{
-	"name": "prestashop/'.$fileName.'",
-	"description": "'.$description.'",
+
+    /*
+     * This function build a string to put in the json file
+     */
+    public static function getJsonComposerString($fileName, $description, $author, $mailContact, $filesystem)
+    {
+        $stringJsonComposer = '{
+	"name": "prestashop/' . $fileName . '",
+	"description": "' . $description . '",
 	"version": "1.0.0",
 	"authors": [
 		{
-            "name": "'.$author.'",
-            "email": "'.$mailContact.'"
+            "name": "' . $author . '",
+            "email": "' . $mailContact . '"
         }
 	],
 	"autoload": {
 		"psr-4": {
-            "PrestaShop\\\\Module\\\\'.$fileName.'\\\\": "src/"
+            "PrestaShop\\\\Module\\\\' . $fileName . '\\\\": "src/"
 		}
 	},
 	"require": {
@@ -271,6 +281,6 @@ class ".$filenameFirstletterCaps." extends Module implements WidgetInterface
 	},
 	"type": "prestashop-module"
 }';
-		$filesystem->dumpFile(_PS_MODULE_DIR_."/".$fileName."/composer.json", $stringJsonComposer);
-	}
+        $filesystem->dumpFile(_PS_MODULE_DIR_ . '/' . $fileName . '/composer.json', $stringJsonComposer);
+    }
 }
