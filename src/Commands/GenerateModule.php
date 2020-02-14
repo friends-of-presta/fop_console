@@ -28,7 +28,7 @@ final class GenerateModule extends Command
     private $sqlTableStringUninstall = '';
     private $sqlTableStringFunction = '';
     private $tabStringInstall = '';
-    
+
     /**
      * {@inheritdoc}
      */
@@ -48,7 +48,7 @@ final class GenerateModule extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $filesystem = new Filesystem();
-        
+
         $io->title('This program was carried out by FriendsOfPresta');
         $io->warning('Be careful if you run this program it may erase data, be sure to specify an unused module name or you know what you are doing');
 
@@ -707,4 +707,3 @@ final class GenerateModule extends Command
         echo $process->getOutput();
     }
 }
-
