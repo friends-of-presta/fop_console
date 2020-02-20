@@ -24,6 +24,11 @@ php bin/console pr:mo install fop_console
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
 * `fop:clear-cache` Clear the cache folder
 * `fop:debug` Configure debug mode
+* `fop:images:generate:categories` Regenerate categories thumbnails
+* `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
+* `fop:images:generate:products` Regenerate products thumbnails
+* `fop:images:generate:stores` Regenerate stores thumbnails
+* `fop:images:generate:suppliers` Regenerate suppliers thumbnails
 * `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:generate:htaccess` Generate the .htaccess file
 * `fop:generate:robots`   Generate the robots.txt file
