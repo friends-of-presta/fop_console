@@ -19,6 +19,9 @@
   "require": {
     "php": "^7.1"
   },
+  "config": {
+    "prepend-autoloader": false
+  },
   "license": "MIT",
   "type": "prestashop-module",
   "require-dev": {
