@@ -79,3 +79,14 @@ services:
     tags:
       - { name: console.command }
 
+  # override provider : construct with various overriders (defined later)
+  fop.console.overrider_provider:
+    class: FOP\Console\Overriders\Provider
+    arguments:
+      $overriders:
+        - '@fop.console.overriders.demo'
+
+  # overriders
+  # demo overrider
+  fop.console.overriders.demo:
+    class: FOP\Console\Overriders\DemoOverrider
