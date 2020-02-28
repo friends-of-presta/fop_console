@@ -42,7 +42,7 @@ class DisplayErrors extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ',
+                'enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             );
     }
@@ -58,7 +58,7 @@ class DisplayErrors extends Command
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
         if (!in_array($action, self::ALLOWED_COMMAND)) {
-            $io->error('Action not allowed');
+            $io->error('Action not allowed.'.PHP_EOL.'Possible actions : '.$this->getPossibleActions());
 
             return 1;
         }
@@ -91,5 +91,10 @@ class DisplayErrors extends Command
         }
 
         return 0;
+    }
+
+    private function getPossibleActions(): string
+    {
+        return implode(',', self::ALLOWED_COMMAND);
     }
 }
