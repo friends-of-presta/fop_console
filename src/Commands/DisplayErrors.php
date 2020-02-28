@@ -37,8 +37,8 @@ class DisplayErrors extends Command
     {
         $this
             ->setName('fop:errors')
-            ->setDescription('Configure and display _PS_MODE_DEV_')
-            ->setHelp('Get or change debug mode.')
+            ->setDescription('Enable or Disable debug mode.')
+            ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
