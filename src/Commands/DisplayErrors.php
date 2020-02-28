@@ -60,7 +60,7 @@ class DisplayErrors extends Command
 
         switch ($action) {
             case 'status':
-                $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+                $io->text('Current debug mode : ' . $isDebugModEnabled ? 'enabled' : 'disabled');
                 break;
             case 'toggle':
                 $returnCode = $isDebugModEnabled
