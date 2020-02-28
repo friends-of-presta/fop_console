@@ -29,8 +29,8 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.debug_mod.command:
-    class: FOP\Console\Commands\DebugMode
+  fop.console.display_errors.command:
+    class: FOP\Console\Commands\DisplayErrors
     tags:
       - { name: console.command }
 
