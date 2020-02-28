@@ -49,14 +49,15 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
             if (0 < strpos($path, 'success')) {
                 // a simple text is enough, Command will do the rest.
                 $io->text(__CLASS__ . ' success. File xxx created. Do something great with it!');
+
                 return;
             }
 
-            throw new \Exception(__CLASS__. ' has failed. Try with "fop:override README.md_success" .');
+            throw new \Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
             // @todo Make OverrideException class
         }
         // otherwise : do nothing.
         // Real overriders will remain silent.
-        $io->text(sprintf("%s did nothing. It does not process file/path %s", __CLASS__, $path));
+        $io->text(sprintf('%s did nothing. It does not process file/path %s', __CLASS__, $path));
     }
 }

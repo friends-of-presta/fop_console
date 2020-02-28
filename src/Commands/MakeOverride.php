@@ -54,14 +54,15 @@ class MakeOverride extends Command
 
             if ($handled) {
                 $io->success('Override(s) done :)');
-        return 0;
+
+                return 0;
             }
-                // io message ...
-                $io->text("No overrider found for file $path");
+            // io message ...
+            $io->text("No overrider found for file $path");
 //                return 2; // @todo another return code ?
-                // ... or Exception
-                // @todo Any preference ?
-                // may depend on verbose level..
+            // ... or Exception
+            // @todo Any preference ?
+            // may depend on verbose level..
 //                throw new \Exception('No overrider found.');
 
             return 0;
