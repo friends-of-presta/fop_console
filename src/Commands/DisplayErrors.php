@@ -80,7 +80,7 @@ class DisplayErrors extends Command
         }
 
         if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode (_PS_MODE_DEV_) ' . $action . 'd with success');
+            $io->success('Debug mode ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
 
             return 0;
         }
