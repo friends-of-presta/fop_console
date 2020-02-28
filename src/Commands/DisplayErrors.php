@@ -53,44 +53,39 @@ class DisplayErrors extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+        $returnCode = null;
         $action = $input->getArgument('action');
         $debugMode = new DebugAdapter();
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
-        if (!in_array($action, self::ALLOWED_COMMAND)) {
-            $io->error('Action not allowed.'.PHP_EOL.'Possible actions : '.$this->getPossibleActions());
+        switch ($action) {
+            case 'status':
+                $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+                break;
+            case 'toggle':
+                $action = (true === $isDebugModEnabled) ? 'disable' : 'enable';
+                // no break
+            case 'enable':
+                $returnCode = $debugMode->enable();
+                break;
+            case 'disable':
+                $returnCode = $debugMode->disable();
+                break;
+            default:
+                $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
-            return 1;
+                return 1;
         }
 
-        //Status
-        if ($action == 'status') {
-            $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+        if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
+            $io->success('Debug mode (_PS_MODE_DEV_) ' . $action . 'd with success');
 
             return 0;
         }
 
-        //Toggle Action
-        if ($action == 'toggle') {
-            (true === $isDebugModEnabled) ? $action = 'disable' : $action = 'enable';
-        }
+        $io->error('An error occured while updating debug mode');
 
-        //Enable action
-        if ($action == 'enable') {
-            $returnCode = $debugMode->enable();
-        }
-        //Disable action
-        else {
-            $returnCode = $debugMode->disable();
-        }
-
-        if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode ' . $action . 'd with success');
-        } else {
-            $io->error('An error occured while updating debug mode');
-        }
-
-        return 0;
+        return 1;
     }
 
     private function getPossibleActions(): string
