@@ -61,6 +61,7 @@ class DebugMode extends Command
         switch ($action) {
             case 'status':
                 $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
+
                 return 0;
                 break;
             case 'toggle':
@@ -86,7 +87,7 @@ class DebugMode extends Command
             return 0;
         }
 
-        $io->error('An error occured while updating debug mode. '.DebugAdapter::class.' error code '.$returnCode.' .');
+        $io->error('An error occured while updating debug mode. ' . DebugAdapter::class . ' error code ' . $returnCode . ' .');
 
         return 1;
     }
