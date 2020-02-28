@@ -58,6 +58,6 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
         }
         // otherwise : do nothing.
         // Real overriders will remain silent.
-        $io->text(sprintf('%s did nothing. It does not process file/path %s', __CLASS__, $path));
+        $io->text(sprintf('%s did nothing. It does not process file/path %s. %s Try "fop:override README.md"', __CLASS__, $path, PHP_EOL));
     }
 }
