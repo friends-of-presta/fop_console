@@ -60,7 +60,8 @@ class DebugMode extends Command
 
         switch ($action) {
             case 'status':
-                $io->text('Current debug mode : ' . $isDebugModEnabled ? 'enabled' : 'disabled');
+                $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
+                return 0;
                 break;
             case 'toggle':
                 $returnCode = $isDebugModEnabled
@@ -80,7 +81,7 @@ class DebugMode extends Command
         }
 
         if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
+            $io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
 
             return 0;
         }
