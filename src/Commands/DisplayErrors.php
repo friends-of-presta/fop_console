@@ -85,7 +85,7 @@ class DisplayErrors extends Command
             return 0;
         }
 
-        $io->error('An error occured while updating debug mode');
+        $io->error('An error occured while updating debug mode. '.DebugAdapter::class.' error code '.$returnCode.' .');
 
         return 1;
     }
