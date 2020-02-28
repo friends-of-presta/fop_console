@@ -23,7 +23,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class DisplayErrors extends Command
+class DebugMode extends Command
 {
     /**
      * @var array possible allowed dev mode passed in command
@@ -36,7 +36,7 @@ class DisplayErrors extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:errors')
+            ->setName('fop:debug-mode')
             ->setDescription('Enable or Disable debug mode.')
             ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
             ->addArgument(

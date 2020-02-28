@@ -30,7 +30,7 @@ services:
       - { name: console.command }
 
   fop.console.display_errors.command:
-    class: FOP\Console\Commands\DisplayErrors
+    class: FOP\Console\Commands\DebugMode
     tags:
       - { name: console.command }
 
