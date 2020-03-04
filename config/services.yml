@@ -29,7 +29,7 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.debug_mod.command:
+  fop.console.debug_mode.command:
     class: FOP\Console\Commands\DebugMode
     tags:
       - { name: console.command }
