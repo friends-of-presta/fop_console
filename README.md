@@ -21,8 +21,9 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:shop-status` Display shop(s) status(es)
-* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands 
-* `fop:debug-mode` Enable or Disable debug mode.
+* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
+* `fop:clear-cache` Clear the cache folder
+* `fop:debug-mode` Enable or Disable debug mode
 * `fop:images:generate:categories` Regenerate categories thumbnails
 * `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
 * `fop:images:generate:products` Regenerate products thumbnails
@@ -82,4 +83,3 @@ This works well but we like to make it more configurable from the Console argume
 ## Contribute
 
 Feel free to add more commands, post some issues or new PR : contributions are very welcome.
-

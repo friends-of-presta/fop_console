@@ -49,6 +49,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.clear_cache_files.command:
+    class: FOP\Console\Commands\ClearCacheFiles
+    tags:
+      - { name: console.command }
+
   fop.console.images_generate_products.command:
     class: FOP\Console\Commands\Images\GenerateProducts
     tags:
