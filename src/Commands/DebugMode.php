@@ -36,13 +36,13 @@ class DebugMode extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:debug')
-            ->setDescription('Configure debug mode')
-            ->setHelp('This command allows you to get or change debug mode')
+            ->setName('fop:debug-mode')
+            ->setDescription('Enable or Disable debug mode.')
+            ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . implode(',', self::ALLOWED_COMMAND) . ') ',
+                'enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             );
     }
@@ -53,43 +53,47 @@ class DebugMode extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+        $returnCode = null;
         $action = $input->getArgument('action');
         $debugMode = new DebugAdapter();
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
-        if (!in_array($action, self::ALLOWED_COMMAND)) {
-            $io->error('Action not allowed');
+        switch ($action) {
+            case 'status':
+                $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
 
-            return 1;
+                return 0;
+                break;
+            case 'toggle':
+                $returnCode = $isDebugModEnabled
+                    ? $debugMode->disable()
+                    : $debugMode->enable();
+                break;
+            case 'enable':
+                $returnCode = $debugMode->enable();
+                break;
+            case 'disable':
+                $returnCode = $debugMode->disable();
+                break;
+            default:
+                $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
+
+                return 1;
         }
 
-        //Status
-        if ($action == 'status') {
-            $io->text('Current debug mode : ' . ((true === $isDebugModEnabled) ? 'enabled' : 'disabled'));
+        if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
+            $io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
 
             return 0;
         }
 
-        //Toggle Action
-        if ($action == 'toggle') {
-            (true === $isDebugModEnabled) ? $action = 'disable' : $action = 'enable';
-        }
+        $io->error('An error occured while updating debug mode. ' . DebugAdapter::class . ' error code ' . $returnCode . ' .');
 
-        //Enable action
-        if ($action == 'enable') {
-            $returnCode = $debugMode->enable();
-        }
-        //Disable action
-        else {
-            $returnCode = $debugMode->disable();
-        }
+        return 1;
+    }
 
-        if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode ' . $action . 'd with success');
-        } else {
-            $io->error('An error occured while updating debug mode');
-        }
-
-        return 0;
+    private function getPossibleActions(): string
+    {
+        return implode(',', self::ALLOWED_COMMAND);
     }
 }
