@@ -78,7 +78,11 @@ final class ClearCacheFiles extends Command
 
     private function renameCurrentCacheDirectory()
     {
-        $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+        if ($this->isWindows()) {
+            $process = new Process(['move', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+        } else {
+            $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+        }
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
@@ -86,7 +90,11 @@ final class ClearCacheFiles extends Command
     private function deleteOldCacheDirectory()
     {
         if (file_exists($this->getCacheDirectoryOldPath())) {
-            $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+            if ($this->isWindows()) {
+                $process = new Process(['rmdir', '/S', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+            } else {
+                $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+            }
             $process->run();
             $this->handleUnsucessfullProcess(__FUNCTION__, $process);
         }
@@ -95,7 +103,11 @@ final class ClearCacheFiles extends Command
     private function createNewCacheDirectory()
     {
         $cache_dir = $this->getCacheDirectoryBasePath() . DIRECTORY_SEPARATOR . ((new DebugAdapter())->isDebugModeEnabled() ? 'dev' : 'prod');
-        $process = new Process(['mkdir', $cache_dir, '-p']);
+        if ($this->isWindows()) {
+            $process = new Process(['mkdir', $cache_dir]);
+        } else {
+            $process = new Process(['mkdir', $cache_dir, '-p']);
+        }
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
@@ -110,8 +122,11 @@ final class ClearCacheFiles extends Command
         if (!defined('_PS_CACHE_DIR_')) {
             throw new RuntimeException('Cache directory path not defined in _PS_CACHE_DIR_');
         }
-
-        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', _PS_CACHE_DIR_);
+        $path = _PS_CACHE_DIR_;
+        if ($this->isWindows()) {
+            $path = str_replace('/', '\\', $path);
+        }
+        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', $path);
     }
 
     private function getCacheDirectoryOldPath(): string
@@ -124,5 +139,10 @@ final class ClearCacheFiles extends Command
         if (!$process->isSuccessful()) {
             throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
         }
+    }
+
+    private function isWindows()
+    {
+        return ('WIN' === strtoupper(substr(PHP_OS, 0, 3)));
     }
 }
