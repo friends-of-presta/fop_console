@@ -126,6 +126,7 @@ final class ClearCacheFiles extends Command
         if ($this->isWindows()) {
             $path = str_replace('/', '\\', $path);
         }
+
         return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', $path);
     }
 
@@ -143,6 +144,6 @@ final class ClearCacheFiles extends Command
 
     private function isWindows()
     {
-        return ('WIN' === strtoupper(substr(PHP_OS, 0, 3)));
+        return 'WIN' === strtoupper(substr(PHP_OS, 0, 3));
     }
 }
