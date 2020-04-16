@@ -59,8 +59,7 @@ final class Export extends Command
      */
     protected function configure()
     {
-        $this->setName('hello:world')
-        ;
+        $this->setName('hello:world');
     }
 
     /**
