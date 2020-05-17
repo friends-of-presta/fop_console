@@ -4,8 +4,8 @@ namespace FOP\Console\Grid\ObjectModel;
 
 use PrestaShop\PrestaShop\Core\Grid\Data\Factory\GridDataFactoryInterface;
 use PrestaShop\PrestaShop\Core\Grid\Data\GridData;
-use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteriaInterface;
 use PrestaShop\PrestaShop\Core\Grid\Record\RecordCollection;
+use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteriaInterface;
 use PrestaShopCollection;
 
 class ObjectModelDataFactory implements GridDataFactoryInterface
@@ -16,7 +16,7 @@ class ObjectModelDataFactory implements GridDataFactoryInterface
     private $objectModelClass = null;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @todo: manage the Search Criteria
      */

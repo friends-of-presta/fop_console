@@ -2,17 +2,17 @@
 
 namespace FOP\Console\Grid\ObjectModel;
 
+use ObjectModel;
+use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
 use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollectionInterface;
-use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DateTimeColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\BulkActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\DateTimeColumn;
 use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
 use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\GridDefinitionFactoryInterface;
-use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
-use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
-use PrestaShop\PrestaShop\Core\Grid\Action\GridActionCollection;
-use PrestaShop\PrestaShop\Core\Grid\Action\Bulk\BulkActionCollection;
 use PrestaShop\PrestaShop\Core\Grid\Definition\GridDefinition;
-use ObjectModel;
+use PrestaShop\PrestaShop\Core\Grid\Filter\FilterCollection;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -26,7 +26,7 @@ class ObjectModelDefinitionFactory implements GridDefinitionFactoryInterface
     private $objectModelClass = null;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getDefinition()
     {
@@ -102,15 +102,14 @@ class ObjectModelDefinitionFactory implements GridDefinitionFactoryInterface
         return $columnCollection;
     }
 
-
     public function setObjectModelClass(string $objectModelClass)
     {
         // Have to patch this fuckin PS autoloader !
         $finder = new Finder();
-        $finder->name($objectModelClass.".php")->files()->in(_PS_MODULE_DIR_);
+        $finder->name($objectModelClass . '.php')->files()->in(_PS_MODULE_DIR_);
 
         foreach ($finder as $file) {
-            require_once($file->getRealPath());
+            require_once $file->getRealPath();
         }
 
         $this->objectModelClass = $objectModelClass;
