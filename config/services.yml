@@ -78,3 +78,18 @@ services:
     class: FOP\Console\Commands\Images\GenerateStores
     tags:
       - { name: console.command }
+
+# Services for Grid generation
+  fop.console.grid_definition.factory:
+    class: FOP\Console\Grid\ObjectModel\ObjectModelDefinitionFactory
+
+  fop.console.grid_data.factory:
+    class: FOP\Console\Grid\ObjectModel\ObjectModelDataFactory
+
+  fop.console.grid_object_model.factory:
+    class: FOP\Console\Grid\ObjectModel\ObjectModelGridFactory
+    arguments:
+      - '@fop.console.grid_definition.factory'
+      - '@fop.console.grid_data.factory'
+      - '@prestashop.core.grid.filter.form_factory'
+      - '@prestashop.core.hook.dispatcher'
