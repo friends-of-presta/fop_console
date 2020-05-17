@@ -28,7 +28,19 @@ class ObjectModelDataFactory implements GridDataFactoryInterface
 
         ob_start();
         $results = (new PrestaShopCollection($this->objectModelClass))->getAll(true);
-        $recordsCollection = new RecordCollection($results->getResults());
+        $resultsAsArray = [];
+
+        foreach ($results as $objectModel) {
+            $vars = get_object_vars($objectModel);
+            $objectModelArray = [];
+            foreach ($vars as $key => $value) {
+                $objectModelArray[ltrim($key, '_')] = $value;
+            }
+
+            $resultsAsArray[] = $objectModelArray;
+        }
+
+        $recordsCollection = new RecordCollection($resultsAsArray);
         $recordsTotal = $recordsCollection->count();
 
         $query = ob_get_contents();
