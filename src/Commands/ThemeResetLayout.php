@@ -62,6 +62,6 @@ final class ThemeResetLayout extends Command
             return 1;
         }
 
-        $io->success(sprintf('Theme "%s" resetted with success.', $theme));
+        $io->success(sprintf('Theme "%s" has been successfully reset.', $theme));
     }
 }
