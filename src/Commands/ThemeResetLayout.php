@@ -46,6 +46,7 @@ final class ThemeResetLayout extends Command
                 $io->title('resetting current theme : ' . $theme);
             } else {
                 $io->error('An error occurred while selecting current theme');
+
                 return 1;
             }
         }
@@ -55,9 +56,9 @@ final class ThemeResetLayout extends Command
         try {
             $themeManager->enable($theme, 1);
             $themeManager->disable($theme);
-
         } catch (\Exception $e) {
             $io->error(sprintf('The selected theme "%s" is invalid', $theme));
+
             return 1;
         }
 
