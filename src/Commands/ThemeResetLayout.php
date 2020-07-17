@@ -52,7 +52,7 @@ final class ThemeResetLayout extends Command
                 ->render();
 
             return self::COMMAND_FAILURE;
-        } else if (count($shops) > 1 && $shopId = $input->getOption(self::ID_SHOP_ARGUMENT)) {
+        } elseif (count($shops) > 1 && $shopId = $input->getOption(self::ID_SHOP_ARGUMENT)) {
             if ($shop = $this->findShopById($shopService->getContextShopId()) === false) {
                 $io->error('An error occurred while selecting shop');
 
