@@ -39,7 +39,7 @@ final class ThemeResetLayout extends Command
         $shopService = $container->get('prestashop.adapter.shop.context');
         $shops = $shopService->getShops();
 
-        // Have more than 1 shop without previously select a shop in input option
+        // Have more than 1 shop without previously selected an id_shop in input option
         if (count($shops) > 1 && $input->getOption(self::ID_SHOP_ARGUMENT) === null) {
             $io->error('Your Prestashop installation seems to be a multistore, please define the --' . self::ID_SHOP_ARGUMENT . ' argument');
 
