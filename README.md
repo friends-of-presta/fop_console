@@ -32,7 +32,7 @@ php bin/console pr:mo install fop_console
 * `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:generate:htaccess` Generate the .htaccess file
 * `fop:generate:robots`   Generate the robots.txt file
-* `fop:theme-reseet` Reset current (or selected) theme
+* `fop:theme-reset` Reset current (or selected) theme
 
 ## Create your owns Commands
 
