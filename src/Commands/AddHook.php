@@ -13,7 +13,6 @@
  * @copyright 2019-present Friends of Presta community
  * @license https://opensource.org/licenses/MIT MIT
  */
-    
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
@@ -30,11 +29,10 @@ final class AddHook extends Command
      */
     protected function configure()
     {
-        $this
-            ->setName('fop:add-hook')
+        $this->setName('fop:add-hook')
             ->setDescription('Create hook in database')
-            ->setHelp('This command allows you create a new hook in database, you dont need to graft a module on it!')
-        ;
+            ->setHelp('This command allows you create a new hook in database,
+            you dont need to graft a module on it!');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
