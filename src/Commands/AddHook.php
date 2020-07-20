@@ -57,14 +57,12 @@ final class AddHook extends Command
                     return true;
                 }
             } catch (\Exception $e) {
-                $io->getErrorStyle()->error( $e->getMessage());
+                $io->getErrorStyle()->error($e->getMessage());
                 return false;
             }
-            
         } else {
             $io->getErrorStyle()->error('You must give me a name, title and description !');
             return false;
         }
-        
     }
 }
