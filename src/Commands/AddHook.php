@@ -13,6 +13,7 @@
  * @copyright 2019-present Friends of Presta community
  * @license https://opensource.org/licenses/MIT MIT
  */
+
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
@@ -23,7 +24,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class AddHook extends Command
 {
-    
     /**
      * {@inheritdoc}
      */
@@ -34,16 +34,22 @@ final class AddHook extends Command
             ->setHelp('This command allows you create a new hook in database,
             you dont need to graft a module on it!');
     }
-    
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return bool
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
-        
+
         $name = $helper->ask($input, $output, new Question('<question>Give me the name for your new HOOK</question>'));
         $title = $helper->ask($input, $output, new Question('<question>Give me the title</question>'));
         $description = $helper->ask($input, $output, new Question('<question>Give me the description</question>'));
-        
+
         if (!empty($name) && !empty($title) && !empty($description)) {
             try {
                 $hook = new \Hook();
@@ -52,14 +58,17 @@ final class AddHook extends Command
                 $hook->description = $description;
                 if ($hook->save()) {
                     $io->getErrorStyle()->success('Your hook has been add !');
+
                     return true;
                 }
             } catch (\Exception $e) {
                 $io->getErrorStyle()->error($e->getMessage());
+
                 return false;
             }
         } else {
             $io->getErrorStyle()->error('You must give me a name, title and description !');
+
             return false;
         }
     }
