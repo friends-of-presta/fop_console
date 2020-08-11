@@ -39,9 +39,9 @@ final class AddHook extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return bool
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
@@ -59,17 +59,17 @@ final class AddHook extends Command
                 if ($hook->save()) {
                     $io->getErrorStyle()->success('Your hook has been add !');
 
-                    return true;
+                    return 0;
                 }
             } catch (\Exception $e) {
                 $io->getErrorStyle()->error($e->getMessage());
 
-                return false;
+                return 1;
             }
         } else {
             $io->getErrorStyle()->error('You must give me a name, title and description !');
 
-            return false;
+            return 1;
         }
     }
 }
