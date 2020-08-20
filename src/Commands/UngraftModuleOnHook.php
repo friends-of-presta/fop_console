@@ -53,9 +53,9 @@ class UngraftModuleOnHook extends Command
         $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want ungraft ?(name)</question>'));
         $moduleInst = \Module::getInstanceByName($moduleName);
         if (!($moduleInst instanceof \Module)) {
-            $io->getErrorStyle()->error('This module not exist, please give the name of the module directory.');
+            $io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
 
-            return false;
+            return 1;
         }
 
         $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want ungraft ' . $moduleName . ' ?(name)</question>'));
@@ -65,9 +65,9 @@ class UngraftModuleOnHook extends Command
             $moduleInst->unregisterHook($hookName);
             $io->getErrorStyle()->success('Your module ' . $moduleName . ' has been ungraft on hook ' . $hookName);
 
-            return true;
+            return 0;
         } else {
-            $io->getErrorStyle()->error('This hook not exist, please check if this hook exist. Or create it !');
+            $io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
         }
     }
 }
