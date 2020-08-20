@@ -30,7 +30,7 @@ class UngraftModuleOnHook extends Command
      */
     protected function configure()
     {
-        $this->setName('fop:ungraft-module-on-hook')
+        $this->setName('fop:unhook-module')
             ->setDescription('Attach one module on specific hook')
             ->setHelp('This command allows you to attach a module on one hook');
         $this->addUsage('--module=[modulename]');
