@@ -25,7 +25,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UngraftModuleOnHook extends Command
 {
-
     /**
      * {@inheritdoc}
      */
@@ -60,7 +59,7 @@ class UngraftModuleOnHook extends Command
         }
 
         $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want ungraft ' . $moduleName . ' ?(name)</question>'));
-        $hookId = (int)\Hook::getIdByName($hookName);
+        $hookId = (int) \Hook::getIdByName($hookName);
 
         if (is_int($hookId) && $hookId > 0) {
             $moduleInst->unregisterHook($hookName);
