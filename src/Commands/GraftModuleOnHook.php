@@ -35,9 +35,10 @@ class GraftModuleOnHook extends Command
         $this->setName('fop:graft-module-on-hook')
             ->setDescription('Attach one module on specific hook')
             ->setHelp('This command allows you to attach a module on one hook');
-        
-       $this->addOption('module', null, InputOption::VALUE_OPTIONAL);
-       $this->addOption('hook', null, InputOption::VALUE_OPTIONAL);
+        $this->addUsage('--module=[modulename]');
+        $this->addUsage('--hook=[hookname]');
+        $this->addOption('module', null, InputOption::VALUE_OPTIONAL);
+        $this->addOption('hook', null, InputOption::VALUE_OPTIONAL);
     }
 
     /**
