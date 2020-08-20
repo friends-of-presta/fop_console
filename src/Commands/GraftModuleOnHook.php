@@ -72,4 +72,3 @@ class GraftModuleOnHook extends Command
         }
     }
 }
-
