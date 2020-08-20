@@ -23,14 +23,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class GraftModuleOnHook extends Command
+class HookModule extends Command
 {
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this->setName('fop:graft-module-on-hook')
+        $this->setName('fop:hook-module')
             ->setDescription('Attach one module on specific hook')
             ->setHelp('This command allows you to attach a module on one hook');
         $this->addUsage('--module=[modulename]');

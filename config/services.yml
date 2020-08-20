@@ -9,8 +9,8 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
-  fop.console.graft_module_on_hook.command:
-    class: FOP\Console\Commands\GraftModuleOnHook
+  fop.console.hook_module.command:
+    class: FOP\Console\Commands\HookModule
     tags:
       - { name: console.command }
 
