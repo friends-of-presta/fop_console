@@ -54,9 +54,9 @@ class GraftModuleOnHook extends Command
 
         $moduleInst = \Module::getInstanceByName($moduleName);
         if (!($moduleInst instanceof \Module)) {
-            $io->getErrorStyle()->error('This module not exist, please give the name of the module directory.');
+            $io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
 
-            return false;
+            return 1;
         }
 
         $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want graft ' . $moduleName . ' ?(name)</question>'));
@@ -66,9 +66,9 @@ class GraftModuleOnHook extends Command
             $moduleInst->registerHook($hookName);
             $io->getErrorStyle()->success('Your module ' . $moduleName . ' has been graft on hook ' . $hookName);
 
-            return true;
+            return 0;
         } else {
-            $io->getErrorStyle()->error('This hook not exist, please check if this hook exist. Or create it !');
+            $io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
         }
     }
 }
