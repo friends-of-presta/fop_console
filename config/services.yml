@@ -14,11 +14,6 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.graft_module_on_hook.command:
-    class: FOP\Console\Commands\GraftModuleOnHook
-    tags:
-      - { name: console.command }
-
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
     tags:
