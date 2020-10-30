@@ -54,6 +54,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.add_hook.command:
+    class: FOP\Console\Commands\AddHook
+    tags:
+      - { name: console.command }
+
   fop.console.images_generate_products.command:
     class: FOP\Console\Commands\Images\GenerateProducts
     tags:
