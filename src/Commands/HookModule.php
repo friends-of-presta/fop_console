@@ -69,6 +69,7 @@ class HookModule extends Command
             return 0;
         } else {
             $io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
+
             return 1;
         }
     }
