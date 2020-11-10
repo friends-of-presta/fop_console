@@ -9,6 +9,11 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
+  fop.console.unhook_module.command:
+    class: FOP\Console\Commands\UnhookModule
+    tags:
+      - { name: console.command }
+  
   fop.console.hook_module.command:
     class: FOP\Console\Commands\HookModule
     tags:

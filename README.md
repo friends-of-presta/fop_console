@@ -33,6 +33,7 @@ php bin/console pr:mo install fop_console
 * `fop:generate:htaccess` Generate the .htaccess file
 * `fop:generate:robots`   Generate the robots.txt file
 * `fop:add-hook` : Create a new hook in database
+* `fop:unhook-module` : Ungraft module on specific hook
 * `fop:hook-module` : Graft module on specific hook
 
 ## Create your owns Commands
