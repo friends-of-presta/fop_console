@@ -13,6 +13,11 @@ services:
     class: FOP\Console\Commands\UnhookModule
     tags:
       - { name: console.command }
+  
+  fop.console.hook_module.command:
+    class: FOP\Console\Commands\HookModule
+    tags:
+      - { name: console.command }
 
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
