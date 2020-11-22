@@ -55,10 +55,9 @@ final class ClearCacheFiles extends Command
             $this->deleteOldCacheDirectory(); // may exist if this command failed before
             $this->renameCurrentCacheDirectory();
             $this->createNewCacheDirectory(); // probably not needed
-            $io->success('New Empty cache directory created. Old cache directory deleted.');
+            $io->success('Cache cleared.');
 
             $this->deleteOldCacheDirectory();
-            $io->text('Old directory deleted');
 
             return 0;
         } catch (RuntimeException $exception) {
@@ -79,24 +78,33 @@ final class ClearCacheFiles extends Command
     private function renameCurrentCacheDirectory()
     {
         if ($this->isWindows()) {
-            $process = new Process(['move', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+            //sleep(1);
+            if (!@rename($this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath())) {
+                // be carefull on widows, if cache folder is open in windows explorer, you will have an access denied error 5
+                throw new RuntimeException("Error renaming cache dir to cache_old, check that cache dir or cache file are not open.");
+            }
         } else {
             $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+            $process->run();
+            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
         }
-        $process->run();
-        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
 
     private function deleteOldCacheDirectory()
     {
         if (file_exists($this->getCacheDirectoryOldPath())) {
             if ($this->isWindows()) {
-                $process = new Process(['rmdir', '/S', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+                $output = [];
+                $return = 0;
+                $returnLine =  exec('rmdir /S /Q '.$this->getCacheDirectoryOldPath(), $output, $return);
+                if ($return !== 0) {
+                    throw new RuntimeException("Error doing ".__FUNCTION__." : " . PHP_EOL . ' : ' . print_r($output, true));
+                }
             } else {
                 $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+                $process->run();
+                $this->handleUnsucessfullProcess(__FUNCTION__, $process);
             }
-            $process->run();
-            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
         }
     }
 
