@@ -81,7 +81,8 @@ final class ClearCacheFiles extends Command
             //sleep(1);
             if (!@rename($this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath())) {
                 // be carefull on widows, if cache folder is open in windows explorer, you will have an access denied error 5
-                throw new RuntimeException("Error renaming cache dir to cache_old, check that cache dir or cache file are not open.");
+                throw new RuntimeException('Error renaming cache dir to cache_old, check that cache dir or cache file are not open.');
+
             }
         } else {
             $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
@@ -96,9 +97,9 @@ final class ClearCacheFiles extends Command
             if ($this->isWindows()) {
                 $output = [];
                 $return = 0;
-                $returnLine =  exec('rmdir /S /Q '.$this->getCacheDirectoryOldPath(), $output, $return);
+                $returnLine =  exec('rmdir /S /Q ' . $this->getCacheDirectoryOldPath(), $output, $return);
                 if ($return !== 0) {
-                    throw new RuntimeException("Error doing ".__FUNCTION__." : " . PHP_EOL . ' : ' . print_r($output, true));
+                    throw new RuntimeException("Error doing " . __FUNCTION__ . " : " . PHP_EOL . ' : ' . print_r($output, true));
                 }
             } else {
                 $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
