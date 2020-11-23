@@ -9,6 +9,16 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
+  fop.console.unhook_module.command:
+    class: FOP\Console\Commands\UnhookModule
+    tags:
+      - { name: console.command }
+  
+  fop.console.hook_module.command:
+    class: FOP\Console\Commands\HookModule
+    tags:
+      - { name: console.command }
+
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
     tags:
@@ -51,6 +61,11 @@ services:
 
   fop.console.clear_cache_files.command:
     class: FOP\Console\Commands\ClearCacheFiles
+    tags:
+      - { name: console.command }
+
+  fop.console.add_hook.command:
+    class: FOP\Console\Commands\AddHook
     tags:
       - { name: console.command }
 
