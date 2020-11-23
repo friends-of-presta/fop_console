@@ -93,3 +93,8 @@ services:
     class: FOP\Console\Commands\Images\GenerateStores
     tags:
       - { name: console.command }
+
+  fop.console.theme-reset.command:
+    class: FOP\Console\Commands\ThemeResetLayout
+    tags:
+      - { name: console.command }
