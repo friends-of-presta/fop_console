@@ -8,3 +8,6 @@
 ## Jean-François Viguier
 * company: Creabilis
 * github: jf-viguier
+## Pascal GAULT
+* company: inRage
+* github: akiletour
