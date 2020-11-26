@@ -14,3 +14,6 @@
 ## Pascal GAULT
 * company : inRage
 * github : akiletour
+## Arnaud Scote
+* company : Arnaud Scote
+* github : Mch0
