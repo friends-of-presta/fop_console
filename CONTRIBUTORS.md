@@ -1,19 +1,20 @@
 # Contributors
+
 ## Mickael Andrieu
 * company: Prestashop
-* github: mickaelandrieu
+* Github: [mickaelandrieu](https://github.com/mickaelandrieu)
 ## Hervé Hennes
 * company: 
-* github: nenes25
+* Github: [nenes25](https://github.com/nenes25)
 ## Jean-François Viguier
 * company: Creabilis
-* github: jf-viguier
+* Github: [jf-viguier](https://github.com/jf-viguier)
 ## Sébastien Monterisi
 * company: Freelance
-* github : [SebSept](https://github.com/SebSept)
+* Github : [SebSept](https://github.com/SebSept)
 ## Pascal GAULT
 * company : inRage
-* github : akiletour
+* Github : [akiletour](https://github.com/akiletour)
 ## Arnaud Scote
 * company : Arnaud Scote
-* github : Mch0
+* Github : [Mch0](https://github.com/Mch0)
