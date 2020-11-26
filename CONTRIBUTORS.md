@@ -11,3 +11,6 @@
 ## Sébastien Monterisi
 * company: Freelance
 * github : [SebSept](https://github.com/SebSept)
+## Pascal GAULT
+* company : inRage
+* github : akiletour
