@@ -58,10 +58,9 @@ final class ClearCacheFiles extends Command
             $this->deleteOldCacheDirectory(); // may exist if this command failed before
             $this->renameCurrentCacheDirectory();
             $this->createNewCacheDirectory(); // probably not needed
-            $io->success('New Empty cache directory created. Old cache directory deleted.');
+            $io->success('Cache cleared.');
 
             $this->deleteOldCacheDirectory();
-            $io->text('Old directory deleted');
 
             return 0;
         } catch (RuntimeException $exception) {
@@ -81,24 +80,45 @@ final class ClearCacheFiles extends Command
 
     private function renameCurrentCacheDirectory()
     {
-        $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
-        $process->run();
-        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        if ($this->isWindows()) {
+            //sleep(1);
+            if (!@rename($this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath())) {
+                // be carefull on widows, if cache folder is open in windows explorer, you will have an access denied error 5
+                throw new RuntimeException('Error renaming cache dir to cache_old, check that cache dir or cache file are not open.');
+            }
+        } else {
+            $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+            $process->run();
+            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        }
     }
 
     private function deleteOldCacheDirectory()
     {
         if (file_exists($this->getCacheDirectoryOldPath())) {
-            $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
-            $process->run();
-            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+            if ($this->isWindows()) {
+                $output = [];
+                $return = 0;
+                $returnLine = exec('rmdir /S /Q ' . $this->getCacheDirectoryOldPath(), $output, $return);
+                if ($return !== 0) {
+                    throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+                }
+            } else {
+                $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+                $process->run();
+                $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+            }
         }
     }
 
     private function createNewCacheDirectory()
     {
         $cache_dir = $this->getCacheDirectoryBasePath() . DIRECTORY_SEPARATOR . ((new DebugAdapter())->isDebugModeEnabled() ? 'dev' : 'prod');
-        $process = new Process(['mkdir', $cache_dir, '-p']);
+        if ($this->isWindows()) {
+            $process = new Process(['mkdir', $cache_dir]);
+        } else {
+            $process = new Process(['mkdir', $cache_dir, '-p']);
+        }
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
@@ -113,8 +133,12 @@ final class ClearCacheFiles extends Command
         if (!defined('_PS_CACHE_DIR_')) {
             throw new RuntimeException('Cache directory path not defined in _PS_CACHE_DIR_');
         }
+        $path = _PS_CACHE_DIR_;
+        if ($this->isWindows()) {
+            $path = str_replace('/', '\\', $path);
+        }
 
-        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', _PS_CACHE_DIR_);
+        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', $path);
     }
 
     private function getCacheDirectoryOldPath(): string
@@ -127,5 +151,10 @@ final class ClearCacheFiles extends Command
         if (!$process->isSuccessful()) {
             throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
         }
+    }
+
+    private function isWindows()
+    {
+        return 'WIN' === strtoupper(substr(PHP_OS, 0, 3));
     }
 }

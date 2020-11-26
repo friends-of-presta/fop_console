@@ -9,6 +9,16 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
+  fop.console.unhook_module.command:
+    class: FOP\Console\Commands\UnhookModule
+    tags:
+      - { name: console.command }
+  
+  fop.console.hook_module.command:
+    class: FOP\Console\Commands\HookModule
+    tags:
+      - { name: console.command }
+
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
     tags:
@@ -54,6 +64,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.add_hook.command:
+    class: FOP\Console\Commands\AddHook
+    tags:
+      - { name: console.command }
+
   fop.console.images_generate_products.command:
     class: FOP\Console\Commands\Images\GenerateProducts
     tags:
@@ -76,5 +91,10 @@ services:
 
   fop.console.images_generate_stores.command:
     class: FOP\Console\Commands\Images\GenerateStores
+    tags:
+      - { name: console.command }
+
+  fop.console.theme-reset.command:
+    class: FOP\Console\Commands\ThemeResetLayout
     tags:
       - { name: console.command }
