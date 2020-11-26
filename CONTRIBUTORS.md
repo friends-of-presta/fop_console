@@ -8,3 +8,6 @@
 ## Jean-François Viguier
 * company: Creabilis
 * github: jf-viguier
+## Sébastien Monterisi
+* company: Freelance
+* github : [SebSept](https://github.com/SebSept)
