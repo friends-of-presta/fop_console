@@ -9,8 +9,8 @@
 * company: Creabilis
 * github: jf-viguier
 ## Sébastien Monterisi
-* company: freelance
-* github: SebSept
+* company: Freelance
+* github : [SebSept](https://github.com/SebSept)
 ## Pascal GAULT
 * company : inRage
 * github : akiletour
