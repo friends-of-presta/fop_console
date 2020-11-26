@@ -8,3 +8,9 @@
 ## Jean-François Viguier
 * company: Creabilis
 * github: jf-viguier
+## Sébastien Monterisi
+* company: freelance
+* github: SebSept
+## Pascal GAULT
+* company : inRage
+* github : akiletour
