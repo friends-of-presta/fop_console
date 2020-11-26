@@ -1,5 +1,5 @@
 {
-  "name": "friends-of-prestashop/console",
+  "name": "friends-of-prestashop/fop_console",
   "description": "Add some console commands for PrestaShop 1.7.5+",
   "authors": [
     {
@@ -7,8 +7,12 @@
       "email": "andrieu.travail@gmail.com"
     },
     {
+      "name": "Friends of Presta",
+      "email": "infos@friendsofpresta.org"
+    },
+    {
       "name": "Friends of PrestaShop Community",
-      "homepage": "https://github.com/friends-of-prestashop/developer_tools/graphs/contributors"
+      "homepage": "https://friendsofpresta.org/"
     }
   ],
   "autoload": {
