@@ -1,7 +1,7 @@
 # Contributors
 
 ## Mickael Andrieu
-* company: Prestashop
+* company: SolvoLabs
 * Github: [mickaelandrieu](https://github.com/mickaelandrieu)
 ## Hervé Hennes
 * company: 
