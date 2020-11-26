@@ -22,6 +22,6 @@
   "license": "MIT",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "^2.2"
+    "prestashop/php-dev-tools": "^v3.11"
   }
 }
