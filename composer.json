@@ -1,17 +1,10 @@
 {
-  "name": "friends-of-prestashop/fop_console",
+  "name": "friends-of-presta/fop_console",
   "description": "Add some console commands for PrestaShop 1.7.5+",
   "authors": [
     {
-      "name": "Mickaël Andrieu",
-      "email": "andrieu.travail@gmail.com"
-    },
-    {
       "name": "Friends of Presta",
-      "email": "infos@friendsofpresta.org"
-    },
-    {
-      "name": "Friends of PrestaShop Community",
+      "email": "infos@friendsofpresta.org",
       "homepage": "https://friendsofpresta.org/"
     }
   ],
@@ -26,9 +19,9 @@
   "config": {
     "prepend-autoloader": false
   },
-  "license": "MIT",
+  "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "^2.2"
+    "prestashop/php-dev-tools": "^v3.11"
   }
 }
