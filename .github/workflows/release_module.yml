@@ -1,0 +1,47 @@
+name: "Release Module"
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  ps_release:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Setup zipname. Exports $MODULE_NAME, $VERSION & $ZIP_FILE"
+        run: |
+          MODULE_NAME=${GITHUB_REPOSITORY#*/}
+          echo "MODULE_NAME=${MODULE_NAME}" >> $GITHUB_ENV
+          REF='${{ github.ref }}'
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          VERSION=${REF#refs/*/}
+          echo "ZIP_FILE=${MODULE_NAME}_${VERSION}.zip" >> $GITHUB_ENV
+
+      - name: "Checkout source code"
+        uses: "actions/checkout@v2"
+        with:
+          lfs: true
+
+      - name: "Prepare files"
+        run: |
+          mkdir newdir
+          ls | grep -v newdir | xargs -I{} mv {} newdir
+          mv newdir ${{ env.MODULE_NAME }}
+
+      - name: "Archive Release"
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: '${{ env.ZIP_FILE }}'
+          exclusions: '*.git* README.md config_de.xml config.xml'
+          type: 'zip'
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          #          automatic_release_tag: "latest"
+          files: |
+            ${{ env.ZIP_FILE }}
+        id: "automatic_releases"

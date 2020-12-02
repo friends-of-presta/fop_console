@@ -20,15 +20,13 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
-use Product;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Tools;
 
-/**
- * This command display common information the latest products.
- */
-final class LatestProducts extends Command
+class GenerateRobots extends Command
 {
     /**
      * {@inheritdoc}
@@ -36,10 +34,14 @@ final class LatestProducts extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:latest-products')
-            ->setDescription('Displays the latest products')
-            ->setHelp('This command allows you to display the latest products')
-        ;
+            ->setName('fop:generate:robots')
+            ->setDescription('Generate the robots.txt file')
+            ->addOption(
+                'executeHook',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Generate actionAdminMetaBeforeWriteRobotsFile hook ?'
+            );
     }
 
     /**
@@ -47,36 +49,15 @@ final class LatestProducts extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $products = Product::getNewProducts(1);
-
+        $input->getOption('executeHook') ? $executeHook = true : $executeHook = false;
         $io = new SymfonyStyle($input, $output);
-        $io->title('Legacy Latest Products listing');
 
-        $io->table(
-            ['ID', 'Name', 'Quantity', 'Price', 'Activated?'],
-            $this->formatProductInformation($products)
-        );
-    }
+        if (true === Tools::generateRobotsFile($executeHook)) {
+            $io->success('robots.txt file generated with success');
+        } else {
+            $io->error('An error occurs while generating robots.txt file');
 
-    /**
-     * @param array $products the list of the products
-     *
-     * @return array
-     */
-    private function formatProductInformation(array $products)
-    {
-        $productsInformation = [];
-        /** @var Product $product */
-        foreach ($products as $product) {
-            $productsInformation[] = [
-                $product['id_product'],
-                $product['name'],
-                $product['quantity'],
-                $product['price'],
-                $product['active'] ? '✔' : '✘',
-            ];
+            return 1;
         }
-
-        return $productsInformation;
     }
 }

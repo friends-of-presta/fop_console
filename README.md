@@ -18,20 +18,24 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:console:debug:mode` change debug mode
-* `fop:console:maintenance` get status or change maintenance mode, list or add maintenance ip address
-* `fop:console:shop-status` Display shop(s) status(es)
-* `fop:console:export`: Exports object models in XML;
-* `fop:console:latest-products`: Displays the latest products;
-* `fop:console:check-container`: List the services we can't use in Symfony commands (for now);
-
-## Current Console arguments
-
-These arguments are available to all commands that extends `FOP\Console\Command` class.
-
-* `employee`: the current Employee ID, __null__ by default;
-* `id_shop`: the selected Shop ID, set to __1__ by default;
-* `id_shop_group`: the selected Group Shop ID, set to __null__ by default;
+* `fop:clear-cache` Clear the cache folder super fast
+* `fop:debug-mode` Enable or Disable debug mode
+* `fop:shop-status` Display shop(s) status(es)
+* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
+* `fop:images:generate:categories` Regenerate categories thumbnails
+* `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
+* `fop:images:generate:products` Regenerate products thumbnails
+* `fop:images:generate:stores` Regenerate stores thumbnails
+* `fop:images:generate:suppliers` Regenerate suppliers thumbnails
+* `fop:generate:htaccess` Generate the .htaccess file
+* `fop:generate:robots`   Generate the robots.txt file
+* `fop:theme-reset` Reset current (or selected) theme
+* `fop:add-hook` : Create a new hook in database
+* `fop:unhook-module` : Ungraft module on specific hook
+* `fop:hook-module` : Graft module on specific hook
+* `fop:latest-products`: Displays the latest products
+* `fop:export`: Exports object models in XML
+* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
 
 ## Create your owns Commands
 
@@ -59,8 +63,7 @@ final class Export extends Command
      */
     protected function configure()
     {
-        $this->setName('hello:world')
-        ;
+        $this->setName('hello:world');
     }
 
     /**
@@ -83,4 +86,3 @@ This works well but we like to make it more configurable from the Console argume
 ## Contribute
 
 Feel free to add more commands, post some issues or new PR : contributions are very welcome.
-
