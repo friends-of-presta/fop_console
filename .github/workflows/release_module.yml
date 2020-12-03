@@ -34,7 +34,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           filename: '${{ env.ZIP_FILE }}'
-          exclusions: '*.git* README.md config_de.xml config.xml'
+          exclusions: '*.git* README.md config_*.xml config.xml .php_cs_dist'
           type: 'zip'
 
       - uses: "marvinpinto/action-automatic-releases@latest"
