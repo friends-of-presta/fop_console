@@ -2,3 +2,4 @@ vendor
 .php_cs.cache
 
 /config_*.xml
+grumphp.yml
