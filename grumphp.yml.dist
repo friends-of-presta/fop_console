@@ -1,0 +1,14 @@
+grumphp:
+  tasks:
+    phpcsfixer:
+      config: .php_cs.dist
+    phpstan:
+      use_grumphp_paths: false
+  environment:
+    variables:
+      _PS_ROOT_DIR_: "/path/to/your/prestashop/"
+  parallel:
+    enabled: false
+  fixer:
+    enabled: true
+    fix_by_default: true

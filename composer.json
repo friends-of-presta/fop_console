@@ -22,6 +22,13 @@
   "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "^v3.11"
+    "prestashop/php-dev-tools": "^v3.11",
+    "phpro/grumphp": "^1.2",
+    "phpstan/phpstan": "^0.12.58"
+  },
+  "scripts": {
+    "fop_check": [
+      "grumphp run --ansi"
+    ]
   }
 }
