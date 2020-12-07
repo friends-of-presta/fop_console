@@ -24,7 +24,7 @@ jobs:
         with:
           lfs: true
 
-      - name: "Setup PHP with pre-release PECL extension"
+      - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
           php-version: '7.2'
