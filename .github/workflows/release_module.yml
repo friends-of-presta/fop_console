@@ -24,6 +24,14 @@ jobs:
         with:
           lfs: true
 
+      - name: "Setup PHP with pre-release PECL extension"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+
+      - name: "Composer install"
+        run: "composer install --ansi --prefer-dist --no-interaction --no-progress --quiet"
+
       - name: "Prepare files"
         run: |
           mkdir newdir
