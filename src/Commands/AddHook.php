@@ -18,6 +18,7 @@ namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -33,6 +34,24 @@ final class AddHook extends Command
             ->setDescription('Create hook in database')
             ->setHelp('This command allows you create a new hook in database,
             you dont need to graft a module on it!');
+        $this->addOption(
+            'name',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Name for the new Hook'
+        );
+        $this->addOption(
+            'title',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Title for the Hook'
+        );
+        $this->addOption(
+            'description',
+            null,
+            InputOption::VALUE_OPTIONAL,
+            'Description for the Hook'
+        );
     }
 
     /**
@@ -46,9 +65,9 @@ final class AddHook extends Command
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
 
-        $name = $helper->ask($input, $output, new Question('<question>Give me the name for your new HOOK</question>'));
-        $title = $helper->ask($input, $output, new Question('<question>Give me the title</question>'));
-        $description = $helper->ask($input, $output, new Question('<question>Give me the description</question>'));
+        $name = $input->getOption('name') ?? $helper->ask($input, $output, new Question('<question>Give me the name for your new HOOK</question>'));
+        $title = $input->getOption('title') ?? $helper->ask($input, $output, new Question('<question>Give me the title</question>'));
+        $description = $input->getOption('description') ?? $helper->ask($input, $output, new Question('<question>Give me the description</question>'));
 
         if (!empty($name) && !empty($title) && !empty($description)) {
             try {

@@ -1,17 +1,20 @@
 <?php
 /**
- * 2020-present Friends of Presta community
+ * Copyright (c) Since 2020 Friends of Presta
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the MIT License
- * that is bundled with this package in the file LICENSE
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file docs/licenses/LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/MIT
+ * https://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to infos@friendsofpresta.org so we can send you a copy immediately.
  *
- * @author    Friends of Presta community
- * @copyright 2020-present Friends of Presta community
- * @license   https://opensource.org/licenses/MIT MIT
+ * @author    Friends of Presta <infos@friendsofpresta.org>
+ * @copyright since 2020 Friends of Presta
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 
 namespace FOP\Console\Commands;
@@ -55,10 +58,9 @@ final class ClearCacheFiles extends Command
             $this->deleteOldCacheDirectory(); // may exist if this command failed before
             $this->renameCurrentCacheDirectory();
             $this->createNewCacheDirectory(); // probably not needed
-            $io->success('New Empty cache directory created. Old cache directory deleted.');
+            $io->success('Cache cleared.');
 
             $this->deleteOldCacheDirectory();
-            $io->text('Old directory deleted');
 
             return 0;
         } catch (RuntimeException $exception) {
@@ -78,24 +80,45 @@ final class ClearCacheFiles extends Command
 
     private function renameCurrentCacheDirectory()
     {
-        $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
-        $process->run();
-        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        if ($this->isWindows()) {
+            //sleep(1);
+            if (!@rename($this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath())) {
+                // be carefull on widows, if cache folder is open in windows explorer, you will have an access denied error 5
+                throw new RuntimeException('Error renaming cache dir to cache_old, check that cache dir or cache file are not open.');
+            }
+        } else {
+            $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
+            $process->run();
+            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        }
     }
 
     private function deleteOldCacheDirectory()
     {
         if (file_exists($this->getCacheDirectoryOldPath())) {
-            $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
-            $process->run();
-            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+            if ($this->isWindows()) {
+                $output = [];
+                $return = 0;
+                $returnLine = exec('rmdir /S /Q ' . $this->getCacheDirectoryOldPath(), $output, $return);
+                if ($return !== 0) {
+                    throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+                }
+            } else {
+                $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+                $process->run();
+                $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+            }
         }
     }
 
     private function createNewCacheDirectory()
     {
         $cache_dir = $this->getCacheDirectoryBasePath() . DIRECTORY_SEPARATOR . ((new DebugAdapter())->isDebugModeEnabled() ? 'dev' : 'prod');
-        $process = new Process(['mkdir', $cache_dir, '-p']);
+        if ($this->isWindows()) {
+            $process = new Process(['mkdir', $cache_dir]);
+        } else {
+            $process = new Process(['mkdir', $cache_dir, '-p']);
+        }
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
     }
@@ -110,8 +133,12 @@ final class ClearCacheFiles extends Command
         if (!defined('_PS_CACHE_DIR_')) {
             throw new RuntimeException('Cache directory path not defined in _PS_CACHE_DIR_');
         }
+        $path = _PS_CACHE_DIR_;
+        if ($this->isWindows()) {
+            $path = str_replace('/', '\\', $path);
+        }
 
-        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', _PS_CACHE_DIR_);
+        return preg_replace('!\\' . DIRECTORY_SEPARATOR . '(prod|dev)\\' . DIRECTORY_SEPARATOR . '$!', '', $path);
     }
 
     private function getCacheDirectoryOldPath(): string
@@ -124,5 +151,10 @@ final class ClearCacheFiles extends Command
         if (!$process->isSuccessful()) {
             throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
         }
+    }
+
+    private function isWindows()
+    {
+        return 'WIN' === strtoupper(substr(PHP_OS, 0, 3));
     }
 }

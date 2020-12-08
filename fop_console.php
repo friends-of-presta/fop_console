@@ -1,20 +1,20 @@
 <?php
 /**
- * 2019-present Friends of Presta community
+ * Copyright (c) Since 2020 Friends of Presta
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Academic Free License 3.0 (AFL-3.0)
- * that is bundled with this package in the file LICENSE.txt.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file docs/licenses/LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * https://opensource.org/licenses/AFL-3.0
+ * https://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to us so we can send you a copy.
+ * to infos@friendsofpresta.org so we can send you a copy immediately.
  *
- * @author Friends of Presta community
- * @copyright 2019-present Friends of Presta community
- * @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ * @author    Friends of Presta <infos@friendsofpresta.org>
+ * @copyright since 2020 Friends of Presta
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 require_once 'vendor/autoload.php';
 
@@ -23,7 +23,7 @@ class Fop_Console extends Module
     public function __construct()
     {
         $this->name = 'fop_console';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'Friends of Presta';
 
         parent::__construct();
