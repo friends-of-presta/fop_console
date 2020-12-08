@@ -19,7 +19,6 @@
 
 namespace FOP\Console\Commands\Customers;
 
-use Configuration;
 use Customer;
 use FOP\Console\Command;
 use Group;
@@ -191,7 +190,7 @@ final class CustomersGroups extends Command
             switch ((int) $actionAfter) {
                 case self::ACTION_JUST_COPY:
                     $customer->addGroups([$GroupTo->id]);
-                    continue;
+                    continue 2;
                     break;
                 case self::ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP:
                     $customerGroups = array_diff($customerGroups, [$groupFrom->id]); // remove group from
@@ -343,10 +342,15 @@ final class CustomersGroups extends Command
      */
     private function getDefaultPsGroups(): array
     {
+        $config = $this
+            ->getContainer()
+            ->get('prestashop.adapter.legacy.configuration')
+        ;
+
         return [
-            (int) Configuration::get('PS_UNIDENTIFIED_GROUP'),
-            (int) Configuration::get('PS_GUEST_GROUP'),
-            (int) Configuration::get('PS_CUSTOMER_GROUP'),
+            $config->getInt('PS_UNIDENTIFIED_GROUP'),
+            $config->getInt('PS_GUEST_GROUP'),
+            $config->getInt('PS_CUSTOMER_GROUP'),
         ];
     }
 
