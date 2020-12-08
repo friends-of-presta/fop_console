@@ -24,6 +24,14 @@ jobs:
         with:
           lfs: true
 
+      - name: "Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+
+      - name: "Composer install"
+        run: "composer install --ansi --prefer-dist --no-interaction --no-progress --quiet"
+
       - name: "Prepare files"
         run: |
           mkdir newdir
@@ -34,7 +42,7 @@ jobs:
         uses: thedoctor0/zip-release@master
         with:
           filename: '${{ env.ZIP_FILE }}'
-          exclusions: '*.git* README.md config_de.xml config.xml'
+          exclusions: '*.git* README.md config_*.xml config.xml .php_cs_dist'
           type: 'zip'
 
       - uses: "marvinpinto/action-automatic-releases@latest"
