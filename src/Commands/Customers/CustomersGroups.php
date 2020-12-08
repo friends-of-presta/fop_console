@@ -41,26 +41,9 @@ final class CustomersGroups extends Command
     public const ACTION_JUST_COPY = 3;
     public const ACTION_CANCEL = 4;
 
-    public $groupQuestionsKeyPrefix;
-    public $actionQuestionsKeyPrefix;
-    public $idLang;
-    public $groups = [];
+    public $groupQuestionsKeyPrefix = 'category_';
+    public $actionQuestionsKeyPrefix = 'action_';
     public $displaySummaryTab = true;
-
-    /**
-     * @param string|null $name The name of the command; passing null means it must be set in configure()
-     *
-     * @throws LogicException When the command name is empty
-     */
-    public function __construct($name = null)
-    {
-        parent::__construct($name);
-
-        $this->groupQuestionsKeyPrefix = 'category_';
-        $this->actionQuestionsKeyPrefix = 'action_';
-        $this->idLang = (int) Configuration::get('PS_LANG_DEFAULT');
-        $this->groups = Group::getGroups($this->idLang, false);
-    }
 
     /**
      * {@inheritdoc}
@@ -164,7 +147,7 @@ final class CustomersGroups extends Command
             $io->table(
                 ['ID', 'Category name', 'Members Nb', 'Reduction (%)'],
                 $this->formatGroupsInformations(
-                    Group::getGroups($this->idLang, false), // refresh groups to avoid old datas.
+                    Group::getGroups($this->getDefautlLang(), false), // refresh groups to avoid old datas.
                     'table'
                 )
             );
@@ -208,7 +191,7 @@ final class CustomersGroups extends Command
             switch ((int) $actionAfter) {
                 case self::ACTION_JUST_COPY:
                     $customer->addGroups([$GroupTo->id]);
-                    continue 2;
+                    continue;
                     break;
                 case self::ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP:
                     $customerGroups = array_diff($customerGroups, [$groupFrom->id]); // remove group from
@@ -295,7 +278,7 @@ final class CustomersGroups extends Command
      */
     private function getGroupName(int $idGroup): string
     {
-        return (new Group($idGroup, $this->idLang))->name;
+        return (new Group($idGroup, $this->getDefautlLang()))->name;
     }
 
     /**
@@ -307,8 +290,8 @@ final class CustomersGroups extends Command
     private function getQuestionsOptions(string $type, string $groupFromName = null): array
     {
         $questionsOptions = [
-            'optionsGroupFrom' => $this->formatGroupsInformations($this->groups, 'question', true),
-            'optionsGroupTo' => $this->formatGroupsInformations($this->groups, 'question', false),
+            'optionsGroupFrom' => $this->formatGroupsInformations($this->getGroups(), 'question', true),
+            'optionsGroupTo' => $this->formatGroupsInformations($this->getGroups(), 'question', false),
             'optionsActions' => [
                 $this->actionQuestionsKeyPrefix . self::ACTION_DELETE_FROM_GROUP => 'Delete (' . $groupFromName . ') group',
                 $this->actionQuestionsKeyPrefix . self::ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP => 'Remove customers in (' . $groupFromName . ') group',
@@ -365,5 +348,33 @@ final class CustomersGroups extends Command
             (int) Configuration::get('PS_GUEST_GROUP'),
             (int) Configuration::get('PS_CUSTOMER_GROUP'),
         ];
+    }
+
+    /**
+     * get groups
+     *
+     * @return array
+     */
+    public function getGroups(): array
+    {
+        return $this
+            ->getContainer()
+            ->get('prestashop.adapter.data_provider.group')
+            ->getGroups($this->getDefautlLang(), false)
+        ;
+    }
+
+    /**
+     * Defautl lang id
+     *
+     * @return in
+     */
+    public function getDefautlLang(): int
+    {
+        return (int) $this
+            ->getContainer()
+            ->get('prestashop.adapter.legacy.configuration')
+            ->getInt('PS_LANG_DEFAULT')
+        ;
     }
 }
