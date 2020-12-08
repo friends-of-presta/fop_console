@@ -208,7 +208,7 @@ final class CustomersGroups extends Command
             switch ((int) $actionAfter) {
                 case self::ACTION_JUST_COPY:
                     $customer->addGroups([$GroupTo->id]);
-                    continue;
+                    continue 2;
                     break;
                 case self::ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP:
                     $customerGroups = array_diff($customerGroups, [$groupFrom->id]); // remove group from
