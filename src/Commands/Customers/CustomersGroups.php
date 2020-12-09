@@ -61,44 +61,28 @@ final class CustomersGroups extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $helper = $this->getHelper('question');
-
         $optionsGroupFrom = $this->getQuestionsOptions('optionsGroupFrom');
         $optionsGroupTo = $this->getQuestionsOptions('optionsGroupTo');
 
         if (count($optionsGroupFrom) <= 1) {
-            $output->writeln('<error>You must have at least two groups associated with at least one customer</error>');
+            $output->writeln('<error>command aborted</error>');
 
             return;
         }
 
-        $questionGroupFrom = new ChoiceQuestion(
-            '<question>Please select the group from :</question>',
-            $optionsGroupFrom
-        );
+        // Step 1 : Group From Question
+        $prefix = $this->groupQuestionsKeyPrefix;
+        $label = 'Please select the group from :';
 
-        $questionGroupFrom->setErrorMessage('Group from %s not found.');
-
-        $groupFrom = $helper->ask($input, $output, $questionGroupFrom);
-        $groupFromId = (int) str_replace($this->groupQuestionsKeyPrefix, '', $groupFrom);
-        $groupFromName = $this->getGroupName($groupFromId);
-        $output->writeln('<info>You have just selected: ' . $groupFromName . '</info>');
+        $groupFromId = $this->generateChoiceQuestion($input, $output, $prefix, $label, $optionsGroupFrom, 'groups');
 
         // Remove selected group from in group to list.
         unset($optionsGroupTo[$this->groupQuestionsKeyPrefix . $groupFromId]);
 
-        $questionGroupTo = new ChoiceQuestion(
-            '<question>Please select the group to :</question>',
-            $optionsGroupTo
-        );
-
-        $questionGroupTo->setErrorMessage('Group to %s not found.');
-
-        $groupTo = $helper->ask($input, $output, $questionGroupTo);
-        $groupToId = (int) str_replace($this->groupQuestionsKeyPrefix, '', $groupTo);
-        $groupToName = $this->getGroupName($groupToId);
-        $output->writeln('<info>You have just selected: ' . $groupToName . '</info>');
-
+        // Step 2 : Group To Question
+        $label = 'Please select the group to :';
+        $groupToId = $this->generateChoiceQuestion($input, $output, $prefix, $label, $optionsGroupTo, 'groups');
+        $groupFromName = $this->getGroupName($groupFromId);
         $optionsActions = $this->getQuestionsOptions('optionsActions', $groupFromName);
 
         // Remove delete action when from group as a PS defautl group
@@ -106,29 +90,25 @@ final class CustomersGroups extends Command
             unset($optionsActions[$this->actionQuestionsKeyPrefix . self::ACTION_DELETE_FROM_GROUP]);
         }
 
-        $questionActions = new ChoiceQuestion(
-            '<question>After moving the customers from (' . $groupFromName . ') group to (' . $groupToName . ') group </question>',
-            $optionsActions
-        );
+        // Step 3 : Action after Question
+        $prefix = $this->actionQuestionsKeyPrefix;
+        $groupToName = $this->getGroupName($groupToId);
+        $label = 'After moving the customers from (' . $groupFromName . ') group to (' . $groupToName . ') group ';
+        $selectedActionId = $this->generateChoiceQuestion($input, $output, $prefix, $label, $optionsActions, 'actions');
 
-        $questionActions->setErrorMessage('Invalid action %s .');
-
-        $selectedAction = $helper->ask($input, $output, $questionActions);
-        $selectedActionId = (int) str_replace($this->actionQuestionsKeyPrefix, '', $selectedAction);
-        $output->writeln('<info>You have just selected: ' . $optionsActions[$selectedAction] . '</info>');
-
-        if (self::ACTION_CANCEL === (int) $selectedActionId) {
+        if (self::ACTION_CANCEL === $selectedActionId) {
             $output->writeln('<info>Action canceled</info>');
 
             return;
         }
 
+        // Step 4 : user confirmation Question
         if (!$this->userConfirmation(
             $input,
             $output,
             $groupFromName,
             $groupToName,
-            $optionsActions[$selectedAction]
+            $optionsActions[$prefix . $selectedActionId]
         )) {
             $output->writeln('<info>Action abandoned</info>');
 
@@ -160,6 +140,8 @@ final class CustomersGroups extends Command
      * @param OutputInterface $output
      *
      * @return null
+     *
+     * @throws Exception
      */
     private function groupCustomersTransfer(
         int $idGroupFrom,
@@ -186,6 +168,7 @@ final class CustomersGroups extends Command
         foreach ($groupFromCustomers as $k => $v) {
             $customer = new Customer($v['id_customer']);
             $customerGroups = $customer->getGroups();
+            $progress->advance();
 
             switch ((int) $actionAfter) {
                 case self::ACTION_JUST_COPY:
@@ -216,8 +199,6 @@ final class CustomersGroups extends Command
 
                 return;
             }
-
-            $progress->advance();
         }
 
         // Delete the form group
@@ -359,7 +340,7 @@ final class CustomersGroups extends Command
      *
      * @return array
      */
-    public function getGroups(): array
+    private function getGroups(): array
     {
         return $this
             ->getContainer()
@@ -373,12 +354,65 @@ final class CustomersGroups extends Command
      *
      * @return in
      */
-    public function getDefautlLang(): int
+    private function getDefautlLang(): int
     {
         return (int) $this
             ->getContainer()
             ->get('prestashop.adapter.legacy.configuration')
             ->getInt('PS_LANG_DEFAULT')
         ;
+    }
+
+    /**
+     * Defautl lang id
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param string $questionsKeyPrefix
+     * @param string $questionLabel
+     * @param array $questionOptions
+     * @param string $type
+     *
+     * @return int
+     *
+     * @throws UnexpectedValueException
+     */
+    private function generateChoiceQuestion(
+        InputInterface $input,
+        OutputInterface $output,
+        string $questionsKeyPrefix,
+        string $questionLabel,
+        array $questionOptions,
+        string $type
+    ): int {
+        $availableTypes = ['groups', 'actions'];
+
+        if (!in_array($type, $availableTypes)) {
+            throw new \UnexpectedValueException('The type must be.' . implode('or', $availableTypes));
+        }
+
+        $helper = $this->getHelper('question');
+
+        $choiceQuestion = new ChoiceQuestion(
+            '<question>' . $questionLabel . '</question>',
+            $questionOptions
+        );
+
+        $choiceQuestion->setErrorMessage('Option %s not found.');
+
+        $optionSeletedKey = $helper->ask($input, $output, $choiceQuestion);
+        $optionSeletedID = (int) str_replace($questionsKeyPrefix, '', $optionSeletedKey);
+
+        switch ($type) {
+          case 'groups':
+            $groupName = $this->getGroupName($optionSeletedID);
+            $output->writeln('<info>You have just selected: ' . $groupName . '</info>');
+            break;
+          case 'actions':
+            $output->writeln('<info>You have just selected: ' . $questionOptions[$optionSeletedKey] . '</info>');
+            break;
+        }
+
+        return $optionSeletedID;
     }
 }
