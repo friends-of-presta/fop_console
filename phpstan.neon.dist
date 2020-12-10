@@ -1,6 +1,3 @@
-includes:
-  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
-
 parameters:
   paths:
     - ./
@@ -8,3 +5,7 @@ parameters:
     - vendor/
   reportUnmatchedIgnoredErrors: false
   level: 0
+
+includes:
+  - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
+  - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon

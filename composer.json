@@ -23,7 +23,7 @@
   "type": "prestashop-module",
   "require-dev": {
     "prestashop/php-dev-tools": "^v3.11",
-    "phpro/grumphp": "^1.2",
+    "phpro/grumphp": "0.19.1",
     "phpstan/phpstan": "^0.12.58"
   },
   "scripts": {
