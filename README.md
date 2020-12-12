@@ -3,7 +3,7 @@
 This repository provides a Command that better supports PrestaShop legacy classes using the current PrestaShop Console and a list
 of useful commands that you can use and reuse for learning purposes.
 
-This module is released under MIT license.
+This module is released under AFL license.
 
 ## Install
 
@@ -86,3 +86,26 @@ This works well but we like to make it more configurable from the Console argume
 ## Contribute
 
 Feel free to add more commands, post some issues or new PR : contributions are very welcome.
+
+## Compatibility
+
+| Prestashop Version | Compatible |
+| ------------------ | -----------|
+| 1.7.0.x | :x: |
+| 1.7.1.x | :x: |
+| 1.7.2.x | :x: |
+| 1.7.3.x | :x: |
+| 1.7.4.x | :x: |
+| 1.7.5.x | :heavy_check_mark: |
+| 1.7.6.x | :heavy_check_mark: |
+| 1.7.7.x | :heavy_check_mark: |
+
+| Php Version | Compatible |
+| ------ | -----------|
+| 5.6 | :x:|
+| 7.0 | :x: |
+| 7.1 | :x: |
+| 7.2 | :heavy_check_mark: |
+| 7.3| :heavy_check_mark: |
+| 7.4 | :interrobang: Not yet tested |
+| 8.0 | :interrobang: Not yet tested |
