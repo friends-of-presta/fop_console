@@ -29,7 +29,6 @@ class ConsoleController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->id = 0;
         $this->controller_type = 'console';
     }
 
