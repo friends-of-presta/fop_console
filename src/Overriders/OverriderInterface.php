@@ -17,28 +17,26 @@
 namespace FOP\Console\Overriders;
 
 use Exception;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface OverriderInterface
 {
-    /**
-     * Overrider exectution.
+    /*
+     * Overrider execution.
      *
      * Creates the file(s), do the job.
      *
      * @param string $path the file or folder path to override
-     * @param SymfonyStyle $io to display a message
-     *
      * @throws Exception in case process fails : just throw an exception
-     *
-     * @todo argument $path can be something else than a path ?
+     * @return string execution message.
      */
-    public function run(string $path, SymfonyStyle $io): void;
+    public function run(string $path): string;
 
     /**
-     * Did the overrider applies to this file ?
+     * Does the overrider handle this path ?
      *
-     * Just set $this->handled and let AbstractOverrider do the job.
+     * @param string $path
+     *
+     * @return bool
      */
-    public function isHandled(): bool;
+    public function handle(string $path): bool;
 }

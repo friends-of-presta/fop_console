@@ -16,8 +16,6 @@
 
 namespace FOP\Console\Overriders;
 
-use Symfony\Component\Console\Style\SymfonyStyle;
-
 /**
  * This is a demo Overrider.
  * It does nothing but serve as example.
@@ -27,37 +25,52 @@ use Symfony\Component\Console\Style\SymfonyStyle;
  * It means it is supposed to do something while this file is passed as argument.
  * So it declare it will process setting $this->handled to true.
  *
- * @todo Maybe not the best way to declare it is concerned.
- * Otherwise the Overrider declares not to handle this file (do not touch $this->handled.
- *
  * If file name also contains 'success', the overrider pretend to succeed.
  * Else it fails (throw an Exception).
  */
-final class DemoOverrider extends AbstractOverrider implements OverriderInterface
+final class DemoOverrider implements OverriderInterface
 {
-    public function run(string $path, SymfonyStyle $io): void
+    /**
+     * Overrider execution.
+     *
+     * Executed only if declared to handle the path.
+     *
+     * @param string $path
+     *
+     * @return string
+     *
+     * @throws \Exception
+     */
+    public function run(string $path): string
     {
-        // this overrider applies only on README.md files
-        if (0 === strpos($path, 'README.md')) {
-            // process files copies, file creations, etc
-            // maybe $this->handled should be set latter, depends on the override process.
-            $this->handled = true;
-            // process override operations here
-            // ...
+        // process
+        // copy files, file creations, etc
 
-            // handle process success here.
-            if (0 < strpos($path, 'success')) {
-                // a simple text is enough, Command will do the rest.
-                $io->text(__CLASS__ . ' success. File xxx created. Do something great with it!');
-
-                return;
-            }
-
-            throw new \Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
-            // @todo Make OverrideException class
+        // handle process success here.
+        if (0 < strpos($path, 'success')) {
+            // a simple text is enough, Command will do the rest.
+            return __CLASS__ . ' success. File xxx created. Do something great with it!';
         }
-        // otherwise : do nothing.
-        // Real overriders will remain silent.
-        $io->text(sprintf('%s did nothing. It does not process file/path %s. %s Try "fop:override README.md"', __CLASS__, $path, PHP_EOL));
+
+        // failure example
+        if (0 < strpos($path, 'failure')) {
+            // @todo Maybe add an OverriderException
+            throw new \Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
+        }
+
+        // smooth failure example
+        return __CLASS__ . ' error. Oops something happend. Maybe file already exists.! Try with README.md_failure';
+    }
+
+    /**
+     * Handles only path that contains 'README.md'
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    public function handle(string $path): bool
+    {
+        return 0 === strpos($path, 'README.md');
     }
 }

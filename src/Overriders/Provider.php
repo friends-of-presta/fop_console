@@ -19,10 +19,17 @@ namespace FOP\Console\Overriders;
 class Provider
 {
     /**
-     * @var array
+     * @var array<OverriderInterface>
      */
     private $overriders = [];
 
+    /**
+     * Provider constructor.
+     *
+     * @param array<OverriderInterface> $overriders
+     *
+     * @throws \Exception
+     */
     public function __construct(array $overriders)
     {
         // check that provided Overriders are really Overriders.
@@ -35,10 +42,14 @@ class Provider
     }
 
     /**
+     * Returns the overriders which handle this path.
+     *
+     * @param string $path
+     *
      * @return OverriderInterface[]
      */
-    public function getOverriders(): array
+    public function getOverriders(string $path): array
     {
-        return $this->overriders;
+        return array_filter($this->overriders, function ($overrider) use ($path) {return $overrider->handle($path); });
     }
 }
