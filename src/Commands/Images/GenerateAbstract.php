@@ -35,7 +35,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class GenerateAbstract extends Command
 {
-
     /** @var string Image type (overrided in subclasses) */
     const IMAGE_TYPE = '';
 

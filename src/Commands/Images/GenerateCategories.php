@@ -21,6 +21,6 @@ namespace FOP\Console\Commands\Images;
 
 class GenerateCategories extends GenerateAbstract
 {
-    /** @var string Image type  */
+    /** @var string Image type */
     const IMAGE_TYPE = 'categories';
 }
