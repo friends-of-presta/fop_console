@@ -1,0 +1,39 @@
+name: PHPStan
+on: [ push, pull_request ]
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        presta-versions: [ '1.7.5.0', '1.7.6.9', 'latest' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: "Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+
+      - run: composer install
+
+      - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
+        run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
+
+      - name: Run PHPStan (inside docker)
+        run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12.59 analyse
