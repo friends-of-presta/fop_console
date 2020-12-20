@@ -38,7 +38,7 @@ class Fop_Console extends Module
 
     public function install()
     {
-        if (PHP_VERSION_ID <= 70200) {
+        if (PHP_VERSION_ID < 70200) {
             $this->_errors[] = $this->l('fop_console require at least php version 7.2.');
             return false;
         }
