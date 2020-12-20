@@ -35,5 +35,5 @@ jobs:
       - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
 
-      - name: Run PHPStan (inside docker)
+      - name: Run PHPStan on Prestashop ${{ matrix.presta-versions }}
         run: docker run --rm --volumes-from temp-ps -v $PWD:/web/module -e _PS_ROOT_DIR_=/var/www/html --workdir=/web/module phpstan/phpstan:0.12.59 analyse
