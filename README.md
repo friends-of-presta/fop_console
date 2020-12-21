@@ -3,7 +3,7 @@
 This repository provides a Command that better supports PrestaShop legacy classes using the current PrestaShop Console and a list
 of useful commands that you can use and reuse for learning purposes.
 
-This module is released under MIT license.
+This module is released under AFL license.
 
 ## Install
 
@@ -18,19 +18,24 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:latest-products`: Displays the latest products
-* `fop:export`: Exports object models in XML
+* `fop:clear-cache` Clear the cache folder super fast
+* `fop:debug-mode` Enable or Disable debug mode
 * `fop:shop-status` Display shop(s) status(es)
-* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands 
-* `fop:debug` Configure debug mode
+* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:images:generate:categories` Regenerate categories thumbnails
 * `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
 * `fop:images:generate:products` Regenerate products thumbnails
 * `fop:images:generate:stores` Regenerate stores thumbnails
 * `fop:images:generate:suppliers` Regenerate suppliers thumbnails
-* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
 * `fop:generate:htaccess` Generate the .htaccess file
 * `fop:generate:robots`   Generate the robots.txt file
+* `fop:theme-reset` Reset current (or selected) theme
+* `fop:add-hook` : Create a new hook in database
+* `fop:unhook-module` : Ungraft module on specific hook
+* `fop:hook-module` : Graft module on specific hook
+* `fop:latest-products`: Displays the latest products
+* `fop:export`: Exports object models in XML
+* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
 
 ## Create your owns Commands
 
@@ -58,8 +63,7 @@ final class Export extends Command
      */
     protected function configure()
     {
-        $this->setName('hello:world')
-        ;
+        $this->setName('hello:world');
     }
 
     /**
@@ -83,3 +87,25 @@ This works well but we like to make it more configurable from the Console argume
 
 Feel free to add more commands, post some issues or new PR : contributions are very welcome.
 
+## Compatibility
+
+| Prestashop Version | Compatible |
+| ------------------ | -----------|
+| 1.7.0.x | :x: |
+| 1.7.1.x | :x: |
+| 1.7.2.x | :x: |
+| 1.7.3.x | :x: |
+| 1.7.4.x | :x: |
+| 1.7.5.x | :heavy_check_mark: |
+| 1.7.6.x | :heavy_check_mark: |
+| 1.7.7.x | :heavy_check_mark: |
+
+| Php Version | Compatible |
+| ------ | -----------|
+| 5.6 | :x:|
+| 7.0 | :x: |
+| 7.1 | :x: |
+| 7.2 | :heavy_check_mark: |
+| 7.3| :heavy_check_mark: |
+| 7.4 | :interrobang: Not yet tested |
+| 8.0 | :interrobang: Not yet tested |

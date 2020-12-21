@@ -1,0 +1,52 @@
+name: PHPStan
+on: [ push, pull_request ]
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        presta-versions: [ '1.7.5.0', '1.7.6.9', '1.7.7.0' ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v1
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: Cache Prestashop source code
+        id: cache_prestashop_source
+        uses: actions/cache@v2
+        with:
+          path: ${{ runner.temp }}/prestashop/
+          key: ${{ runner.os }}-${{ matrix.presta-versions }}
+
+      - name: "Setup PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+
+      - name : "Install module dependencies"
+        run: composer install
+
+      - name : "Extract Prestashop"
+        if: steps.cache_prestashop_source.outputs.cache-hit != 'true'
+        run : |
+          echo "no cache for Prestashop ${{ matrix.presta-versions }} source. Fectching and extracting source code..."
+          wget https://github.com/PrestaShop/PrestaShop/releases/download/${{ matrix.presta-versions }}/prestashop_${{ matrix.presta-versions }}.zip --quiet --output-document ${{ runner.temp }}/prestashop.zip
+          unzip -q ${{ runner.temp }}/prestashop.zip -d ${{ runner.temp }}/prestashop_zip
+          unzip -q ${{ runner.temp }}/prestashop_zip/prestashop.zip -d ${{ runner.temp }}/prestashop
+
+      - name: "Run phpstan"
+        run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse ./
