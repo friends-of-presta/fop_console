@@ -19,6 +19,8 @@
 
 namespace FOP\Console\Overriders;
 
+use Exception;
+
 /**
  * This is a demo Overrider.
  * It does nothing but serve as example.
@@ -58,7 +60,7 @@ final class DemoOverrider implements OverriderInterface
         // failure example
         if (0 < strpos($path, 'failure')) {
             // @todo Maybe add an OverriderException
-            throw new \Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
+            throw new Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
         }
 
         // smooth failure example

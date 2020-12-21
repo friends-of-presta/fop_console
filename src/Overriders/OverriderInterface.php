@@ -18,8 +18,6 @@
  */
 namespace FOP\Console\Overriders;
 
-use Exception;
-
 interface OverriderInterface
 {
     /*

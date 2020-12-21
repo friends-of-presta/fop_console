@@ -18,6 +18,8 @@
  */
 namespace FOP\Console\Overriders;
 
+use Context;
+use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class ModuleTemplateOverrider implements OverriderInterface
@@ -30,7 +32,7 @@ final class ModuleTemplateOverrider implements OverriderInterface
             $fs->copy($path, $final_path, true);
 
             return "File $final_path created";
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return 'An error occurred : ' . $exception->getMessage();
         }
     }
@@ -46,6 +48,6 @@ final class ModuleTemplateOverrider implements OverriderInterface
     private function getThemePath(): string
     {
         // @todo Maybe it's better to rely on the directory property
-        return \Context::getContext()->shop->theme->getName();
+        return Context::getContext()->shop->theme->getName();
     }
 }

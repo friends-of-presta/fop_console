@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands;
 
+use Exception;
 use FOP\Console\Command;
 use FOP\Console\Overriders\OverriderInterface;
 use FOP\Console\Overriders\Provider;
@@ -65,7 +66,7 @@ class MakeOverride extends Command
             $io->block($messages);
 
             return 0;
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $io->error("Override for '$path' fails : {$exception->getMessage()}");
 
             return 1;
