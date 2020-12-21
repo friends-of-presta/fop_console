@@ -35,6 +35,11 @@ use Validate;
  */
 final class CustomersGroups extends Command
 {
+    public const SUCCESS = 0;
+    public const FAILURE = 1;	    
+    public const INVALID = 2;
+    public const ABORTED = 3;
+
     public const ACTION_DELETE_FROM_GROUP = 1;
     public const ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP = 2;
     public const ACTION_JUST_COPY = 3;
@@ -67,7 +72,7 @@ final class CustomersGroups extends Command
         if (count($optionsGroupFrom) <= 1) {
             $output->writeln('<error>command aborted</error>');
 
-            return;
+            return self::FAILURE;
         }
 
         // Step 1 : Group From Question
@@ -99,7 +104,7 @@ final class CustomersGroups extends Command
         if (self::ACTION_CANCEL === $selectedActionId) {
             $output->writeln('<info>Action canceled</info>');
 
-            return;
+            return self::ABORTED;
         }
 
         // Step 4 : user confirmation Question
@@ -112,7 +117,7 @@ final class CustomersGroups extends Command
         )) {
             $output->writeln('<info>Action abandoned</info>');
 
-            return;
+            return self::ABORTED;
         }
 
         $this->groupCustomersTransfer($groupFromId, $groupToId, $selectedActionId, $output);
@@ -131,6 +136,8 @@ final class CustomersGroups extends Command
                 )
             );
         }
+        
+        return self::SUCCESS;
     }
 
     /**
@@ -139,16 +146,16 @@ final class CustomersGroups extends Command
      * @param int $actionAfter
      * @param OutputInterface $output
      *
-     * @return null
+     * @return int|null
      *
-     * @throws Exception
+     * @throws \Exception
      */
     private function groupCustomersTransfer(
         int $idGroupFrom,
         int $IdGroupTo,
         int $actionAfter,
         OutputInterface $output
-    ): void {
+    ) {
         $groupFrom = new Group($idGroupFrom);
         $GroupTo = new Group($IdGroupTo);
         $hasError = 0;
@@ -157,7 +164,7 @@ final class CustomersGroups extends Command
          || !Validate::isLoadedObject($GroupTo)) {
             $output->writeln('<error>Invalid groups given </error>');
 
-            return;
+            return self::FAILURE;
         }
 
         $groupFromCustomers = $groupFrom->getCustomers();
@@ -197,7 +204,7 @@ final class CustomersGroups extends Command
                     );
                 ++$hasError;
 
-                return;
+                return self::FAILURE;
             }
         }
 
@@ -212,7 +219,7 @@ final class CustomersGroups extends Command
                     '</error>'
                 );
 
-                return;
+                return self::FAILURE;
             }
         }
     }
@@ -352,7 +359,7 @@ final class CustomersGroups extends Command
     /**
      * Defautl lang id
      *
-     * @return in
+     * @return int
      */
     private function getDefautlLang(): int
     {
@@ -375,7 +382,7 @@ final class CustomersGroups extends Command
      *
      * @return int
      *
-     * @throws UnexpectedValueException
+     * @throws \UnexpectedValueException
      */
     private function generateChoiceQuestion(
         InputInterface $input,
