@@ -19,22 +19,38 @@
 
 namespace FOP\Console\Overriders;
 
-use Exception;
+use RuntimeException;
 
 /**
  * This is a demo Overrider.
  * It does nothing but serve as example.
  *
- * It handles files (passed as command argument).
- * If it contains 'README.md' the overrider will handle the override.
- * It means it is supposed to do something while this file is passed as argument.
- * So it declare it will process setting $this->handled to true.
+ * It handles file (passed as command argument) if it contains 'classes/*README.md*'
  *
  * If file name also contains 'success', the overrider pretend to succeed.
- * Else it fails (throw an Exception).
+ * use 'classes/README.md_success' for example.
+ * For other cases, see comments in source code below.
  */
-final class DemoOverrider implements OverriderInterface
+
+// using Inheritance is discouraged. Use a final class. if Inheritance is needed you will to really think about it.
+final class DemoOverrider extends AbstractOverrider implements OverriderInterface
 {
+    /**
+     * Is this path handled by this overrider ?
+     *
+     * Used to declare if this overrider will be triggered.
+     *
+     * This demo implementation returns a positive response if the path matches 'classes/*README.md*' pattern.
+     *
+     * @param string $path
+     *
+     * @return bool
+     */
+    public function handle(string $path): bool
+    {
+        return fnmatch('classes/*README.md*', $path);
+    }
+
     /**
      * Overrider execution.
      *
@@ -44,38 +60,35 @@ final class DemoOverrider implements OverriderInterface
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws RuntimeException
      */
     public function run(string $path): string
     {
-        // process
-        // copy files, file creations, etc
+        // at this point you are sure that path is matching fnmatch('classes/*README.md*', $path)
+        // handle was called as a filter before.
 
-        // handle process success here.
+        // Concrete process goes here : copy or create files.
+        // here are just responses example no copy will happen.
+
+        // Case 1 : Success : Copy/Creation succeed.
         if (0 < strpos($path, 'success')) {
-            // a simple text is enough, Command will do the rest.
-            return __CLASS__ . ' success. File xxx created. Do something great with it!';
+            $this->setSuccessful();
+
+            return __CLASS__ . ' success. File xxx created. Do something great with it!' . PHP_EOL
+                . 'Try with "classes/README.md_failure" for another result.';
         }
 
-        // failure example
-        if (0 < strpos($path, 'failure')) {
-            // @todo Maybe add an OverriderException
-            throw new Exception(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
+        // Case 2 : smooth failure : file already exists for example.
+        if (false === strpos($path, 'failure')) {
+            $this->setUnsuccessful();
+
+            return __CLASS__ . ' error. Oops something happen' . PHP_EOL
+                . 'Try with "classes/README.md_success" for another result.';
         }
 
-        // smooth failure example
-        return __CLASS__ . ' error. Oops something happend. Maybe file already exists.! Try with README.md_failure';
-    }
-
-    /**
-     * Handles only path that contains 'README.md'
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    public function handle(string $path): bool
-    {
-        return 0 === strpos($path, 'README.md');
+        // something unexpected happened !
+        // just Throw exception ( MakeOverride handle it )
+        throw new RuntimeException(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
+        // @todo Maybe add an OverriderException
     }
 }
