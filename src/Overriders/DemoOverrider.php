@@ -80,7 +80,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
         }
 
         // Case 2 : smooth failure : file already exists for example.
-        if (false === strpos($path, 'failure')) {
+        if (false !== strpos($path, 'failure')) {
             $this->setUnsuccessful();
 
             return __CLASS__ . ' error. Oops something happen' . PHP_EOL
@@ -89,7 +89,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
 
         // something unexpected happened !
         // just Throw exception ( MakeOverride handle it )
-        throw new RuntimeException(__CLASS__ . ' has failed. Try with "fop:override README.md_success" .');
+        throw new RuntimeException(__CLASS__ . ' has failed. Try with "fop:override classes/README.md_success" .');
         // @todo Maybe add an OverriderException
     }
 }
