@@ -22,15 +22,34 @@ declare(strict_types=1);
 namespace FOP\Console\Overriders;
 
 use Context;
-use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
+    /**
+     * @param string $path
+     *
+     * @return array<string>
+     */
     public function run(string $path): array
     {
         $final_path = sprintf('themes/%s/%s', $this->getThemePath(), $path);
         $fs = new Filesystem();
+        if ($fs->exists($final_path) && !$this->IsForceMode()) {
+            $this->hasIo() && $this->getIo()->comment("File already exists '$final_path'.");
+            $abort = true;
+
+            if ($this->isInteractiveMode() && $this->hasIo() && $this->getIo()->confirm('Overwrite existing file ?')) {
+                $abort = false;
+            }
+
+            if ($abort) {
+                $this->setUnsuccessful();
+
+                return ['File not created.', 'It already exists. Use --force to bypass this protection.'];
+            }
+        }
+
         $fs->copy($path, $final_path, true);
         $this->setSuccessful();
 

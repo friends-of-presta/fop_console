@@ -26,6 +26,7 @@ use FOP\Console\Overriders\OverriderInterface;
 use FOP\Console\Overriders\Provider;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -39,7 +40,8 @@ class MakeOverride extends Command
         $this
             ->setName('fop:override')
             ->setDescription('Generate a file to make an override.')
-            ->addArgument('path', InputArgument::REQUIRED, 'file to override.');
+            ->addArgument('path', InputArgument::REQUIRED, 'file to override.')
+            ->addOption('force', InputArgument::OPTIONAL, InputOption::VALUE_NONE, 'overwrite files without confirmation');
     }
 
     /**
@@ -48,11 +50,11 @@ class MakeOverride extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $path = (string)$input->getArgument('path');
+        $path = (string) $input->getArgument('path');
 
         try {
             // gather overriders
-            $overriders = $this->getOverriders($path);
+            $overriders = $this->getOverriders($path, $input->getOptions(), $io);
             if (empty($overriders)) {
                 $io->comment("No Overrider for path '$path' fails");
                 $io->comment("Looking for a demo ? try with 'classes/README.md' ...");
@@ -66,18 +68,21 @@ class MakeOverride extends Command
                 $message = $overrider->run($path);
 
                 $overrider->isSuccessful()
-                    ? array_push($success_messages, $message)
-                    : array_push($error_messages, $message);
+                    ? $success_messages += $message
+                    : $error_messages += $message;
             }
 
             // display results
             empty($success_messages) ?: $io->success($success_messages);
-            empty($error_messages)   ?: $io->warning($error_messages);
+            empty($error_messages) ?: $io->warning($error_messages);
 
             return 0;
         } catch (Exception $exception) {
-            $io->error(["Override for '$path' failed",
-                        $exception->getMessage()]);
+            $io->error(["Override for '$path' failed", $exception->getMessage()]);
+            // Caught Exception get rethrown at high verbosity (-vvv)
+            if (OutputInterface::VERBOSITY_DEBUG === $output->getVerbosity()) {
+                throw $exception;
+            }
 
             return 1;
         }
@@ -85,14 +90,16 @@ class MakeOverride extends Command
 
     /**
      * @param string $path
+     * @param array $options
+     * @param SymfonyStyle $io
      *
      * @return OverriderInterface[]
      */
-    private function getOverriders(string $path): array
+    private function getOverriders(string $path, array $options, SymfonyStyle $io): array
     {
         /** @var Provider $override_provider */
         $override_provider = $this->getContainer()->get('fop.console.overrider_provider');
 
-        return $override_provider->getOverriders($path);
+        return $override_provider->getOverriders($path, $options, $io);
     }
 }

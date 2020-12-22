@@ -19,10 +19,22 @@
 
 namespace FOP\Console\Overriders;
 
+use RuntimeException;
+use Symfony\Component\Console\Style\SymfonyStyle;
+
 class AbstractOverrider
 {
     /** @var bool */
     private $successful;
+
+    /** @var bool */
+    private $force = false;
+
+    /** @var SymfonyStyle|null */
+    private $io;
+
+    /** @var bool */
+    private $interactive_mode = false;
 
     final public function setSuccessful(): void
     {
@@ -37,5 +49,36 @@ class AbstractOverrider
     final public function isSuccessful(): bool
     {
         return $this->successful;
+    }
+
+    final public function init(bool $force, bool $no_interaction, ?SymfonyStyle $io): void
+    {
+        $this->interactive_mode = !$no_interaction;
+        $this->force = $force;
+        $this->io = $io;
+    }
+
+    final public function getIo(): SymfonyStyle
+    {
+        if (is_null($this->io)) {
+            throw new RuntimeException('Io not initialized. Init Overrider using init().');
+        }
+
+        return $this->io;
+    }
+
+    final public function IsForceMode(): bool
+    {
+        return $this->force;
+    }
+
+    final public function hasIo(): bool
+    {
+        return !is_null($this->io);
+    }
+
+    final public function isInteractiveMode(): bool
+    {
+        return $this->interactive_mode;
     }
 }

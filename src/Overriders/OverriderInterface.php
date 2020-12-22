@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace FOP\Console\Overriders;
 
 use Exception;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface OverriderInterface
 {
@@ -30,8 +31,10 @@ interface OverriderInterface
      * Creates the file(s), do the job.
      *
      * @param string $path the file or folder path to override
+     *
      * @throws Exception in case process fails : just throw an exception
-     * @return array messages.
+     *
+     * @return array<string> messages
      */
     public function run(string $path): array;
 
@@ -51,4 +54,14 @@ interface OverriderInterface
      * @return bool
      */
     public function isSuccessful(): bool;
+
+    public function init(bool $force, bool $no_interaction, ?SymfonyStyle $io): void;
+
+    public function getIo(): SymfonyStyle;
+
+    public function IsForceMode(): bool;
+
+    public function hasIo(): bool;
+
+    public function isInteractiveMode(): bool;
 }

@@ -33,7 +33,6 @@ use RuntimeException;
  * use 'classes/README.md_success' for example.
  * For other cases, see comments in source code below.
  */
-
 // using Inheritance is discouraged. Use a final class. if Inheritance is needed you will to really think about it.
 final class DemoOverrider extends AbstractOverrider implements OverriderInterface
 {
@@ -60,7 +59,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
      *
      * @param string $path
      *
-     * @return string
+     * @return array<string>
      *
      * @throws RuntimeException
      */
@@ -83,8 +82,8 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
         if (false !== strpos($path, 'failure')) {
             $this->setUnsuccessful();
 
-            return __CLASS__ . ' error. Oops something happen' . PHP_EOL
-                . 'Try with "classes/README.md_success" for another result.';
+            return ['Error. Oops something happen',
+                    'Try with "classes/README.md_success" for another result.', ];
         }
 
         // something unexpected happened !
