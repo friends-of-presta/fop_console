@@ -33,4 +33,9 @@ class AbstractOverrider
     {
         $this->successful = false;
     }
+
+    final public function isSuccessful(): bool
+    {
+        return $this->successful;
+    }
 }

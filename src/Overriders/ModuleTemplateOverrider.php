@@ -25,14 +25,14 @@ use Context;
 use Exception;
 use Symfony\Component\Filesystem\Filesystem;
 
-final class ModuleTemplateOverrider implements OverriderInterface
+final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
     public function run(string $path): array
     {
-        try {
-            $final_path = sprintf('themes/%s/%s', $this->getThemePath(), $path);
-            $fs = new Filesystem();
-            $fs->copy($path, $final_path, true);
+        $final_path = sprintf('themes/%s/%s', $this->getThemePath(), $path);
+        $fs = new Filesystem();
+        $fs->copy($path, $final_path, true);
+        $this->setSuccessful();
 
         return ["File $final_path created"];
     }
