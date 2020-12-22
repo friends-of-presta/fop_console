@@ -62,7 +62,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
      *
      * @throws RuntimeException
      */
-    public function run(string $path): string
+    public function run(string $path): array
     {
         // at this point you are sure that path is matching fnmatch('classes/*README.md*', $path)
         // handle was called as a filter before.
@@ -74,8 +74,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
         if (0 < strpos($path, 'success')) {
             $this->setSuccessful();
 
-            return __CLASS__ . ' success. File xxx created. Do something great with it!' . PHP_EOL
-                . 'Try with "classes/README.md_failure" for another result.';
+            return ['Success :) . File xxx created. Do something great with it!', 'Try with "classes/README.md_failure" for another result.'];
         }
 
         // Case 2 : smooth failure : file already exists for example.

@@ -25,17 +25,14 @@ use Symfony\Component\Filesystem\Filesystem;
 
 final class ModuleTemplateOverrider implements OverriderInterface
 {
-    public function run(string $path): string
+    public function run(string $path): array
     {
         try {
             $final_path = sprintf('themes/%s/%s', $this->getThemePath(), $path);
             $fs = new Filesystem();
             $fs->copy($path, $final_path, true);
 
-            return "File $final_path created";
-        } catch (Exception $exception) {
-            return 'An error occurred : ' . $exception->getMessage();
-        }
+        return ["File $final_path created"];
     }
 
     public function handle(string $path): bool

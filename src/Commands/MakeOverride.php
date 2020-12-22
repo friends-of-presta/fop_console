@@ -48,26 +48,36 @@ class MakeOverride extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $path = (string) $input->getArgument('path');
+        $path = (string)$input->getArgument('path');
 
         try {
+            // gather overriders
             $overriders = $this->getOverriders($path);
             if (empty($overriders)) {
                 $io->comment("No Overrider for path '$path' fails");
+                $io->comment("Looking for a demo ? try with 'classes/README.md' ...");
 
                 return 0;
             }
 
-            $messages = [];
+            // run overriders
+            $error_messages = $success_messages = [];
             foreach ($overriders as $overrider) {
-                $messages = $overrider->run($path);
+                $message = $overrider->run($path);
+
+                $overrider->isSuccessful()
+                    ? array_push($success_messages, $message)
+                    : array_push($error_messages, $message);
             }
 
-            $io->block($messages);
+            // display results
+            empty($success_messages) ?: $io->success($success_messages);
+            empty($error_messages)   ?: $io->warning($error_messages);
 
             return 0;
         } catch (Exception $exception) {
-            $io->error("Override for '$path' fails : {$exception->getMessage()}");
+            $io->error(["Override for '$path' failed",
+                        $exception->getMessage()]);
 
             return 1;
         }

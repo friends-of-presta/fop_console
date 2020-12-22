@@ -16,21 +16,24 @@
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
+declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
+use Exception;
+
 interface OverriderInterface
 {
-    /*
+    /**
      * Overrider execution.
      *
      * Creates the file(s), do the job.
      *
      * @param string $path the file or folder path to override
      * @throws Exception in case process fails : just throw an exception
-     * @return string execution message.
+     * @return array messages.
      */
-    public function run(string $path): string;
+    public function run(string $path): array;
 
     /**
      * Does the overrider handle this path ?
@@ -40,4 +43,12 @@ interface OverriderInterface
      * @return bool
      */
     public function handle(string $path): bool;
+
+    /**
+     * Was the execution successful ?
+     * Response set by run().
+     *
+     * @return bool
+     */
+    public function isSuccessful(): bool;
 }
