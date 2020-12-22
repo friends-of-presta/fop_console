@@ -17,6 +17,8 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 
+declare(strict_types=1);
+
 namespace FOP\Console\Overriders;
 
 use RuntimeException;
