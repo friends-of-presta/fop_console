@@ -21,7 +21,6 @@ declare(strict_types=1);
 namespace FOP\Console\Overriders;
 
 use Exception;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 interface OverriderInterface
 {
@@ -30,22 +29,18 @@ interface OverriderInterface
      *
      * Creates the file(s), do the job.
      *
-     * @param string $path the file or folder path to override
-     *
      * @throws Exception in case process fails : just throw an exception
      *
      * @return array<string> messages
      */
-    public function run(string $path): array;
+    public function run(): array;
 
     /**
      * Does the overrider handle this path ?
      *
-     * @param string $path
-     *
      * @return bool
      */
-    public function handle(string $path): bool;
+    public function handle(): bool;
 
     /**
      * Was the execution successful ?
@@ -55,13 +50,22 @@ interface OverriderInterface
      */
     public function isSuccessful(): bool;
 
-    public function init(bool $force, bool $no_interaction, ?SymfonyStyle $io): void;
+    /**
+     * Returns values expected :
+     * - null : nothing bad can happen.
+     * - string : description of what will happen if user confirms.
+     *   This is probably a file overwrite.
+     *   Message example : 'The file xxx will be overwritten.'
+     *
+     * If a string is returned the user will be prompted for confirmation (interactive mode only)
+     * , unless force option is defined.
+     * Otherwise, the overrider is not ran. Nothing happen.
+     *
+     * @todo Maybe returning an array is better : consistent with run(). But in fact, there will be only a single consequence...
+     *
+     * @return string|null
+     */
+    public function getDangerousConsequences(): ?string;
 
-    public function getIo(): SymfonyStyle;
-
-    public function IsForceMode(): bool;
-
-    public function hasIo(): bool;
-
-    public function isInteractiveMode(): bool;
+    public function init(string $path): void;
 }

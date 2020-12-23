@@ -27,38 +27,21 @@ use Symfony\Component\Filesystem\Filesystem;
 final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
     /**
-     * @param string $path
-     *
      * @return array<string>
      */
-    public function run(string $path): array
+    public function run(): array
     {
-        $final_path = sprintf('themes/%s/%s', $this->getThemePath(), $path);
-        $fs = new Filesystem();
-        if ($fs->exists($final_path) && !$this->IsForceMode()) {
-            $this->hasIo() && $this->getIo()->comment("File already exists '$final_path'.");
-            $abort = true;
-
-            if ($this->isInteractiveMode() && $this->hasIo() && $this->getIo()->confirm('Overwrite existing file ?')) {
-                $abort = false;
-            }
-
-            if ($abort) {
-                $this->setUnsuccessful();
-
-                return ['File not created.', 'It already exists. Use --force to bypass this protection.'];
-            }
-        }
-
-        $fs->copy($path, $final_path, true);
+        $fs = new Filesystem(); // @todo move fs in abstractOverrider ?
+        $targetPath = $this->getTargetPath();
+        $fs->copy($this->getPath(), $targetPath, true);
         $this->setSuccessful();
 
-        return ["File $final_path created"];
+        return ["File $targetPath created"];
     }
 
-    public function handle(string $path): bool
+    public function handle(): bool
     {
-        return fnmatch('modules/*/*.tpl', $path);
+        return fnmatch('modules/*/*.tpl', $this->getPath());
     }
 
     /**
@@ -68,5 +51,20 @@ final class ModuleTemplateOverrider extends AbstractOverrider implements Overrid
     {
         // @todo Maybe it's better to rely on the directory property
         return Context::getContext()->shop->theme->getName();
+    }
+
+    public function getDangerousConsequences(): ?string
+    {
+        $fs = new Filesystem();
+        if ($fs->exists($this->getTargetPath())) {
+            return "File {$this->getTargetPath()} will be overwritten.";
+        }
+
+        return null;
+    }
+
+    private function getTargetPath(): string
+    {
+        return sprintf('themes/%s/%s', $this->getThemePath(), $this->getPath());
     }
 }

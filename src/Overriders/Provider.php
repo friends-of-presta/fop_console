@@ -20,21 +20,20 @@
 namespace FOP\Console\Overriders;
 
 use Exception;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Provider
 {
     /**
      * @var array<OverriderInterface>
      */
-    private $overriders = [];
+    private $overriders;
 
     /**
      * Provider constructor.
      *
      * @param array<OverriderInterface> $overriders
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct(array $overriders)
     {
@@ -51,24 +50,21 @@ class Provider
      * Returns the overriders which handle this path.
      *
      * @param string $path
-     * @param array<mixed> $options
-     * @param SymfonyStyle $io
      *
      * @return OverriderInterface[]
      */
-    public function getOverriders(string $path, array $options, SymfonyStyle $io): array
+    public function getOverriders(string $path): array
     {
-        $overriders = array_filter($this->overriders, function ($overrider) use ($path) {return $overrider->handle($path); });
-        // initialize overrider for interaction and behaviour (overwrite file, ...)
+        $overriders = $this->overriders;
+        // initialize overriders
         array_walk(
             $overriders,
-            function (OverriderInterface &$overrider) use ($options, $io) {
-                $overrider->init(
-                    $options['force'] ?? false,
-                    $options['no-interaction'] ?? false,
-                    $io ?? null);
+            function (OverriderInterface $overrider) use ($path) {
+                $overrider->init($path);
             }
-                );
+        );
+        // just keep overriders that handle this path
+        $overriders = array_filter($overriders, function ($overrider) {return $overrider->handle(); });
 
         return $overriders;
     }

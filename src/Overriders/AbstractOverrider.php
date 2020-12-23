@@ -16,31 +16,26 @@
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
+declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
-use RuntimeException;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use LogicException;
 
-class AbstractOverrider
+abstract class AbstractOverrider implements OverriderInterface
 {
     /** @var bool */
-    private $successful;
+    private $successful = false;
 
-    /** @var bool */
-    private $force = false;
-
-    /** @var SymfonyStyle|null */
-    private $io;
-
-    /** @var bool */
-    private $interactive_mode = false;
+    /** @var ?string */
+    private $path;
 
     final public function setSuccessful(): void
     {
         $this->successful = true;
     }
 
+    // not really needed since it's false by default.
     final public function setUnsuccessful(): void
     {
         $this->successful = false;
@@ -51,34 +46,17 @@ class AbstractOverrider
         return $this->successful;
     }
 
-    final public function init(bool $force, bool $no_interaction, ?SymfonyStyle $io): void
+    final public function init(string $path): void
     {
-        $this->interactive_mode = !$no_interaction;
-        $this->force = $force;
-        $this->io = $io;
+        $this->path = $path;
     }
 
-    final public function getIo(): SymfonyStyle
+    final public function getPath(): string
     {
-        if (is_null($this->io)) {
-            throw new RuntimeException('Io not initialized. Init Overrider using init().');
+        if (is_null($this->path)) {
+            throw new LogicException('Overrider not initialized. Use ->init() before usage.');
         }
 
-        return $this->io;
-    }
-
-    final public function IsForceMode(): bool
-    {
-        return $this->force;
-    }
-
-    final public function hasIo(): bool
-    {
-        return !is_null($this->io);
-    }
-
-    final public function isInteractiveMode(): bool
-    {
-        return $this->interactive_mode;
+        return $this->path;
     }
 }
