@@ -8,6 +8,7 @@ services:
       $overriders:
         - '@fop.console.overriders.demo'
         - '@fop.console.overriders.moduletemplate'
+        - '@fop.console.overriders.class'
 
   # --- overriders ---
 
@@ -16,3 +17,6 @@ services:
 
   fop.console.overriders.moduletemplate:
     class: FOP\Console\Overriders\ModuleTemplateOverrider
+
+  fop.console.overriders.class:
+    class: FOP\Console\Overriders\ClassOverrider
