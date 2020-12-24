@@ -1,0 +1,18 @@
+services:
+
+  # overriders provider
+  # register overriders here (and define them below).
+  fop.console.overrider_provider:
+    class: FOP\Console\Overriders\Provider
+    arguments:
+      $overriders:
+        - '@fop.console.overriders.demo'
+        - '@fop.console.overriders.moduletemplate'
+
+  # --- overriders ---
+
+  fop.console.overriders.demo:
+    class: FOP\Console\Overriders\DemoOverrider
+
+  fop.console.overriders.moduletemplate:
+    class: FOP\Console\Overriders\ModuleTemplateOverrider
