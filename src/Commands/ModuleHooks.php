@@ -21,12 +21,12 @@
 namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
+use Module;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Module;
 
 class ModuleHooks extends Command
 {
@@ -54,16 +54,15 @@ class ModuleHooks extends Command
         $io = new SymfonyStyle($input, $output);
 
         if ($module = Module::getInstanceByName($moduleName)) {
-
             $possibleHooksList = $module->getPossibleHooksList();
             $moduleHooks = [];
 
             foreach ($possibleHooksList as $hook) {
-                $isHooked = (int)$module->getPosition($hook['id_hook']);
+                $isHooked = (int) $module->getPosition($hook['id_hook']);
                 if ($isHooked != 0) {
                     $moduleHooks[] = [
                         'name' => $hook['name'],
-                        'position' => $isHooked
+                        'position' => $isHooked,
                     ];
                 }
             }
@@ -81,6 +80,7 @@ class ModuleHooks extends Command
             }
         } else {
             $io->error('Error the module ' . $moduleName . ' doesn\'t exists');
+
             return 1;
         }
     }
