@@ -30,6 +30,11 @@ abstract class AbstractOverrider implements OverriderInterface
     /** @var ?string */
     private $path;
 
+    /**
+     * @var array<string>
+     */
+    private $methods;
+
     final public function setSuccessful(): void
     {
         $this->successful = true;
@@ -46,9 +51,14 @@ abstract class AbstractOverrider implements OverriderInterface
         return $this->successful;
     }
 
-    final public function init(string $path): void
+    /**
+     * @param string $path
+     * @param array<string> $methods
+     */
+    final public function init(string $path, array $methods = []): void
     {
         $this->path = $path;
+        $this->methods = $methods;
     }
 
     final public function getPath(): string
@@ -58,5 +68,13 @@ abstract class AbstractOverrider implements OverriderInterface
         }
 
         return $this->path;
+    }
+
+    /**
+     * @return array<string>
+     */
+    final public function getMethods(): array
+    {
+        return $this->methods;
     }
 }

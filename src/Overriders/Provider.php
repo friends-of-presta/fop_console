@@ -50,17 +50,18 @@ class Provider
      * Returns the overriders which handle this path.
      *
      * @param string $path
+     * @param array<string> $methods
      *
      * @return OverriderInterface[]
      */
-    public function getOverriders(string $path): array
+    public function getOverriders(string $path, array $methods): array
     {
         $overriders = $this->overriders;
         // initialize overriders
         array_walk(
             $overriders,
-            function (OverriderInterface $overrider) use ($path) {
-                $overrider->init($path);
+            function (OverriderInterface $overrider) use ($path, $methods) {
+                $overrider->init($path, $methods);
             }
         );
         // just keep overriders that handle this path
