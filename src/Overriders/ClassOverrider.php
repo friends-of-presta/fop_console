@@ -7,7 +7,6 @@ namespace FOP\Console\Overriders;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 use Laminas\Code\Reflection\ClassReflection;
-use Symfony\Component\Filesystem\Filesystem;
 
 class ClassOverrider extends AbstractOverrider implements OverriderInterface
 {
@@ -16,7 +15,6 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
      */
     public function run(): array
     {
-        $fs = new Filesystem();
         $success_messages = [];
 
         // maybe this code could be improved ...
@@ -28,7 +26,7 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
         // re push already added methods
         $override_class_generator->addMethods($core_class_reflection->getMethods());
 
-        if (!$fs->exists($this->getTargetPath())) {
+        if (!$this->fs->exists($this->getTargetPath())) {
             // success messages are pushed before action :/
             // not really a problem but may lead to false positives returns in the future
             // @todo can you improve it ?
@@ -54,7 +52,7 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
         // Create the file with the class
         $fileGenerator = new FileGenerator();
         $fileGenerator->setClass($override_class_generator);
-        $fs->dumpFile($this->getTargetPath(), $fileGenerator->generate());
+        $this->fs->dumpFile($this->getTargetPath(), $fileGenerator->generate());
 
         // required otherwise generator will consider the class in the stub instead of the one in the override dir.
         \Tools::generateIndex();
