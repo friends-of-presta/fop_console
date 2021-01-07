@@ -33,7 +33,7 @@ class ModuleHooks extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:module:hooks')
@@ -50,10 +50,10 @@ class ModuleHooks extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $moduleName = $input->getArgument('name');
+        $moduleName = (string) $input->getArgument('name');  /** @phpstan-ignore-line */
         $io = new SymfonyStyle($input, $output);
 
-        if ($module = Module::getInstanceByName($moduleName)) {
+        if ($module = Module::getInstanceByName($moduleName)) { /** @phpstan-ignore-line */
             $possibleHooksList = $module->getPossibleHooksList();
             $moduleHooks = [];
 
@@ -78,10 +78,12 @@ class ModuleHooks extends Command
             } else {
                 $io->title('The module is not hooked to any hook');
             }
+
+            return 1;
         } else {
             $io->error('Error the module ' . $moduleName . ' doesn\'t exists');
 
-            return 1;
+            return 0;
         }
     }
 }
