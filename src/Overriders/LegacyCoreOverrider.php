@@ -8,7 +8,7 @@ use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 use Laminas\Code\Reflection\ClassReflection;
 
-class ClassOverrider extends AbstractOverrider implements OverriderInterface
+class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterface
 {
     /**
      * {@inheritDoc}
@@ -56,7 +56,6 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
 
         // required otherwise generator will consider the class in the stub instead of the one in the override dir.
         \Tools::generateIndex();
-
         $this->setSuccessful();
 
         return $success_messages;
@@ -67,7 +66,7 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
      */
     public function handle(): bool
     {
-        return fnmatch('classes/**.php', $this->getPath());
+        return fnmatch('*classes/**.php', $this->getPath()) || fnmatch('*controllers/**.php', $this->getPath());
     }
 
     /**
@@ -88,8 +87,16 @@ class ClassOverrider extends AbstractOverrider implements OverriderInterface
 
     private function getTargetPath(): string
     {
-        // after 'classes/' included - probably ready to handle absolute paths
-        $file_and_folder = substr($this->getPath(), (int) strrpos('classes/', $this->getPath()));
+        // after 'classes/' or 'controllers' (included) - probably ready to handle absolute paths
+        $relative_path_start = strrpos($this->getPath(), 'classes/');
+        $relative_path_start = false !== $relative_path_start
+            ? $relative_path_start
+            : strrpos($this->getPath(), 'controllers/');
+        if (false === $relative_path_start) {
+            throw new \Exception('no "classes/" or "controllers/" found in path.');
+        }
+
+        $file_and_folder = substr($this->getPath(), (int) $relative_path_start);
 
         return sprintf('override/%s', $file_and_folder);
     }

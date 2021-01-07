@@ -4,11 +4,12 @@ services:
   # register overriders here (and define them below).
   fop.console.overrider_provider:
     class: FOP\Console\Overriders\Provider
+    public: true
     arguments:
       $overriders:
         - '@fop.console.overriders.demo'
         - '@fop.console.overriders.moduletemplate'
-        - '@fop.console.overriders.class'
+        - '@fop.console.overriders.legacy_core'
 
   # --- overriders ---
 
@@ -18,5 +19,5 @@ services:
   fop.console.overriders.moduletemplate:
     class: FOP\Console\Overriders\ModuleTemplateOverrider
 
-  fop.console.overriders.class:
-    class: FOP\Console\Overriders\ClassOverrider
+  fop.console.overriders.legacy_core:
+    class: FOP\Console\Overriders\LegacyCoreOverrider
