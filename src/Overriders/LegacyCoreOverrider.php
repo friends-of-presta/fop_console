@@ -17,6 +17,12 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
     {
         $success_messages = [];
 
+        if ($this->fs->exists($this->getTargetPath()) && empty($this->getMethods())) {
+            // $this->setSuccessful(); // @todo not really a success but not really a failure ...
+            return ["File {$this->getTargetPath()} untouched." . PHP_EOL
+                . 'It already exists and no method argument was provided', ];
+        }
+
         // maybe this code could be improved ...
         $core_class_generator = ClassGenerator::fromReflection(new ClassReflection($this->getCoreClassName())); /* @phpstan-ignore-line */
         // Laminas doctype is malformed, so /* @phpstan-ignore-line */ is required.
