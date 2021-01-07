@@ -48,7 +48,7 @@ class ModuleHooks extends Command
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $moduleName = (string) $input->getArgument('name');  /** @phpstan-ignore-line */
         $io = new SymfonyStyle($input, $output);
