@@ -79,11 +79,11 @@ class ModuleHooks extends Command
                 $io->title('The module is not hooked to any hook');
             }
 
-            return 1;
+            return 0;
         } else {
             $io->error('Error the module ' . $moduleName . ' doesn\'t exists');
 
-            return 0;
+            return 1;
         }
     }
 }
