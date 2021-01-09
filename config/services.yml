@@ -111,5 +111,8 @@ services:
 
   fop.console.customers.groups.command:
     class: FOP\Console\Commands\Customers\CustomersGroups
+
+  fop.console.configuration.export:
+    class: FOP\Console\Commands\Configuration\Export
     tags:
       - { name: console.command }
