@@ -103,3 +103,8 @@ services:
     class: FOP\Console\Commands\Configuration\Export
     tags:
       - { name: console.command }
+
+  fop.console.configuration.import:
+    class: FOP\Console\Commands\Configuration\Import
+    tags:
+      - { name: console.command }
