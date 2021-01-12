@@ -14,7 +14,8 @@
     }
   },
   "require": {
-    "php": "7.2 - 7.3"
+    "php": "^7.1",
+    "ext-json": "*"
   },
   "config": {
     "prepend-autoloader": false
