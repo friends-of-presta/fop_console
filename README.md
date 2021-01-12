@@ -44,6 +44,8 @@ php bin/console pr:mo install fop_console
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
 * `fop:dev:setup-env`: Setup your local environnement for development
 * `fop:customer-groups`: Move or add in bulk clients from one group client to another
+* `fop:configuration:export` Export configuration values to a json file
+* `fop:configuration:import` Import configuration values from a json file
 
 ## Create your owns Commands
 
