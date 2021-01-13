@@ -70,7 +70,7 @@ final class CustomersGroups extends Command
         $optionsGroupTo = $this->getQuestionsOptions('optionsGroupTo');
 
         if (count($optionsGroupFrom) <= 1) {
-            $output->writeln('<error>command aborted</error>');
+            $output->writeln('<error>command aborted : at least 2 groups and 1 customer are required.</error>');
 
             return self::FAILURE;
         }
@@ -214,7 +214,7 @@ final class CustomersGroups extends Command
                 $groupFrom->delete();
             } catch (\Exception $e) {
                 $output->writeln(
-                    '<error> 
+                    '<error>
                         An error has occurred when try to delete group ' . $this->getGroupName($groupFrom->id) . ' : ' . $e->getMessage() .
                     '</error>'
                 );
@@ -312,9 +312,9 @@ final class CustomersGroups extends Command
 
         $questionConfirm = new ConfirmationQuestion(
             '<question>
-                This action will move the customers from group (' . $groupFromName . ') into group (' . $groupToName . ') and 
-                ' . $selectedActionValue . '. 
-                Continue with this action? (Y/N) : 
+                This action will move the customers from group (' . $groupFromName . ') into group (' . $groupToName . ') and
+                ' . $selectedActionValue . '.
+                Continue with this action? (Y/N) :
             </question>',
             false,
             '/^(y|Y)/i'
