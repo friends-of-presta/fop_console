@@ -50,7 +50,7 @@ to extends our class.
 // if the command is located at src/Commands
 namespace FOP\Console\Commands; 
 // or if command is located in a subfolder
-namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration;xample if command
+namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration
 
 use FOP\Console\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
