@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Configuration;
 
+use DbQuery;
 use FOP\Console\Command;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,7 +22,11 @@ final class Export extends Command
     {
         $this->setName('fop:configuration:export')
             ->setDescription('Export configuration values')
-            ->setHelp('Dump configuration to a json file.')
+            ->setHelp(
+                'Dump configuration(s) to a json file.'
+                . PHP_EOL . 'Exported file can later be used to import values, using configuration:import command.'
+                . PHP_EOL . '<keys> are configuration names, "PS_LANG_DEFAULT" for example, multiple keys can be provided.'
+                . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.')
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'file to dump to', self::PS_CONFIGURATIONS_FILE)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file')
             ->addArgument('keys', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'configuration values to export');
@@ -52,6 +57,12 @@ final class Export extends Command
         // or event create an empty configuration value ?
         $to_export = [];
         foreach ($configuration_keys as $key) {
+            // keys to query with a 'like' syntaxe from db
+            if (false !== strpos($key, '%')) {
+                $to_export = array_merge($to_export, $this->queryConfigurationsLike($key));
+                continue;
+            }
+
             if (!$configuration_service->has($key)) {
                 $io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
                 continue;
@@ -78,5 +89,31 @@ final class Export extends Command
         $io->success("configuration(s) dumped to file '{$output_file}'");
 
         return 1;
+    }
+
+    /**
+     * @param string $key_like_term
+     *
+     * @return array [name => value, ...]
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function queryConfigurationsLike(string $key_like_term): array
+    {
+        $query = new DbQuery(); // @todo sup Core
+        $query->select('name, value')
+        ->from('configuration')
+        ->where(sprintf('name LIKE "%s"', $key_like_term));
+
+//        $db = $this->getContainer()->get('prestashop.adapter.legacy_db'); // not on ps 1.7.5
+        $db = \Db::getInstance();
+        $r = $db->executeS($query);
+        if (false === $r) {
+            dump($query->build(), $db->getMsgError());
+            throw new \Exception('sql query error : see dump above.');
+        }
+
+        return array_combine(array_column($r, 'name'), array_column($r, 'value'));
     }
 }
