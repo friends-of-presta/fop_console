@@ -9,3 +9,4 @@ parameters:
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+  - %currentWorkingDirectory%/.devtools/myextension.neon
