@@ -23,6 +23,7 @@ final class Export extends Command
             ->setDescription('Export configuration values')
             ->setHelp('Dump configuration to a json file.')
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'file to dump to', self::PS_CONFIGURATIONS_FILE)
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file')
             ->addArgument('keys', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'configuration values to export');
     }
 
@@ -30,6 +31,18 @@ final class Export extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $configuration_keys = (array) $input->getArgument('keys');
+        $output_file = $input->getOption('file');
+        $force_mode = $input->getOption('force');
+        $fs = new Filesystem();
+
+        if ($fs->exists($output_file)
+            && !$force_mode
+            && !$io->confirm('Overwrite ' . self::PS_CONFIGURATIONS_FILE . ' ?', false)
+        ) {
+            $io->comment($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
+
+            return 0;
+        }
 
         /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
         $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
@@ -59,10 +72,10 @@ final class Export extends Command
         // @todo : dump to stdout if on file provided or dump to a default file ?
         // dump to a default file and add std output option
         $fs = new Filesystem();
-        $fs->dumpFile($input->getOption('file'), $json_export);
+        $fs->dumpFile($output_file, $json_export);
 
         // @todo list dumped configurations if verbose mode
-        $io->success("configuration(s) dumped to file '{$input->getOption('file')}'");
+        $io->success("configuration(s) dumped to file '{$output_file}'");
 
         return 1;
     }
