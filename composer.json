@@ -11,7 +11,8 @@
   "autoload": {
     "psr-4": {
       "FOP\\Console\\": "src/"
-    }
+    },
+    "classmap": [".devtools/"]
   },
   "autoload-dev": {
     "psr-4": {
