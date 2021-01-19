@@ -10,6 +10,7 @@ services:
         - '@fop.console.overriders.demo'
         - '@fop.console.overriders.moduletemplate'
         - '@fop.console.overriders.legacy_core'
+        - '@fop.console.overriders.module'
 
   # --- overriders ---
 
@@ -21,3 +22,6 @@ services:
 
   fop.console.overriders.legacy_core:
     class: FOP\Console\Overriders\LegacyCoreOverrider
+
+  fop.console.overriders.module:
+    class: FOP\Console\Overriders\ModuleOverrider
