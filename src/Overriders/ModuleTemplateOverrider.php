@@ -22,7 +22,6 @@ declare(strict_types=1);
 namespace FOP\Console\Overriders;
 
 use Context;
-use Symfony\Component\Filesystem\Filesystem;
 
 final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
@@ -31,9 +30,8 @@ final class ModuleTemplateOverrider extends AbstractOverrider implements Overrid
      */
     public function run(): array
     {
-        $fs = new Filesystem(); // @todo move fs in abstractOverrider ?
         $targetPath = $this->getTargetPath();
-        $fs->copy($this->getPath(), $targetPath, true);
+        $this->fs->copy($this->getPath(), $targetPath, true);
         $this->setSuccessful();
 
         return ["File $targetPath created"];
@@ -55,8 +53,7 @@ final class ModuleTemplateOverrider extends AbstractOverrider implements Overrid
 
     public function getDangerousConsequences(): ?string
     {
-        $fs = new Filesystem();
-        if ($fs->exists($this->getTargetPath())) {
+        if ($this->fs->exists($this->getTargetPath())) {
             return "File {$this->getTargetPath()} will be overwritten.";
         }
 
