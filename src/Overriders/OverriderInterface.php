@@ -29,9 +29,11 @@ interface OverriderInterface
      *
      * Creates the file(s), do the job.
      *
-     * @throws Exception in case process fails : just throw an exception
+     * @throws Exception in case of hard fail. In case of soft fails just return message(s)
      *
-     * @return array<string> messages
+     * @see isSuccessful()
+     *
+     * @return array<string> messages. Error or success messages depends on $this->isSuccessful()
      */
     public function run(): array;
 

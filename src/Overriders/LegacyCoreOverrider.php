@@ -25,7 +25,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
 
         // maybe this code could be improved ...
         $core_class_generator = ClassGenerator::fromReflection(new ClassReflection($this->getCoreClassName())); /* @phpstan-ignore-line */
-        // Laminas doctype is malformed, so /* @phpstan-ignore-line */ is required.
+        // Laminas doctype is not correct for phpstan, so /* @phpstan-ignore-line */ is required.
         $core_class_reflection = new ClassReflection($this->getClassName()); /* @phpstan-ignore-line */
         $override_class_generator = ClassGenerator::fromReflection($core_class_reflection);
 
@@ -97,7 +97,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
         $relative_path_start = strrpos($this->getPath(), 'classes/');
         $relative_path_start = false !== $relative_path_start
             ? $relative_path_start
-            : strrpos($this->getPath(), 'controllers/');
+            : strrpos($this->getPath(), 'controllers/'); // @todo not ready to handle absolute path for classes
         if (false === $relative_path_start) {
             throw new \Exception('no "classes/" or "controllers/" found in path.');
         }

@@ -28,7 +28,10 @@ abstract class AbstractOverrider implements OverriderInterface
     /** @var bool */
     private $successful = false;
 
-    /** @var ?string */
+    /**
+     * @var ?string Path to override, provided as argument on command line
+     *              e.g. classes/Cart.php , controllers/HomeController.php
+     */
     private $path;
 
     /**
@@ -68,6 +71,9 @@ abstract class AbstractOverrider implements OverriderInterface
         $this->fs = new Filesystem();
     }
 
+    /**
+     * @return string source path to override
+     */
     final public function getPath(): string
     {
         if (is_null($this->path)) {
@@ -81,7 +87,7 @@ abstract class AbstractOverrider implements OverriderInterface
     }
 
     /**
-     * @return array<string>
+     * @return array<string> methods to implement in the override
      */
     final public function getMethods(): array
     {
