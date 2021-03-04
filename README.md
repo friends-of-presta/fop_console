@@ -5,13 +5,19 @@ of useful commands that you can use and reuse for learning purposes.
 
 This module is released under AFL license.
 
-## Install
+## Install from release
+Donwload the zip release and install it like any other module.
+
+## Install from sources
 
 ```
 cd modules 
 git clone https://github.com/friends-of-presta/fop_console.git
 cd fop_console
 composer install
+```
+Install the module in the backoffice or in command line like this :
+```
 cd ../../
 php bin/console pr:mo install fop_console
 ```
