@@ -17,26 +17,38 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 
-namespace FOP\Console;
+namespace FOP\Console\Commands;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Tools;
 
-/**
- * Symfony Command class for PrestaShop allowed to rely on legacy classes
- */
-abstract class Command extends ContainerAwareCommand
+class GenerateHtaccess extends Command
 {
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure()
     {
-        $container = $this->getContainer();
-        $commandDefinition = $this->getDefinition();
-        $commandDefinition->addOption(new InputOption('employee', '-em', InputOption::VALUE_REQUIRED, 'Specify employee context (id).', null));
+        $this
+            ->setName('fop:generate:htaccess')
+            ->setDescription('Generate the .htaccess file');
+    }
 
-        $container->get('fop.console.console_loader')->loadConsoleContext($input);
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $io = new SymfonyStyle($input, $output);
+        if (true === Tools::generateHtaccess()) {
+            $io->success('htaccess file generated with success');
+        } else {
+            $io->error('An error occurs while generating .htaccess file');
 
-        return parent::initialize($input, $output);
+            return 1;
+        }
     }
 }

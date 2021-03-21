@@ -16,23 +16,11 @@
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
-require_once 'vendor/autoload.php';
 
-class Fop_Console extends Module
+namespace FOP\Console\Commands\Images;
+
+class GenerateProducts extends GenerateAbstract
 {
-    public function __construct()
-    {
-        $this->name = 'fop_console';
-        $this->version = '1.1.0';
-        $this->author = 'Friends of Presta';
-
-        parent::__construct();
-
-        $this->displayName = 'FoP Console';
-        $this->description = $this->l('Set of command lines to perform daily or heavy tasks.');
-        $this->ps_versions_compliancy = [
-            'min' => '1.7.5.0',
-            'max' => _PS_VERSION_,
-        ];
-    }
+    /** @var type string */
+    const IMAGE_TYPE = 'products';
 }
