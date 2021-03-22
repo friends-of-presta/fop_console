@@ -36,6 +36,7 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
+* `fop:install-env-for-dev`: Setup developpement environnement (change url in database, set ssl, change customer password, change employee password, regenerate htaccess)
 
 ## Create your owns Commands
 
