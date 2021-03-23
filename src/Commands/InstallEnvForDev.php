@@ -35,12 +35,12 @@ class InstallEnvForDev extends Command
             ->setDescription('Install your project for local developement')
             ->setHelp('This command database configuration with dev parameters (url,ssl)');
         $this->addUsage('--url=[url]');
-        $this->addUsage('--ssl=[TRUE or FALSE]');
-        $this->addUsage('--is_shop specify shop id ');
+        $this->addUsage('--ssl');
+        $this->addUsage('--id_shop specify shop id ');
         $this->addUsage('--modifyemployeepwd to change all employees password');
         $this->addUsage('--modifycustomerpwd to change all customers password');
         $this->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'url to set');
-        $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl? default false');
+        $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?');
         $this->addOption('modifyemployeepwd', 'mep', InputOption::VALUE_OPTIONAL, 'Modify all employee BO password', false);
         $this->addOption('modifycustomerpwd', 'mcp', InputOption::VALUE_OPTIONAL, 'Modify all customers password', false);
     }
@@ -53,8 +53,6 @@ class InstallEnvForDev extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        dump($input->getOptions());
-        dump($input->getArguments());
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
         $dbi = \Db::getInstance();
@@ -118,7 +116,15 @@ class InstallEnvForDev extends Command
         $io->text('<info>Active debug mode</info>');
         $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
         $debugMode->enable();
-
+        
+        //Disable maintenance mode
+        $io->text('<info>Disable maintenance mode</info>');
+        $mc = $this->getContainer()->get('prestashop.adapter.maintenance.configuration');
+        $maintenanceConf = $mc->getConfiguration();
+        $maintenanceConf['enable_shop'] = false;
+        $mc->updateConfiguration($maintenanceConf);
+        
+        
         //cache off
         $io->text('<info>Disable cache</info>');
 
