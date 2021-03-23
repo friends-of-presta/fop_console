@@ -103,3 +103,8 @@ services:
     class: FOP\Console\Commands\ThemeResetLayout
     tags:
       - { name: console.command }
+
+  fop.console.install-env-for-dev:
+    class: FOP\Console\Commands\InstallEnvForDev
+    tags:
+      - { name: console.command }
