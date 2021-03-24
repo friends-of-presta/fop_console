@@ -121,7 +121,7 @@ class InstallEnvForDev extends Command
         $io->text('<info>Disable maintenance mode</info>');
         $mc = $this->getContainer()->get('prestashop.adapter.maintenance.configuration');
         $maintenanceConf = $mc->getConfiguration();
-        $maintenanceConf['enable_shop'] = false;
+        $maintenanceConf['enable_shop'] = true;
         $mc->updateConfiguration($maintenanceConf);
 
         //cache off
@@ -156,8 +156,8 @@ class InstallEnvForDev extends Command
 
         //Clear all cache
         $io->text('<info>Clear all cache</info>');
-        $cacheClearChain = $this->getContainer()->get('prestashop.core.cache.clearer.cache_clearer_chain');
-        $cacheClearChain->clear();
+        $cacheClearChain = $this->getContainer()->get('prestashop.adapter.cache_clearer');
+        $cacheClearChain->clearAllCaches();
 
         if (!$res) {
             //If error ROLLBACK sql update
