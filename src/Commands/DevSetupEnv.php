@@ -27,11 +27,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class InstallEnvForDev extends Command
+class DevSetupEnv extends Command
 {
     protected function configure()
     {
-        $this->setName('fop:install-env-for-dev')
+        $this->setName('fop:dev:setup-env')
             ->setDescription('Install your project for local developement')
             ->setHelp('This command database configuration with dev parameters (url,ssl)');
         $this->addUsage('--url=[url]');
