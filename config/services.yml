@@ -104,7 +104,7 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.install-env-for-dev:
-    class: FOP\Console\Commands\InstallEnvForDev
+  fop.console.dev_setup_env.command:
+    class: FOP\Console\Commands\DevSetupEnv
     tags:
       - { name: console.command }

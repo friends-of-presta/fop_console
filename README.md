@@ -42,7 +42,7 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
-* `fop:install-env-for-dev`: Setup your local environnement for development
+* `fop:dev:setup-env`: Setup your local environnement for development
 ## Create your owns Commands
 
 The official documentation from PrestaShop and Symfony Core teams are still right, but you needs
