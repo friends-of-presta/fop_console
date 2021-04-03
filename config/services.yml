@@ -103,3 +103,10 @@ services:
     class: FOP\Console\Commands\ThemeResetLayout
     tags:
       - { name: console.command }
+
+  fop.console.optimize_integrity.command:
+    class: FOP\Console\Commands\Optimize\DataIntegrityOptimizer
+    arguments:
+      $moduleManager: '@prestashop.module.manager'
+    tags:
+      - { name: console.command }
