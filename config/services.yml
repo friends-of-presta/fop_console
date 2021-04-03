@@ -103,3 +103,8 @@ services:
     class: FOP\Console\Commands\ThemeResetLayout
     tags:
       - { name: console.command }
+
+  fop.console.optimize_cart.command:
+    class: FOP\Console\Commands\Optimize\CartOptimizer
+    tags:
+      - { name: console.command }
