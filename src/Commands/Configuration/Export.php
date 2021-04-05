@@ -59,9 +59,6 @@ final class Export extends Command
         /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
         $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
 
-        // @todo what to do if configuration key not found ?
-        // for the moment let's emit a simple warning. (throw an error is better ?)
-        // or event create an empty configuration value ?
         $to_export = [];
         foreach ($configuration_keys as $key) {
             // keys to query with a 'like' syntaxe from db
