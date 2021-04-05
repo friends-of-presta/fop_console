@@ -94,7 +94,7 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.make_override.command:
+  fop.console.override.make.command:
     class: FOP\Console\Commands\MakeOverride
     tags:
       - { name: console.command }

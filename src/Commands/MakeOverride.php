@@ -38,7 +38,7 @@ class MakeOverride extends Command
     protected function configure(): void
     {
         $this
-            ->setName('fop:override')
+            ->setName('fop:override:make')
             ->setDescription('Generate a file to make an override.')
             ->addArgument('path', InputArgument::REQUIRED, 'file to override.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'overwrite files without confirmation');
