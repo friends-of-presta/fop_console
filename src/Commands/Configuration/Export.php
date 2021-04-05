@@ -76,18 +76,13 @@ final class Export extends Command
         }
 
         $json_export = json_encode($to_export, JSON_PRETTY_PRINT);
-        if (false === $json_export) { // useless ?
-            if ($io->isVeryVerbose()) {
-                $io->writeln('$to_export:');
-                dump($to_export);
-            }
+        if (false === $json_export) {
             throw new RuntimeException('Failed to json encode configuration');
         }
 
         $fs = new Filesystem();
         $fs->dumpFile($output_file, $json_export);
 
-        // @todo list dumped configurations if verbose mode
         $io->success("configuration(s) dumped to file '{$output_file}'");
 
         return 1;
