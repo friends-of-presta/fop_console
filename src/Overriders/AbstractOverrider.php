@@ -35,11 +35,6 @@ abstract class AbstractOverrider implements OverriderInterface
     private $path;
 
     /**
-     * @var array<string>
-     */
-    private $methods;
-
-    /**
      * @var Filesystem
      */
     protected $fs;
@@ -60,14 +55,9 @@ abstract class AbstractOverrider implements OverriderInterface
         return $this->successful;
     }
 
-    /**
-     * @param string $path
-     * @param array<string> $methods
-     */
-    final public function init(string $path, array $methods = []): void
+    final public function init(string $path): void
     {
         $this->path = $path;
-        $this->methods = $methods;
         $this->fs = new Filesystem();
     }
 
@@ -84,13 +74,5 @@ abstract class AbstractOverrider implements OverriderInterface
         }
 
         return $this->path;
-    }
-
-    /**
-     * @return array<string> methods to implement in the override
-     */
-    final public function getMethods(): array
-    {
-        return $this->methods;
     }
 }

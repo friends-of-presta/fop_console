@@ -41,7 +41,6 @@ class MakeOverride extends Command
             ->setName('fop:override')
             ->setDescription('Generate a file to make an override.')
             ->addArgument('path', InputArgument::REQUIRED, 'file to override.')
-            ->addOption('method', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'method(s) to overwrite.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'overwrite files without confirmation');
     }
 
@@ -52,12 +51,10 @@ class MakeOverride extends Command
     {
         $io = new SymfonyStyle($input, $output);
         $path = (string) $input->getArgument('path'); /* @phpstan-ignore-line */
-        $methods = $input->getOption('method') ?: [];
 
         try {
             // gather overriders
-            $overriders = $this->getOverriders($path, $methods); /* @phpstan-ignore-line */
-            // no overriders found
+            $overriders = $this->getOverriders($path);
             if (empty($overriders)) {
                 $io->comment("No Overrider for path '$path' fails");
                 $io->comment("Looking for a demo ? try with 'classes/README.md' ...");
@@ -103,15 +100,14 @@ class MakeOverride extends Command
 
     /**
      * @param string $path
-     * @param array<string> $methods
      *
      * @return OverriderInterface[]
      */
-    private function getOverriders(string $path, array $methods = []): array
+    private function getOverriders(string $path): array
     {
         /** @var Provider $override_provider */
         $override_provider = $this->getContainer()->get('fop.console.overrider_provider');
 
-        return $override_provider->getOverriders($path, $methods);
+        return $override_provider->getOverriders($path);
     }
 }

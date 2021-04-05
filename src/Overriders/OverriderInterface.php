@@ -69,9 +69,5 @@ interface OverriderInterface
      */
     public function getDangerousConsequences(): ?string;
 
-    /**
-     * @param string $path
-     * @param array<string> $methods
-     */
-    public function init(string $path, array $methods = []): void;
+    public function init(string $path): void;
 }
