@@ -21,12 +21,19 @@ final class Export extends Command
     protected function configure(): void
     {
         $this->setName('fop:configuration:export')
-            ->setDescription('Export configuration values')
+            ->setDescription('Export configuration values (from ps_configuration table).')
             ->setHelp(
                 'Dump configuration(s) to a json file.'
                 . PHP_EOL . 'Exported file can later be used to import values, using configuration:import command.'
                 . PHP_EOL . '<keys> are configuration names, "PS_LANG_DEFAULT" for example, multiple keys can be provided.'
-                . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.')
+                . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.'
+                . PHP_EOL . PHP_EOL . 'This command is not multishop, neither multilang.'
+                . PHP_EOL . PHP_EOL . 'Examples :'
+                . PHP_EOL . 'dump one value : <info>./bin/console fop:configuration:export PS_COUNTRY_DEFAULT</info>'
+                . PHP_EOL . 'dump multiples values : <info>./bin/console fop:configuration:export PS_COMBINATION_FEATURE_ACTIVE PS_CUSTOMIZATION_FEATURE_ACTIVE PS_FEATURE_FEATURE_ACTIVE
+</info>'
+                . PHP_EOL . 'dump multiples values using mysql "like" syntax : <info>./bin/console fop:configuration:export --file configuration_blocksocial.json BLOCKSOCIAL_%</info>'
+            )
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'file to dump to', self::PS_CONFIGURATIONS_FILE)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file')
             ->addArgument('keys', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'configuration values to export');
