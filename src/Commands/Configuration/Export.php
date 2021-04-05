@@ -84,8 +84,6 @@ final class Export extends Command
             throw new RuntimeException('Failed to json encode configuration');
         }
 
-        // @todo : dump to stdout if on file provided or dump to a default file ?
-        // dump to a default file and add std output option
         $fs = new Filesystem();
         $fs->dumpFile($output_file, $json_export);
 
