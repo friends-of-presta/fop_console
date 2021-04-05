@@ -40,6 +40,24 @@ class MakeOverride extends Command
         $this
             ->setName('fop:override:make')
             ->setDescription('Generate a file to make an override.')
+            ->setHelp('This command provides a quick way to generate on override.'
+                . PHP_EOL . 'Just provide the path of the file to override.'
+
+                . PHP_EOL . PHP_EOL . 'Examples : '
+                . PHP_EOL . '* Override a legacy class or controller :'
+                . PHP_EOL . '  <info>./bin/console fop:override:make classes/Link.php </info>'
+                . PHP_EOL . '  It creates a file <comment>override/classes/Link.php</comment> with the right class name and parent <comment>class Link extends LinkCore {}</comment>'
+
+                . PHP_EOL . PHP_EOL . '* Override a module :'
+                . PHP_EOL . '  <info>./bin/console fop:override:make modules/ps_searchbar/ps_searchbar.php</info>'
+                . PHP_EOL . '  It creates a file <comment>override/modules/ps_searchbar/ps_searchbar.php</comment> with <comment>class ps_searchbarOverride extends ps_searchbar {}</comment>'
+
+                . PHP_EOL . PHP_EOL . '* Override a module template :'
+                . PHP_EOL . '  <info>./bin/console fop:override:make modules/ps_searchbar/ps_searchbar.tpl </info>'
+                . PHP_EOL . '  It creates a copy of source file in the current theme : <comment>themes/classic/modules/ps_searchbar/ps_searchbar.tpl</comment>'
+
+                . PHP_EOL . PHP_EOL . ' need more ? need to override symfony services and objects ? Go contribute : https://github.com/friends-of-presta/fop_console/'
+            )
             ->addArgument('path', InputArgument::REQUIRED, 'file to override.')
             ->addOption('force', null, InputOption::VALUE_NONE, 'overwrite files without confirmation');
     }
