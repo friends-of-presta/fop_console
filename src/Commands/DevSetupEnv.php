@@ -21,7 +21,6 @@ namespace FOP\Console\Commands;
 
 use FOP\Console\Command;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,22 +33,22 @@ class DevSetupEnv extends Command
      * @var SymfonyStyle
      */
     protected $io;
-    
+
     /**
      * @var mixed
      */
     protected $helper;
-    
+
     /**
      * @var \Db
      */
     protected $dbi;
-    
+
     /**
      * @var Hashing
      */
     protected $crypto;
-    
+
     protected function configure()
     {
         $this->setName('fop:dev:setup-env')
@@ -58,7 +57,7 @@ class DevSetupEnv extends Command
                         '<info>How to use : </info>' . PHP_EOL .
                         '  <info>php bin/console fop:dev:setup-env --url=url.local --modifyemployeepwd=1 --modifycustomerpwd=1 --employeepwd=fopisnice --customerpwd=fopisnice --ssl=0</info>'
                         );
-            
+
         $this->addUsage('--url=[url]');
         $this->addUsage('--ssl ssl option ');
         $this->addUsage('--id_shop specify shop id ');
@@ -86,27 +85,27 @@ class DevSetupEnv extends Command
         $this->helper = $this->getHelper('question');
         $this->dbi = \Db::getInstance();
         $this->crypto = new Hashing();
-        
+
         $res = true;
-    
+
         if ($input->getOption('verbose')) {
             dump($input->getOptions());
             dump($input->getArguments());
-            
+
             //dump($input->getArguments());
         }
         //START MYSQL TRANSACTION
         $this->dbi->execute('START TRANSACTION');
-        
+
         //Get options value
         $ssl = (bool) $input->getOption('ssl');
         $url = $input->getOption('url') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the url you want for your env</question>'));
         $idShop = (int) $input->getOption('id_shop');
         $modifyemployeepwd = (bool) $input->getOption('modifyemployeepwd');
         $modifycustomerpwd = (bool) $input->getOption('modifycustomerpwd');
-        
+
         $this->io->text('<info>Update table ps_configuration</info>');
-    
+
         //URL configuration
         $res = $res && $this->updateUrlConfiguration($idShop, $url);
 
@@ -124,9 +123,9 @@ class DevSetupEnv extends Command
 
         //Change Employee BO pwd
         if ($modifyemployeepwd) {
-            $this->updateEmployessPwd($input, $output);
+            $this->updateEmployeesPwd($input, $output);
         }
-    
+
         //Change all customer pwd
         if ($modifycustomerpwd) {
             $this->updateCustomersPwd($input, $output);
@@ -134,10 +133,10 @@ class DevSetupEnv extends Command
 
         //debug mode on
         $this->enableDecbugMode();
-        
+
         //Disable maintenance mode
         $this->disableMaintenanceMode();
-        
+
         //cache off
         $this->io->text('<info>Disable cache</info>');
 
@@ -183,15 +182,16 @@ class DevSetupEnv extends Command
             sprintf('<fg=green>%s</fg=green> [<fg=yellow>%s</fg=yellow>]%s ', $question, $default, $separator) :
             sprintf('<fg=green>%s</fg=green>%s ', $question, $separator);
     }
-    
+
     /**
      * Update Shop Url in configuration table
      *
      * @param $idShop
      * @param $url
+     *
      * @return bool
      */
-    protected function updateUrlConfiguration($idShop, $url)
+    protected function updateUrlConfiguration($idShop, $url): bool
     {
         //URL configuration
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SHOP_DOMAIN and PS_SHOP_DOMAIN_SSL</info>', $url));
@@ -199,94 +199,111 @@ class DevSetupEnv extends Command
         if ($idShop) {
             $where = sprintf('name in ("%s","%s") AND id_shop = %s', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL', $idShop);
         }
+
         return $this->dbi->update('configuration', ['value' => $url], $where, 0, false, false);
     }
-    
+
     /**
      * Update ssl in configuration table
      *
      * @param $idShop
      * @param $ssl
+     *
      * @return bool
      */
-    protected function updateSslConfiguration($idShop, $ssl)
+    protected function updateSslConfiguration($idShop, $ssl): bool
     {
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SSL_ENABLED_EVERYWHERE and PS_SSL_ENABLED</info>', (int) $ssl));
         $where = sprintf('name in ("%s", "%s")', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED');
         if ($idShop) {
             $where = sprintf('name in ("%s", "%s") AND id_shop = %s', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED', $idShop);
         }
+
         return $this->dbi->update('configuration', ['value' => (int) $ssl], $where, 0, false, false);
     }
-    
+
     /**
      * Update Url in ps_shop_url table
      *
      * @param $idShop
      * @param $url
+     *
      * @return bool
      */
-    protected function updateShopUrl($idShop, $url)
+    protected function updateShopUrl($idShop, $url): bool
     {
         $this->io->text('<info>Update table ps_shop_url</info>');
         $where = sprintf('id_shop = %s', $idShop);
+
         return $this->dbi->update('shop_url', ['domain' => $url, 'domain_ssl' => $url], $where, 0, false, false);
     }
-    
+
     /**
      * Update employees password
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @return bool
      */
-    protected function updateEmployessPwd(InputInterface $input, OutputInterface $output)
+    protected function updateEmployeesPwd(InputInterface $input, OutputInterface $output): bool
     {
         $this->io->text('<info>Modify password for all BO employees</info>');
-        $pwd = ((bool)$input->getOption('employeepwd') === true) ? $input->getOption('employeepwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all employee')));
+        $pwd = ((bool) $input->getOption('employeepwd') === true) ? $input->getOption('employeepwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all employee')));
+
         return $this->dbi->update('employee', ['passwd' => $this->crypto->hash($pwd, _COOKIE_KEY_)], '', 0, false, false);
     }
-    
+
     /**
      * Update customers password
      *
      * @param InputInterface $input
      * @param OutputInterface $output
+     *
      * @return bool
      */
-    protected function updateCustomersPwd(InputInterface $input, OutputInterface $output)
+    protected function updateCustomersPwd(InputInterface $input, OutputInterface $output): bool
     {
         $this->io->text('<info>Modify password for all customers</info>');
-        $pwd = ((bool)$input->getOption('customerpwd') === true) ? $input->getOption('customerpwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all customer')));
+        $pwd = ((bool) $input->getOption('customerpwd') === true) ? $input->getOption('customerpwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all customer')));
+
         return $this->dbi->update('customer', ['passwd' => $this->crypto->hash($pwd, _COOKIE_KEY_)], '', 0, false, false);
     }
-    
+
     /**
+     * Enable debug mode
+     *
      * @return int
      */
-    protected function enableDecbugMode()
+    protected function enableDecbugMode(): int
     {
         $this->io->text('<info>Active debug mode</info>');
         $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
+
         return $debugMode->enable();
     }
-    
+
     /**
+     * Set maintenance mode to off
+     *
      * @return array
      */
-    protected function disableMaintenanceMode()
+    protected function disableMaintenanceMode(): array
     {
         $this->io->text('<info>Disable maintenance mode</info>');
         $mc = $this->getContainer()->get('prestashop.adapter.maintenance.configuration');
         $maintenanceConf = $mc->getConfiguration();
         $maintenanceConf['enable_shop'] = true;
+
         return $mc->updateConfiguration($maintenanceConf);
     }
-    
+
     /**
+     * Disable smart cache for js, css and apache
+     *
      * @return bool
      */
-    protected function disableSmartCacheJsAndCss()
+    protected function disableSmartCacheJsAndCss(): bool
     {
         $this->io->text('<info>Setup smart cache (js & css)</info>');
         $ccc = $this->getContainer()->get('prestashop.adapter.ccc.configuration');
@@ -294,25 +311,31 @@ class DevSetupEnv extends Command
         $combineCacheConfig['smart_cache_css'] = false;
         $combineCacheConfig['smart_cache_js'] = false;
         $combineCacheConfig['apache_optimization'] = false;
+
         return !$ccc->updateConfiguration($combineCacheConfig);
     }
-    
+
     /**
+     * Disable global cache
+     *
      * @return bool
      */
-    protected function disableGlobalCache()
+    protected function disableGlobalCache(): bool
     {
         $this->io->text('<info>Setup global cache</info>');
         $cc = $this->getContainer()->get('prestashop.adapter.caching.configuration');
         $cachingConf = $cc->getConfiguration();
         $cachingConf['use_cache'] = false;
+
         return !$cc->updateConfiguration($cachingConf);
     }
-    
+
     /**
+     * Disable smarty cache, set to force compilation
+     *
      * @return bool
      */
-    protected function disableSmartyCache()
+    protected function disableSmartyCache(): bool
     {
         $this->io->text('<info>Setup smarty cache</info>');
         $smc = $this->getContainer()->get('prestashop.adapter.smarty_cache.configuration');
@@ -322,6 +345,7 @@ class DevSetupEnv extends Command
         $smartyCacheConf['multi_front_optimization'] = false;
         $smartyCacheConf['caching_type'] = 'filesystem';
         $smartyCacheConf['clear_cache'] = 'everytime';
+
         return !$smc->updateConfiguration($smartyCacheConf);
     }
 }
