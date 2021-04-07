@@ -191,7 +191,7 @@ class DevSetupEnv extends Command
      *
      * @return bool
      */
-    protected function updateUrlConfiguration($idShop, $url): bool
+    protected function updateUrlConfiguration(int $idShop, string $url): bool
     {
         //URL configuration
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SHOP_DOMAIN and PS_SHOP_DOMAIN_SSL</info>', $url));
@@ -211,7 +211,7 @@ class DevSetupEnv extends Command
      *
      * @return bool
      */
-    protected function updateSslConfiguration($idShop, $ssl): bool
+    protected function updateSslConfiguration(int $idShop, bool $ssl): bool
     {
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SSL_ENABLED_EVERYWHERE and PS_SSL_ENABLED</info>', (int) $ssl));
         $where = sprintf('name in ("%s", "%s")', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED');
@@ -230,7 +230,7 @@ class DevSetupEnv extends Command
      *
      * @return bool
      */
-    protected function updateShopUrl($idShop, $url): bool
+    protected function updateShopUrl(int $idShop, string $url): bool
     {
         $this->io->text('<info>Update table ps_shop_url</info>');
         $where = sprintf('id_shop = %s', $idShop);
