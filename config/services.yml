@@ -19,6 +19,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.list_module_hooks.command:
+    class: FOP\Console\Commands\ModuleHooks
+    tags:
+      - { name: console.command }
+
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
     tags:
@@ -106,5 +111,8 @@ services:
 
   fop.console.configuration.import:
     class: FOP\Console\Commands\Configuration\Import
+
+  fop.console.customers.groups.command:
+    class: FOP\Console\Commands\Customers\CustomersGroups
     tags:
       - { name: console.command }
