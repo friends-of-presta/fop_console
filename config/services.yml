@@ -19,6 +19,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.list_module_hooks.command:
+    class: FOP\Console\Commands\ModuleHooks
+    tags:
+      - { name: console.command }
+
   fop.console.latest_products.command:
     class: FOP\Console\Commands\LatestProducts
     tags:
@@ -101,6 +106,11 @@ services:
 
   fop.console.theme-reset.command:
     class: FOP\Console\Commands\ThemeResetLayout
+    tags:
+      - { name: console.command }
+
+  fop.console.customers.groups.command:
+    class: FOP\Console\Commands\Customers\CustomersGroups
     tags:
       - { name: console.command }
 

@@ -5,13 +5,19 @@ of useful commands that you can use and reuse for learning purposes.
 
 This module is released under AFL license.
 
-## Install
+## Install from release
+Donwload the zip release and install it like any other module.
+
+## Install from sources
 
 ```
 cd modules 
 git clone https://github.com/friends-of-presta/fop_console.git
 cd fop_console
 composer install
+```
+Install the module in the backoffice or in command line like this :
+```
 cd ../../
 php bin/console pr:mo install fop_console
 ```
@@ -36,6 +42,7 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
+* `fop:customer-groups`: Move or add in bulk clients from one group client to another
 
 ## Create your owns Commands
 
@@ -45,25 +52,30 @@ to extends our class.
 ```php
 <?php
 
-namespace Your\Own\Namespace;
+// psr-4 autoloader
+
+// if the command is located at src/Commands
+namespace FOP\Console\Commands; 
+// or if command is located in a subfolder
+namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration
 
 use FOP\Console\Command;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
-/**
- * This command is a working exemple.
- */
-final class Export extends Command
+final class MyCommand extends Command
 {
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this->setName('hello:world');
+        $this
+            ->setName('fop:mycommand') // e.g 'fop:shop-status'
+            // or
+            ->setName('fop:domain:mycommand') // e.g 'fop:configuration:export' 
+            ->setDescription('Describe the command on a user perspective.');
     }
 
     /**
@@ -72,8 +84,9 @@ final class Export extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
-
         $io->text('Hello friends of PrestaShop!');
+
+        return 0; // return 0 on success or 1 on failure.        
     }
 }
 ```
