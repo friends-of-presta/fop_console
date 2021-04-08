@@ -20,7 +20,9 @@ final class Import extends Command
     {
         $this->setName('fop:configuration:import')
             ->setDescription('Import configuration values')
-            ->setHelp('Import configurations from a json file. ')
+            ->setHelp('Import configurations into ps_configuration table from a json file.'
+            . PHP_EOL . ' To generate an json file use the fop:configuration:export command'
+            )
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'file to import from', self::PS_CONFIGURATIONS_FILE);
     }
 
