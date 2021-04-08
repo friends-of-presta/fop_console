@@ -99,13 +99,21 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.theme-reset.command:
+    class: FOP\Console\Commands\ThemeResetLayout
+
   fop.console.override.make.command:
     class: FOP\Console\Commands\MakeOverride
     tags:
       - { name: console.command }
 
-  fop.console.theme-reset.command:
-    class: FOP\Console\Commands\ThemeResetLayout
+  fop.console.configuration.export:
+    class: FOP\Console\Commands\Configuration\Export
+    tags:
+      - { name: console.command }
+
+  fop.console.configuration.import:
+    class: FOP\Console\Commands\Configuration\Import
     tags:
       - { name: console.command }
 
