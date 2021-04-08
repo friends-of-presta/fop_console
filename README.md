@@ -5,10 +5,7 @@ of useful commands that you can use and reuse for learning purposes.
 
 This module is released under AFL license.
 
-## Install from release
-Donwload the zip release and install it like any other module.
-
-## Install from sources
+## Install
 
 ```
 cd modules 
@@ -43,6 +40,7 @@ php bin/console pr:mo install fop_console
 * `fop:export`: Exports object models in XML
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
 * `fop:customer-groups`: Move or add in bulk clients from one group client to another
+* `fop:override:make` Create an override file ready for implementation
 
 ## Create your owns Commands
 
