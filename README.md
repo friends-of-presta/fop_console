@@ -42,6 +42,8 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`: Displays the latest products
 * `fop:export`: Exports object models in XML
 * `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
+* `fop:configuration:export` Export configuration values to a json file
+* `fop:configuration:import` Import configuration values from a json file
 * `fop:customer-groups`: Move or add in bulk clients from one group client to another
 
 ## Create your owns Commands
