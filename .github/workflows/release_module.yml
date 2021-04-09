@@ -30,7 +30,7 @@ jobs:
           php-version: '7.2'
 
       - name: "Composer install"
-        run: "composer install --ansi --prefer-dist --no-interaction --no-progress --quiet"
+        run: "composer install --no-dev --ansi --prefer-dist --no-interaction --no-progress --quiet"
 
       - name: "Prepare files"
         run: |
