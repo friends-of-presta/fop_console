@@ -7,26 +7,9 @@ Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdo
 This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
 These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
-## Install from release
-Donwload the zip release and install it like any other module.
+## Fop Console commands
 
-## Install from sources
-
-```
-cd modules 
-git clone https://github.com/friends-of-presta/fop_console.git
-cd fop_console
-composer install
-```
-Install the module in the backoffice or in command line like this :
-```
-cd ../../
-php bin/console pr:mo install fop_console
-```
-
-## Current commands
-
-* `fop:clear-cache` Clear the cache folder super fast
+* `fop:clear-cache` Clear the cache folder super-fast
 * `fop:debug-mode` Enable or Disable debug mode
 * `fop:shop-status` Display shop(s) status(es)
 * `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
@@ -49,83 +32,51 @@ php bin/console pr:mo install fop_console
 * `fop:configuration:export` Export configuration values to a json file
 * `fop:configuration:import` Import configuration values from a json file
 
-## Create your owns Commands
+## Install from release (recommended)
 
-The official documentation from PrestaShop and Symfony Core teams are still right, but you needs
-to extends our class.
+Donwload the zip release and install it like any other module.
 
-```php
-<?php
+## Install from sources
 
-// psr-4 autoloader
+If you want to contribute or use the dev branch, you can install from github
 
-// if the command is located at src/Commands
-namespace FOP\Console\Commands; 
-// or if command is located in a subfolder
-namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration
-
-use FOP\Console\Command;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-final class MyCommand extends Command
-{
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
-    {
-        $this
-            ->setName('fop:mycommand') // e.g 'fop:shop-status'
-            // or
-            ->setName('fop:domain:mycommand') // e.g 'fop:configuration:export' 
-            ->setDescription('Describe the command on a user perspective.');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $io = new SymfonyStyle($input, $output);
-        $io->text('Hello friends of PrestaShop!');
-
-        return 0; // return 0 on success or 1 on failure.        
-    }
-}
 ```
-
-## What's next?
-
-The current strategy is to configure a Context before the execution of the Command.
-This works well but we like to make it more configurable from the Console arguments.
+cd modules 
+git clone https://github.com/friends-of-presta/fop_console.git
+cd fop_console
+composer install
+```
+Install the module in the backoffice or in command line like this :
+```
+cd ../../
+php bin/console pr:mo install fop_console
+```
 
 ## Contribute
 
-Feel free to add more commands, post some issues or new PR : contributions are very welcome.
+Any contributions are very welcome :)
+See [Contributing](/CONTRIBUTING.md) for details.
+
+[Current contributors](https://github.com/friends-of-presta/fop_console/graphs/contributors) or [contributors](/CONTRIBUTORS.md).
 
 ## Compatibility
 
 | Prestashop Version | Compatible |
 | ------------------ | -----------|
-| 1.7.0.x | :x: |
-| 1.7.1.x | :x: |
-| 1.7.2.x | :x: |
-| 1.7.3.x | :x: |
-| 1.7.4.x | :x: |
+| 1.7.4.x and below | :x: |
 | 1.7.5.x | :heavy_check_mark: |
 | 1.7.6.x | :heavy_check_mark: |
 | 1.7.7.x | :heavy_check_mark: |
 
 | Php Version | Compatible |
 | ------ | -----------|
-| 5.6 | :x:|
-| 7.0 | :x: |
-| 7.1 | :x: |
+| 7.1 and below | :x: |
 | 7.2 | :heavy_check_mark: |
 | 7.3| :heavy_check_mark: |
 | 7.4 | :interrobang: Not yet tested |
 | 8.0 | :interrobang: Not yet tested |
 
+## License
+
 This module is released under AFL license.
+See [License](/docs/licenses/LICENSE.txt) for details.
