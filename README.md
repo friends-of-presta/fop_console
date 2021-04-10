@@ -31,9 +31,6 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 ## Fop Console commands
 
-=======
-## Fop Console commands
-
 * `fop:clear-cache` Clear the cache folder super-fast
 * `fop:debug-mode` Enable or Disable debug mode
 * `fop:shop-status` Display shop(s) status(es)
@@ -56,6 +53,31 @@ These commands are mainly for developers, just some basic knowledge of command l
 * `fop:customer-groups`: Move or add in bulk clients from one group client to another
 * `fop:configuration:export` Export configuration values to a json file
 * `fop:configuration:import` Import configuration values from a json file
+
+## Getting started
+
+In a shell (call it shell, console or terminal), at the root of a Prestashop installation run the command, type this command to list all available commands.
+You'll see commands provided by Symfony, Prestashop and installed modules.
+```shell
+./bin/console list
+```
+
+To list only only fop commands :
+```shell
+./bin/console list | grep fop
+```
+
+To toggle the debug-mode (_PS_DEV_MODE_) run :
+```shell
+./bin/console fop:debug-mode toggle
+```
+
+To get help about a command :
+```shell
+./bin/console help fop:debug-mode
+```
+
+You are ready to go !
 
 ## Contribute
 
