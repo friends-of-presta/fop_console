@@ -4,6 +4,28 @@ Fop console is a module which provides a set a commands to extend PrestaShop 1.7
 
 Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdocs.prestashop.com/1.7/modules/concepts/commands/) using the [Symfony console tool](https://symfony.com/doc/3.4/console.html).
 
+
+
+## Install from release (recommended)
+
+Donwload the zip release and install it like any other module.
+
+## Install from sources
+
+If you want to contribute or use the dev branch, you can install from github
+
+```
+cd modules 
+git clone https://github.com/friends-of-presta/fop_console.git
+cd fop_console
+composer install
+```
+Install the module in the backoffice or in command line like this :
+```
+cd ../../
+php bin/console pr:mo install fop_console
+```
+
 This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
 These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
@@ -32,26 +54,6 @@ These commands are mainly for developers, just some basic knowledge of command l
 * `fop:configuration:export` Export configuration values to a json file
 * `fop:configuration:import` Import configuration values from a json file
 
-## Install from release (recommended)
-
-Donwload the zip release and install it like any other module.
-
-## Install from sources
-
-If you want to contribute or use the dev branch, you can install from github
-
-```
-cd modules 
-git clone https://github.com/friends-of-presta/fop_console.git
-cd fop_console
-composer install
-```
-Install the module in the backoffice or in command line like this :
-```
-cd ../../
-php bin/console pr:mo install fop_console
-```
-
 ## Contribute
 
 Any contributions are very welcome :)
@@ -76,7 +78,11 @@ See [Contributing](/CONTRIBUTING.md) for details.
 | 7.4 | :interrobang: Not yet tested |
 | 8.0 | :interrobang: Not yet tested |
 
+<<<<<<< HEAD
 ## License
 
 This module is released under AFL license.
 See [License](/docs/licenses/LICENSE.txt) for details.
+=======
+This module is released under AFL license.
+>>>>>>> rewrite intro + links to ps devdocs & symfony.
