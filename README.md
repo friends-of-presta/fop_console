@@ -31,6 +31,9 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 ## Fop Console commands
 
+=======
+## Fop Console commands
+
 * `fop:clear-cache` Clear the cache folder super-fast
 * `fop:debug-mode` Enable or Disable debug mode
 * `fop:shop-status` Display shop(s) status(es)
@@ -78,11 +81,15 @@ See [Contributing](/CONTRIBUTING.md) for details.
 | 7.4 | :interrobang: Not yet tested |
 | 8.0 | :interrobang: Not yet tested |
 
-<<<<<<< HEAD
+
 ## License
 
 This module is released under AFL license.
 See [License](/docs/licenses/LICENSE.txt) for details.
 =======
 This module is released under AFL license.
->>>>>>> rewrite intro + links to ps devdocs & symfony.
+
+## License
+
+This module is released under AFL license.
+See [License](/docs/licenses/LICENSE.txt) for details.
