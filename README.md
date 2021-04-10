@@ -1,9 +1,11 @@
-# Console for PrestaShop 1.7
+# Friends of Presta Console
 
-This repository provides a Command that better supports PrestaShop legacy classes using the current PrestaShop Console and a list
-of useful commands that you can use and reuse for learning purposes.
+Fop console is a module which provides a set a commands to extend PrestaShop 1.7 commands.
 
-This module is released under AFL license.
+Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdocs.prestashop.com/1.7/modules/concepts/commands/) using the [Symfony console tool](https://symfony.com/doc/3.4/console.html).
+
+This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
+These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
 ## Install from release
 Donwload the zip release and install it like any other module.
@@ -125,3 +127,5 @@ Feel free to add more commands, post some issues or new PR : contributions are v
 | 7.3| :heavy_check_mark: |
 | 7.4 | :interrobang: Not yet tested |
 | 8.0 | :interrobang: Not yet tested |
+
+This module is released under AFL license.
