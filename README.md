@@ -60,7 +60,7 @@ You'll see commands provided by Symfony, Prestashop and installed modules.
 ./bin/console list
 ```
 
-To list only only fop commands :
+To list only fop commands :
 ```shell
 ./bin/console list | grep fop
 ```
