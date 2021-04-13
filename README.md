@@ -62,7 +62,7 @@ You'll see commands provided by Symfony, Prestashop and installed modules.
 
 To list only fop commands :
 ```shell
-./bin/console list | grep fop
+./bin/console list fop
 ```
 
 To toggle the debug-mode (_PS_DEV_MODE_) run :
