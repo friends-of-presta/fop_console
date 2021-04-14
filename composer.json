@@ -15,7 +15,8 @@
   },
   "require": {
     "php": "^7.1",
-    "laminas/laminas-code": "3.4.1"
+    "laminas/laminas-code": "3.4.1",
+    "ext-json": "*"
   },
   "config": {
     "prepend-autoloader": false
