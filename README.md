@@ -56,7 +56,7 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 ## Getting started
 
-In a shell (call it shell, console or terminal), at the root of a Prestashop installation run the command, type this command to list all available commands.
+In a shell (call it shell, console or terminal), at the root of a Prestashop installation, type this command to list all available commands.
 You'll see commands provided by Symfony, Prestashop and installed modules.
 ```shell
 ./bin/console list
