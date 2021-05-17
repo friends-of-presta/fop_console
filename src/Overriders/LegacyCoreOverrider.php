@@ -54,7 +54,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
      */
     public function handle(): bool
     {
-        return fnmatch('*classes/**.php', $this->getPath()) || fnmatch('*controllers/**.php', $this->getPath());
+        return fnmatch('*classes' . DIRECTORY_SEPARATOR . '**.php', $this->getPath()) || fnmatch('*controllers' . DIRECTORY_SEPARATOR . '**.php', $this->getPath());
     }
 
     /**
@@ -68,7 +68,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
     private function getTargetPath(): string
     {
         // after 'classes/' included - probably ready to handle absolute paths
-        $file_and_folder = substr($this->getPath(), (int) strrpos($this->getPath(), 'classes/'));
+        $file_and_folder = substr($this->getPath(), (int) strrpos($this->getPath(), 'classes' . DIRECTORY_SEPARATOR));
 
         return sprintf('override/%s', $file_and_folder);
     }

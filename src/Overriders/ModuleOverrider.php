@@ -20,6 +20,7 @@
 
 namespace FOP\Console\Overriders;
 
+use Exception;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 
@@ -43,7 +44,7 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
 
     public function handle(): bool
     {
-        return fnmatch('modules/*/*.php', $this->getPath());
+        return fnmatch('modules' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . '*.php', $this->getPath());
     }
 
     public function getDangerousConsequences(): ?string
@@ -55,17 +56,17 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
     {
         // after 'modules/' (included) - probably ready to handle absolute paths
         // relative path, relative to Prestashop root folder.
-        $relative_path_start = strrpos($this->getPath(), 'modules/');
+        $relative_path_start = strrpos($this->getPath(), 'modules' . DIRECTORY_SEPARATOR);
         $relative_path_start = false !== $relative_path_start
             ? $relative_path_start
-            : strrpos($this->getPath(), 'modules/');
+            : strrpos($this->getPath(), 'modules' . DIRECTORY_SEPARATOR);
         if (false === $relative_path_start) {
-            throw new \Exception(sprintf('"modules/" not found in path "%s"', $this->getPath()));
+            throw new Exception(sprintf('"modules/" not found in path "%s"', $this->getPath()));
         }
 
         $file_and_folder = substr($this->getPath(), (int) $relative_path_start);
 
-        return sprintf('override/%s', $file_and_folder);
+        return sprintf('override%s%s', DIRECTORY_SEPARATOR, $file_and_folder);
     }
 
     /**

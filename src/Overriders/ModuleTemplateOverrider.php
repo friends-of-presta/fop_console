@@ -26,7 +26,7 @@ use Context;
 final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
     /**
-     * @return array<string>
+     * @return array<int, string>
      */
     public function run(): array
     {
@@ -39,7 +39,7 @@ final class ModuleTemplateOverrider extends AbstractOverrider implements Overrid
 
     public function handle(): bool
     {
-        return fnmatch('modules/*/*.tpl', $this->getPath());
+        return fnmatch('modules' . DIRECTORY_SEPARATOR . '*' . DIRECTORY_SEPARATOR . '*.tpl', $this->getPath());
     }
 
     /**
