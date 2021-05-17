@@ -7,6 +7,7 @@ namespace FOP\Console\Overriders;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 use Symfony\Component\Filesystem\Filesystem;
+use Tools;
 
 class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterface
 {
@@ -26,7 +27,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
         $fs->dumpFile($this->getTargetPath(), $fileGenerator->generate());
         $this->setSuccessful();
 
-        \Tools::generateIndex();
+        Tools::generateIndex();
 
         return ["{$this->getTargetPath()} created."];
     }
@@ -50,7 +51,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
     private function getTargetPath(): string
     {
         // after 'classes/' included - probably ready to handle absolute paths
-        $file_and_folder = substr($this->getPath(), (int) strrpos('classes/', $this->getPath()));
+        $file_and_folder = substr($this->getPath(), (int) strrpos($this->getPath(), 'classes/'));
 
         return sprintf('override/%s', $file_and_folder);
     }
