@@ -118,3 +118,8 @@ services:
     class: FOP\Console\Commands\Customers\CustomersGroups
     tags:
       - { name: console.command }
+
+  fop.console.clean_category.command:
+    class: FOP\Console\Commands\CleanCategory
+    tags:
+      - { name: console.command }
