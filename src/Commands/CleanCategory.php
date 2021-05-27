@@ -41,8 +41,8 @@ final class CleanCategory extends Command
     protected function configure()
     {
         $this->setName('fop:category')
-            ->setDescription('Active or desactive categorys depending on products')
-            ->setHelp('This command desactive final categories witout product, and active final catgories with product')
+            ->setDescription('Manage your categories')
+            ->setHelp('This command active or desacative catégory and desactive final categories witout product or active final catgories with product')
             ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
             ->addArgument(
                 'action',
