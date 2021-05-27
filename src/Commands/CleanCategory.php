@@ -197,6 +197,11 @@ final class CleanCategory extends Command
             case 'toggle':
                 $helper = $this->getHelper('question');
                 $id_caterory = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
+                if (!Category::categoryExists($id_caterory)) {
+                    $io->error('Hum i don\'t think id_category : ' . $id_caterory . ' exist');
+
+                    return 1;
+                }
                 $category = new Category($id_caterory);
 
                 if (0 == $category->active) {
