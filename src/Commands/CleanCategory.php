@@ -25,6 +25,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class CleanCategory extends Command
@@ -32,7 +33,7 @@ final class CleanCategory extends Command
     /**
      * @var array possible command
      */
-    const ALLOWED_COMMAND = ['status', 'enable-noempty', 'disable-empty'];
+    const ALLOWED_COMMAND = ['status', 'toggle', 'enable-noempty', 'disable-empty'];
 
     /**
      * {@inheritdoc}
@@ -50,6 +51,7 @@ final class CleanCategory extends Command
                 'status'
             )
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
+            ->addOption('id_category', null, InputOption::VALUE_OPTIONAL)
             ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude');
     }
 
@@ -57,11 +59,11 @@ final class CleanCategory extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
+        $action = $input->getArgument('action');
+        $categoriesToActive = [];
+        $categoriesToDesactive = [];
         $id_lang = $input->getOption('id_lang') ?? Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
-        $desactivedCategories = [];
-        $activedCategories = [];
-        $action = $input->getArgument('action');
 
         switch ($action) {
             case 'status':
@@ -76,9 +78,9 @@ final class CleanCategory extends Command
                                 $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                                 if (!$NbProducts && 0 != $categorieToCheck->active) {
-                                    $desactivedCategories[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToDesactive[] = $categorieToCheck->name[$id_lang];
                                 } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                                    $activedCategories[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToActive[] = $categorieToCheck->name[$id_lang];
                                 }
                             }
                         }
@@ -89,22 +91,24 @@ final class CleanCategory extends Command
                     return 1;
                 }
 
-                if (!$desactivedCategories && !$activedCategories) {
+                if (!$categoriesToDesactive && !$categoriesToActive) {
                     $io->title('No Categories to updated');
 
                     return 0;
                 }
 
-                if ($desactivedCategories) {
-                    $io->title('You have categorie(s) actived without product active');
-                    $io->text(' -- Categories : ' . implode(',', $desactivedCategories));
+                if ($categoriesToDesactive) {
+                    $io->title('The following categorie(s) are enabled but without product active');
+                    $io->text(implode(' / ', $categoriesToDesactive));
                     $io->text(' -- You can run `./bin/console fop:category disable-empty` to fix it');
+                    $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
-                if ($activedCategories) {
-                    $io->title('You have categorie(s) disabled but with product active in the categorie');
-                    $io->text(' -- Categories : ' . implode(',', $activedCategories));
+                if ($categoriesToActive) {
+                    $io->title('The following categorie(s) are disabled but with product active in the categorie');
+                    $io->text(implode(' / ', $categoriesToActive));
                     $io->text(' -- You can run `./bin/console fop:category enable-noempty` to fix it');
+                    $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
                 return 0;
@@ -126,7 +130,7 @@ final class CleanCategory extends Command
                                     if (!$categorieToCheck->update()) {
                                         throw new \Exception('Failed to update Category : ' . $categorieToCheck->name[$id_lang]);
                                     }
-                                    $desactivedCategories[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToDesactive[] = $categorieToCheck->name[$id_lang];
                                 }
                             }
                         }
@@ -137,59 +141,85 @@ final class CleanCategory extends Command
                     return 1;
                 }
 
-                if (!$desactivedCategories && !$activedCategories) {
+                if (!$categoriesToDesactive) {
                     $io->title('No Categories to updated');
 
                     return 0;
                 }
 
-                if ($desactivedCategories) {
+                if ($categoriesToDesactive) {
                     $io->title('The following categories are desactived');
-                    $io->text(implode(',', $desactivedCategories));
+                    $io->text(implode(',', $categoriesToDesactive));
                 }
 
                 return 0;
                 break;
-                case 'enable-noempty':
-                    try {
-                        $categories = Category::getCategories($id_lang, false, false);
+            case 'enable-noempty':
+                try {
+                    $categories = Category::getCategories($id_lang, false, false);
 
-                        foreach ($categories as $categorie) {
-                            if (!in_array($categorie['id_category'], $exclude)) {
-                                if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                    $categorieToCheck = new Category($categorie['id_category']);
+                    foreach ($categories as $categorie) {
+                        if (!in_array($categorie['id_category'], $exclude)) {
+                            if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
+                                $categorieToCheck = new Category($categorie['id_category']);
 
-                                    $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
+                                $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
-                                    if ($NbProducts && 1 != $categorieToCheck->active) {
-                                        $categorieToCheck->active = 1;
-                                        if (!$categorieToCheck->update()) {
-                                            throw new \Exception('Failed to update Category : ' . $categorieToCheck->name[$id_lang]);
-                                        }
-                                        $activedCategories[] = $categorieToCheck->name[$id_lang];
+                                if ($NbProducts && 1 != $categorieToCheck->active) {
+                                    $categorieToCheck->active = 1;
+                                    if (!$categorieToCheck->update()) {
+                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name[$id_lang]);
                                     }
+                                    $categoriesToActive[] = $categorieToCheck->name[$id_lang];
                                 }
                             }
                         }
-                    } catch (\Exception $e) {
-                        $io->getErrorStyle()->error($e->getMessage());
-
-                        return 1;
                     }
+                } catch (\Exception $e) {
+                    $io->getErrorStyle()->error($e->getMessage());
 
-                    if (!$activedCategories) {
-                        $io->title('No Categories to updated');
+                    return 1;
+                }
 
-                        return 0;
-                    }
-
-                    if ($activedCategories) {
-                        $io->title('The following categories are actived');
-                        $io->text(implode(',', $activedCategories));
-                    }
+                if (!$categoriesToActive) {
+                    $io->title('No Categories to updated');
 
                     return 0;
-                    break;
+                }
+
+                if ($categoriesToActive) {
+                    $io->title('The following categories are actived');
+                    $io->text(implode(',', $categoriesToActive));
+                }
+
+                return 0;
+                break;
+            case 'toggle':
+                $helper = $this->getHelper('question');
+                $id_caterory = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
+                $category = new Category($id_caterory);
+
+                if (0 == $category->active) {
+                    $category->active = 1;
+                    if (!$category->update()) {
+                        $io->error('Failed to update Category with ID : ' . $id_caterory);
+                    }
+                    $io->title('The category : ' . $category->name[$id_lang] . ' is now enabled');
+
+                    return 0;
+                } else {
+                    $category->active = 0;
+                    if (!$category->update()) {
+                        $io->error('Failed to update Category with ID : ' . $id_caterory);
+                    }
+                    $io->title('The category : ' . $category->name[$id_lang] . ' is now disaled');
+
+                    return 0;
+                }
+
+                return 1;
+
+                break;
             default:
                 $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
