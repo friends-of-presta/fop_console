@@ -47,7 +47,7 @@ final class CleanCategory extends Command
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
+                'Disable, Enable, Disable empty categories or Active no empty categories ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             )
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
@@ -105,7 +105,7 @@ final class CleanCategory extends Command
                 }
 
                 if ($categoriesToActive) {
-                    $io->title('The following categorie(s) are disabled but with product active in the categorie');
+                    $io->title('The following categorie(s) are disabled but with product active in the category');
                     $io->text(implode(' / ', $categoriesToActive));
                     $io->text(' -- You can run `./bin/console fop:category enable-noempty` to fix it');
                     $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
