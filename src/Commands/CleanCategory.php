@@ -73,14 +73,14 @@ final class CleanCategory extends Command
                     foreach ($categories as $categorie) {
                         if (!in_array($categorie['id_category'], $exclude)) {
                             if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category']);
+                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
 
                                 $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                                 if (!$NbProducts && 0 != $categorieToCheck->active) {
-                                    $categoriesToDesactive[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToDesactive[] = $categorieToCheck->name;
                                 } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                                    $categoriesToActive[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToActive[] = $categorieToCheck->name;
                                 }
                             }
                         }
@@ -121,16 +121,16 @@ final class CleanCategory extends Command
                     foreach ($categories as $categorie) {
                         if (!in_array($categorie['id_category'], $exclude)) {
                             if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category']);
+                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
 
                                 $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                                 if (!$NbProducts && 0 != $categorieToCheck->active) {
                                     $categorieToCheck->active = 0;
                                     if (!$categorieToCheck->update()) {
-                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name[$id_lang]);
+                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                                     }
-                                    $categoriesToDesactive[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToDesactive[] = $categorieToCheck->name;
                                 }
                             }
                         }
@@ -161,16 +161,16 @@ final class CleanCategory extends Command
                     foreach ($categories as $categorie) {
                         if (!in_array($categorie['id_category'], $exclude)) {
                             if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category']);
+                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
 
                                 $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                                 if ($NbProducts && 1 != $categorieToCheck->active) {
                                     $categorieToCheck->active = 1;
                                     if (!$categorieToCheck->update()) {
-                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name[$id_lang]);
+                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                                     }
-                                    $categoriesToActive[] = $categorieToCheck->name[$id_lang];
+                                    $categoriesToActive[] = $categorieToCheck->name;
                                 }
                             }
                         }
@@ -202,14 +202,14 @@ final class CleanCategory extends Command
 
                     return 1;
                 }
-                $category = new Category($id_caterory);
+                $category = new Category($id_caterory, $id_lang);
 
                 if (0 == $category->active) {
                     $category->active = 1;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_caterory);
                     }
-                    $io->title('The category : ' . $category->name[$id_lang] . ' is now enabled');
+                    $io->title('The category : ' . $category->name . ' is now enabled');
 
                     return 0;
                 } else {
@@ -217,7 +217,7 @@ final class CleanCategory extends Command
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_caterory);
                     }
-                    $io->title('The category : ' . $category->name[$id_lang] . ' is now disaled');
+                    $io->title('The category : ' . $category->name . ' is now disaled');
 
                     return 0;
                 }
