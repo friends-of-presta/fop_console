@@ -21,6 +21,7 @@ namespace FOP\Console\Commands;
 use Category;
 use Configuration;
 use FOP\Console\Command;
+use Shop;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,7 +43,11 @@ final class CleanCategory extends Command
     {
         $this->setName('fop:category')
             ->setDescription('Manage your categories, this command don\'t support multishop')
-            ->setHelp('This command enable or disable a category or disable final categories without product or enable final categories with an active product. This command DON\'T SUPPORT multi-shop ')
+            ->setHelp('This command :'
+                . PHP_EOL . '    Enable or disable a category.'
+                . PHP_EOL . '    Disable final categories without product.'
+                . PHP_EOL . '    Enable final categories with an active product.'
+                . PHP_EOL . '    This command DON\'T SUPPORT multi-shop.')
             ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
             ->addArgument(
                 'action',
@@ -58,6 +63,12 @@ final class CleanCategory extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        if (1 < Shop::getTotalShops(false)) {
+            $io->error('Actualy this command don\'t work with MultiShop');
+
+            return 1;
+        }
 
         $action = $input->getArgument('action');
         $categoriesToActive = [];
