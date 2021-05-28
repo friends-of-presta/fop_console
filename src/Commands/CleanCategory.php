@@ -41,13 +41,13 @@ final class CleanCategory extends Command
     protected function configure()
     {
         $this->setName('fop:category')
-            ->setDescription('Manage your categories')
-            ->setHelp('This command active or desacative catégory and desactive final categories witout product or active final catgories with product')
+            ->setDescription('Manage your categories, this command don\'t support multishop')
+            ->setHelp('This command enable or disable a category or disable final categories without product or enable final categories with an active product. This command DON\'T SUPPORT multi-shop ')
             ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'Disable, Enable, Disable empty categories or Active no empty categories ( possible values : ' . $this->getPossibleActions() . ') ',
+                'Disable, Enable, Disable empty categories or Enable no empty categories ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             )
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
@@ -148,7 +148,7 @@ final class CleanCategory extends Command
                 }
 
                 if ($categoriesToDesactive) {
-                    $io->title('The following categories are desactived');
+                    $io->title('The following categories have been disabled');
                     $io->text(implode(',', $categoriesToDesactive));
                 }
 
@@ -188,7 +188,7 @@ final class CleanCategory extends Command
                 }
 
                 if ($categoriesToActive) {
-                    $io->title('The following categories are actived');
+                    $io->title('The following categories have been enabled');
                     $io->text(implode(',', $categoriesToActive));
                 }
 
