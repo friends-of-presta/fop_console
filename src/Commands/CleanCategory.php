@@ -57,17 +57,24 @@ final class CleanCategory extends Command
             )
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
             ->addOption('id_category', null, InputOption::VALUE_OPTIONAL)
-            ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude');
+            ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude')
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $force = $input->getOption('force');
 
         if (1 < Shop::getTotalShops(false)) {
-            $io->error('Actualy this command don\'t work with MultiShop');
+            if (!$force) {
+                $io->error('Actualy this command don\'t work with MultiShop.'
+                . PHP_EOL . 'Use force (-f) option to run the commande.');
 
-            return 1;
+                return 1;
+            } else {
+                $io->warning('MultiShop Enable, Force Mode');
+            }
         }
 
         $action = $input->getArgument('action');
@@ -78,40 +85,24 @@ final class CleanCategory extends Command
 
         switch ($action) {
             case 'status':
-                $categories = Category::getCategories($id_lang, false, false);
+                $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
 
-                foreach ($categories as $categorie) {
-                    if (!in_array($categorie['id_category'], $exclude)) {
-                        if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                            $categorieToCheck = new Category($categorie['id_category'], $id_lang);
-
-                            $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
-
-                            if (!$NbProducts && 0 != $categorieToCheck->active) {
-                                $categoriesToDesactive[] = $categorieToCheck->name;
-                            } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                                $categoriesToActive[] = $categorieToCheck->name;
-                            }
-                        }
-                    }
-                }
-
-                if (!$categoriesToDesactive && !$categoriesToActive) {
+                if (!$categories['empty'] && !$categories['noempty']) {
                     $io->title('No Categories to updated');
 
                     return 0;
                 }
 
-                if ($categoriesToDesactive) {
+                if ($categories['empty']) {
                     $io->title('The following categorie(s) are enabled but without product active');
-                    $io->text(implode(' / ', $categoriesToDesactive));
+                    $io->text(implode(' / ', $categories['empty']));
                     $io->text(' -- You can run `./bin/console fop:category disable-empty` to fix it');
                     $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
-                if ($categoriesToActive) {
+                if ($categories['noempty']) {
                     $io->title('The following categorie(s) are disabled but with product active in the category');
-                    $io->text(implode(' / ', $categoriesToActive));
+                    $io->text(implode(' / ', $categories['noempty']));
                     $io->text(' -- You can run `./bin/console fop:category enable-noempty` to fix it');
                     $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
@@ -121,38 +112,20 @@ final class CleanCategory extends Command
                 break;
             case 'disable-empty':
                 try {
-                    $categories = Category::getCategories($id_lang, false, false);
-
-                    foreach ($categories as $categorie) {
-                        if (!in_array($categorie['id_category'], $exclude)) {
-                            if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
-
-                                $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
-
-                                if (!$NbProducts && 0 != $categorieToCheck->active) {
-                                    $categorieToCheck->active = 0;
-                                    if (!$categorieToCheck->update()) {
-                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
-                                    }
-                                    $categoriesToDesactive[] = $categorieToCheck->name;
-                                }
-                            }
-                        }
-                    }
+                    $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
                 } catch (\Exception $e) {
                     $io->getErrorStyle()->error($e->getMessage());
 
                     return 1;
                 }
 
-                if (!$categoriesToDesactive) {
+                if (!$categories['empty']) {
                     $io->title('No Categories to updated');
 
                     return 0;
                 } else {
                     $io->title('The following categories have been disabled');
-                    $io->text(implode(',', $categoriesToDesactive));
+                    $io->text(implode(',', $categories['empty']));
 
                     return 0;
                 }
@@ -160,38 +133,20 @@ final class CleanCategory extends Command
                 break;
             case 'enable-noempty':
                 try {
-                    $categories = Category::getCategories($id_lang, false, false);
-
-                    foreach ($categories as $categorie) {
-                        if (!in_array($categorie['id_category'], $exclude)) {
-                            if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
-
-                                $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
-
-                                if ($NbProducts && 1 != $categorieToCheck->active) {
-                                    $categorieToCheck->active = 1;
-                                    if (!$categorieToCheck->update()) {
-                                        throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
-                                    }
-                                    $categoriesToActive[] = $categorieToCheck->name;
-                                }
-                            }
-                        }
-                    }
+                    $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
                 } catch (\Exception $e) {
                     $io->getErrorStyle()->error($e->getMessage());
 
                     return 1;
                 }
 
-                if (!$categoriesToActive) {
+                if (!$categories['noempty']) {
                     $io->title('No Categories to updated');
 
                     return 0;
                 } else {
                     $io->title('The following categories have been enabled');
-                    $io->text(implode(',', $categoriesToActive));
+                    $io->text(implode(',', $categories['noempty']));
 
                     return 0;
                 }
@@ -238,5 +193,45 @@ final class CleanCategory extends Command
     private function getPossibleActions(): string
     {
         return implode(',', self::ALLOWED_COMMAND);
+    }
+
+    private function getCategoriesToClean($id_lang, $action, $exclude): array
+    {
+        $categoriesToActive = [];
+        $categoriesToDesactive = [];
+        $categories = Category::getCategories($id_lang, false, false);
+
+        foreach ($categories as $categorie) {
+            $categories = Category::getCategories($id_lang, false, false);
+            if (!in_array($categorie['id_category'], $exclude)) {
+                if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
+                    $categorieToCheck = new Category($categorie['id_category'], $id_lang);
+
+                    $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
+
+                    if (!$NbProducts && 0 !== $categorieToCheck->active) {
+                        if ($action == 'disable-empty') {
+                            $categorieToCheck->active = 0;
+                            if (!$categorieToCheck->update()) {
+                                throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
+                            }
+                        }
+                        $categoriesToDesactive[] = $categorieToCheck->name;
+                    } elseif ($NbProducts && 1 !== $categorieToCheck->active) {
+                        if ($action == 'enable-noempty') {
+                            $categorieToCheck->active = 1;
+                            if (!$categorieToCheck->update()) {
+                                throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
+                            }
+                        }
+                        $categoriesToActive[] = $categorieToCheck->name;
+                    }
+                }
+            }
+        }
+
+        $categories = ['empty' => $categoriesToDesactive, 'noempty' => $categoriesToActive];
+
+        return $categories;
     }
 }
