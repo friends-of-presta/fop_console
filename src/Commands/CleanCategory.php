@@ -78,7 +78,6 @@ final class CleanCategory extends Command
 
         switch ($action) {
             case 'status':
-
                 $categories = Category::getCategories($id_lang, false, false);
 
                 foreach ($categories as $categorie) {
