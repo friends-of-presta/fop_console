@@ -69,7 +69,7 @@ final class CleanCategory extends Command
         if (1 < Shop::getTotalShops(false)) {
             if (!$force) {
                 $io->error('Actualy this command don\'t work with MultiShop.'
-                . PHP_EOL . 'Use force (-f) option to run the commande.');
+                . PHP_EOL . 'Use force (-f) option to run the command.');
 
                 return 1;
             } else {
@@ -200,7 +200,6 @@ final class CleanCategory extends Command
         $categories = Category::getCategories($id_lang, false, false);
 
         foreach ($categories as $categorie) {
-            $categories = Category::getCategories($id_lang, false, false);
             if (!in_array($categorie['id_category'], $exclude)) {
                 if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
                     $categorieToCheck = new Category($categorie['id_category'], $id_lang);
