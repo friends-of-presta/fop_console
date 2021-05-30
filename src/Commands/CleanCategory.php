@@ -78,8 +78,6 @@ final class CleanCategory extends Command
         }
 
         $action = $input->getArgument('action');
-        $categoriesToActive = [];
-        $categoriesToDesactive = [];
         $id_lang = $input->getOption('id_lang') ?? Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
 
@@ -209,7 +207,7 @@ final class CleanCategory extends Command
 
                     $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
-                    if (!$NbProducts && 0 !== $categorieToCheck->active) {
+                    if (!$NbProducts && 0 != $categorieToCheck->active) {
                         if ($action == 'disable-empty') {
                             $categorieToCheck->active = 0;
                             if (!$categorieToCheck->update()) {
@@ -217,7 +215,7 @@ final class CleanCategory extends Command
                             }
                         }
                         $categoriesToDesactive[] = $categorieToCheck->name;
-                    } elseif ($NbProducts && 1 !== $categorieToCheck->active) {
+                    } elseif ($NbProducts && 1 != $categorieToCheck->active) {
                         if ($action == 'enable-noempty') {
                             $categorieToCheck->active = 1;
                             if (!$categorieToCheck->update()) {
