@@ -44,10 +44,10 @@ final class CleanCategory extends Command
         $this->setName('fop:category')
             ->setDescription('Manage your categories, this command don\'t support multishop')
             ->setHelp('This command :'
-                . PHP_EOL . '    Enable or disable a category.'
-                . PHP_EOL . '    Disable final categories without product.'
-                . PHP_EOL . '    Enable final categories with an active product.'
-                . PHP_EOL . '    This command DON\'T SUPPORT multi-shop.')
+                . PHP_EOL . '   - Enable or disable a category.'
+                . PHP_EOL . '   - Disable final categories without product.'
+                . PHP_EOL . '   - Enable final categories with an active product.'
+                . PHP_EOL . '   - This command DON\'T SUPPORT multi-shop.')
             ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
             ->addArgument(
                 'action',
@@ -78,28 +78,23 @@ final class CleanCategory extends Command
 
         switch ($action) {
             case 'status':
-                try {
-                    $categories = Category::getCategories($id_lang, false, false);
 
-                    foreach ($categories as $categorie) {
-                        if (!in_array($categorie['id_category'], $exclude)) {
-                            if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                                $categorieToCheck = new Category($categorie['id_category'], $id_lang);
+                $categories = Category::getCategories($id_lang, false, false);
 
-                                $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
+                foreach ($categories as $categorie) {
+                    if (!in_array($categorie['id_category'], $exclude)) {
+                        if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
+                            $categorieToCheck = new Category($categorie['id_category'], $id_lang);
 
-                                if (!$NbProducts && 0 != $categorieToCheck->active) {
-                                    $categoriesToDesactive[] = $categorieToCheck->name;
-                                } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                                    $categoriesToActive[] = $categorieToCheck->name;
-                                }
+                            $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
+
+                            if (!$NbProducts && 0 != $categorieToCheck->active) {
+                                $categoriesToDesactive[] = $categorieToCheck->name;
+                            } elseif ($NbProducts && 1 != $categorieToCheck->active) {
+                                $categoriesToActive[] = $categorieToCheck->name;
                             }
                         }
                     }
-                } catch (\Exception $e) {
-                    $io->getErrorStyle()->error($e->getMessage());
-
-                    return 1;
                 }
 
                 if (!$categoriesToDesactive && !$categoriesToActive) {
@@ -156,14 +151,13 @@ final class CleanCategory extends Command
                     $io->title('No Categories to updated');
 
                     return 0;
-                }
-
-                if ($categoriesToDesactive) {
+                } else {
                     $io->title('The following categories have been disabled');
                     $io->text(implode(',', $categoriesToDesactive));
+
+                    return 0;
                 }
 
-                return 0;
                 break;
             case 'enable-noempty':
                 try {
@@ -196,20 +190,19 @@ final class CleanCategory extends Command
                     $io->title('No Categories to updated');
 
                     return 0;
-                }
-
-                if ($categoriesToActive) {
+                } else {
                     $io->title('The following categories have been enabled');
                     $io->text(implode(',', $categoriesToActive));
+
+                    return 0;
                 }
 
-                return 0;
                 break;
             case 'toggle':
                 $helper = $this->getHelper('question');
                 $id_caterory = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
                 if (!Category::categoryExists($id_caterory)) {
-                    $io->error('Hum i don\'t think id_category : ' . $id_caterory . ' exist');
+                    $io->error('Hum i don\'t think id_category ' . $id_caterory . ' exist');
 
                     return 1;
                 }
