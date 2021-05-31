@@ -59,6 +59,8 @@ class DevSetupEnv extends Command
                         );
 
         $this->addUsage('--url=[url]');
+        $this->addUsage('--purl=[physical_url]');
+        $this->addUsage('--vurl=[virutal_url]');
         $this->addUsage('--ssl ssl option ');
         $this->addUsage('--id_shop specify shop id ');
         $this->addUsage('--modifyemployeepwd to change all employees password');
@@ -66,11 +68,14 @@ class DevSetupEnv extends Command
         $this->addUsage('--customerpwd password for all customers');
         $this->addUsage('--employeepwd password for all employees');
         $this->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'url to set');
+        $this->addOption('purl', null, InputOption::VALUE_REQUIRED, 'physical url');
+        $this->addOption('vurl', null, InputOption::VALUE_REQUIRED, 'virtual url');
         $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?', 0);
         $this->addOption('modifyemployeepwd', 'mep', InputOption::VALUE_REQUIRED, 'Modify all employee BO password', 0);
         $this->addOption('modifycustomerpwd', 'mcp', InputOption::VALUE_REQUIRED, 'Modify all customers password', 0);
         $this->addOption('customerpwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Define all customers passwords', false);
         $this->addOption('employeepwd', 'epwd', InputOption::VALUE_REQUIRED, 'Define all employees passwords', false);
+        $this->addOption('id_shop', null, InputOption::VALUE_REQUIRED, 'Id shop to apply setup', false);
     }
 
     /**
@@ -91,15 +96,15 @@ class DevSetupEnv extends Command
         if ($input->getOption('verbose')) {
             dump($input->getOptions());
             dump($input->getArguments());
-
-            //dump($input->getArguments());
         }
-        //START MYSQL TRANSACTION
+
         $this->dbi->execute('START TRANSACTION');
 
-        //Get options value
         $ssl = (bool) $input->getOption('ssl');
+
         $url = $input->getOption('url') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the url you want for your env</question>'));
+        $puri = $input->getOption('purl');
+        $vuri = $input->getOption('vurl');
         $idShop = (int) $input->getOption('id_shop');
         $modifyemployeepwd = (bool) $input->getOption('modifyemployeepwd');
         $modifycustomerpwd = (bool) $input->getOption('modifycustomerpwd');
@@ -113,7 +118,7 @@ class DevSetupEnv extends Command
         $res = $res && $this->updateSslConfiguration($idShop, $ssl);
 
         //URL configuration in shop_url
-        $res = $res && $this->updateShopUrl($idShop, $url);
+        $res = $res && $this->updateShopUrl($idShop, $url, $puri, $vuri);
 
         //Regenerate htaccess
         $this->io->text('<info>Regenerate htaccess</info>');
@@ -230,12 +235,12 @@ class DevSetupEnv extends Command
      *
      * @return bool
      */
-    protected function updateShopUrl(int $idShop, string $url): bool
+    protected function updateShopUrl(int $idShop, string $url, string $physicalUrl = '/', string $virtualUrl = ''): bool
     {
         $this->io->text('<info>Update table ps_shop_url</info>');
         $where = sprintf('id_shop = %s', $idShop);
 
-        return $this->dbi->update('shop_url', ['domain' => $url, 'domain_ssl' => $url], $where, 0, false, false);
+        return $this->dbi->update('shop_url', ['domain' => $url, 'domain_ssl' => $url, 'physical_uri' => $physicalUrl, 'virtual_uri' => $virtualUrl], $where, 0, false, false);
     }
 
     /**
