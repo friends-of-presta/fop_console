@@ -58,7 +58,7 @@ final class CleanCategory extends Command
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
             ->addOption('id_category', null, InputOption::VALUE_OPTIONAL)
             ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude')
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file');
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force the command when the MultiShop is enable.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -164,21 +164,25 @@ final class CleanCategory extends Command
                     $category->active = 1;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_caterory);
+
+                        return 1;
                     }
-                    $io->title('The category : ' . $category->name . ' is now enabled');
+
+                    $io->success('The category : ' . $category->name . ' is now enabled.');
 
                     return 0;
                 } else {
                     $category->active = 0;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_caterory);
+
+                        return 1;
                     }
-                    $io->title('The category : ' . $category->name . ' is now disaled');
+
+                    $io->success('The category : ' . $category->name . ' is now enabled.');
 
                     return 0;
                 }
-
-                return 1;
 
                 break;
             default:
