@@ -78,7 +78,7 @@ final class CleanCategory extends Command
         }
 
         $action = $input->getArgument('action');
-        $id_lang = $input->getOption('id_lang') ?? Configuration::get('PS_LANG_DEFAULT');
+        $id_lang = (int) $input->getOption('id_lang') ?? Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
 
         switch ($action) {
@@ -123,7 +123,7 @@ final class CleanCategory extends Command
                     return 0;
                 } else {
                     $io->title('The following categories have been disabled');
-                    $io->text(implode(',', $categories['empty']));
+                    $io->text(implode(', ', $categories['empty']));
 
                     return 0;
                 }
@@ -144,7 +144,7 @@ final class CleanCategory extends Command
                     return 0;
                 } else {
                     $io->title('The following categories have been enabled');
-                    $io->text(implode(',', $categories['noempty']));
+                    $io->text(implode(', ', $categories['noempty']));
 
                     return 0;
                 }
@@ -160,7 +160,7 @@ final class CleanCategory extends Command
                 }
                 $category = new Category($id_category, $id_lang);
 
-                if (0 == $category->active) {
+                if (0 === (int) $category->active) {
                     $category->active = 1;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_category);
@@ -197,21 +197,29 @@ final class CleanCategory extends Command
         return implode(',', self::ALLOWED_COMMAND);
     }
 
-    private function getCategoriesToClean($id_lang, $action, $exclude): array
+    /**
+     * @param int $id_lang
+     * @param string $action
+     * @param array $exclude
+     *
+     * @return array
+     */
+    private function getCategoriesToClean(int $id_lang, string $action, array $exclude): array
     {
         $categoriesToActive = [];
         $categoriesToDesactive = [];
         $categories = Category::getCategories($id_lang, false, false);
+        $excludeDefault = [Configuration::get('PS_ROOT_CATEGORY'), Configuration::get('PS_HOME_CATEGORY')];
 
         foreach ($categories as $categorie) {
-            if (!in_array($categorie['id_category'], $exclude)) {
+            if (!in_array($categorie['id_category'], $exclude) && !in_array($categorie['id_category'], $excludeDefault)) {
                 if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
                     $categorieToCheck = new Category($categorie['id_category'], $id_lang);
 
                     $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
-                    if (!$NbProducts && 0 != $categorieToCheck->active) {
-                        if ($action == 'disable-empty') {
+                    if (!$NbProducts && 1 === (int) $categorieToCheck->active) {
+                        if ($action === 'disable-empty') {
                             $categorieToCheck->active = 0;
                             if (!$categorieToCheck->update()) {
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
@@ -219,7 +227,7 @@ final class CleanCategory extends Command
                         }
                         $categoriesToDesactive[] = $categorieToCheck->name . ' (' . $categorie['id_category'] . ')';
                     } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                        if ($action == 'enable-noempty') {
+                        if ($action === 'enable-noempty') {
                             $categorieToCheck->active = 1;
                             if (!$categorieToCheck->update()) {
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
