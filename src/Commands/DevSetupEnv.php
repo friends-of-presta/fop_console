@@ -75,7 +75,6 @@ class DevSetupEnv extends Command
         $this->addOption('modifycustomerpwd', 'mcp', InputOption::VALUE_REQUIRED, 'Modify all customers password', 0);
         $this->addOption('customerpwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Define all customers passwords', false);
         $this->addOption('employeepwd', 'epwd', InputOption::VALUE_REQUIRED, 'Define all employees passwords', false);
-        $this->addOption('id_shop', null, InputOption::VALUE_REQUIRED, 'Id shop to apply setup', false);
     }
 
     /**
