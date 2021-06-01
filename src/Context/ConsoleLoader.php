@@ -70,6 +70,6 @@ final class ConsoleLoader
         if ($shopGroupId !== null) {
             $this->shopContext->setShopGroupContext($shopGroupId);
         }
-        $this->legacyContext->getContext()->currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
+        $this->legacyContext->getContext()->currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT') ?: null);
     }
 }
