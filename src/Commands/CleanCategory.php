@@ -86,7 +86,7 @@ final class CleanCategory extends Command
                 $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
 
                 if (!$categories['empty'] && !$categories['noempty']) {
-                    $io->title('No Categories to updated');
+                    $io->title('No Categories to update');
 
                     return 0;
                 }
@@ -118,7 +118,7 @@ final class CleanCategory extends Command
                 }
 
                 if (!$categories['empty']) {
-                    $io->title('No Categories to updated');
+                    $io->title('No Categories to update');
 
                     return 0;
                 } else {
@@ -139,7 +139,7 @@ final class CleanCategory extends Command
                 }
 
                 if (!$categories['noempty']) {
-                    $io->title('No Categories to updated');
+                    $io->title('No Categories to update');
 
                     return 0;
                 } else {
@@ -152,18 +152,18 @@ final class CleanCategory extends Command
                 break;
             case 'toggle':
                 $helper = $this->getHelper('question');
-                $id_caterory = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
-                if (!Category::categoryExists($id_caterory)) {
-                    $io->error('Hum i don\'t think id_category ' . $id_caterory . ' exist');
+                $id_category = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
+                if (!Category::categoryExists($id_category)) {
+                    $io->error('Hum i don\'t think id_category ' . $id_category . ' exist');
 
                     return 1;
                 }
-                $category = new Category($id_caterory, $id_lang);
+                $category = new Category($id_category, $id_lang);
 
                 if (0 == $category->active) {
                     $category->active = 1;
                     if (!$category->update()) {
-                        $io->error('Failed to update Category with ID : ' . $id_caterory);
+                        $io->error('Failed to update Category with ID : ' . $id_category);
 
                         return 1;
                     }
@@ -174,12 +174,12 @@ final class CleanCategory extends Command
                 } else {
                     $category->active = 0;
                     if (!$category->update()) {
-                        $io->error('Failed to update Category with ID : ' . $id_caterory);
+                        $io->error('Failed to update Category with ID : ' . $id_category);
 
                         return 1;
                     }
 
-                    $io->success('The category : ' . $category->name . ' is now enabled.');
+                    $io->success('The category : ' . $category->name . ' is now disabled.');
 
                     return 0;
                 }
@@ -217,7 +217,7 @@ final class CleanCategory extends Command
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                             }
                         }
-                        $categoriesToDesactive[] = $categorieToCheck->name;
+                        $categoriesToDesactive[] = $categorieToCheck->name . ' (' . $categorie['id_category'] . ')';
                     } elseif ($NbProducts && 1 != $categorieToCheck->active) {
                         if ($action == 'enable-noempty') {
                             $categorieToCheck->active = 1;
@@ -225,7 +225,7 @@ final class CleanCategory extends Command
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                             }
                         }
-                        $categoriesToActive[] = $categorieToCheck->name;
+                        $categoriesToActive[] = $categorieToCheck->name . ' (' . $categorie['id_category'] . ')';
                     }
                 }
             }
