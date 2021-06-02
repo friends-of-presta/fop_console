@@ -59,20 +59,20 @@ class DevSetupEnv extends Command
             ->setDescription('Install your project for local developement')
             ->setHelp('<info>This command update database configuration with dev parameters (url, ssl, passwords). </info>' . PHP_EOL .
                         '<info>How to use : </info>' . PHP_EOL .
-                        '  <info>php bin/console fop:dev:setup-env --url=url.local --modifyemployeepwd=1 --modifycustomerpwd=1 --employeepwd=fopisnice --customerpwd=fopisnice --ssl=0</info>'
+                        '<info>php bin/console fop:dev:setup-env --url=url.local --modifyemployeepwd=1 --modifycustomerpwd=1 --employeepwd=fopisnice --customerpwd=fopisnice --ssl=0</info>'
                         );
 
         $this->addUsage('--url=[url]');
         $this->addUsage('--purl=[physical_url]');
         $this->addUsage('--vurl=[virutal_url]');
         $this->addUsage('--ssl ssl option ');
-        $this->addUsage('--id_shop specify shop id ');
+        $this->addUsage('--id_shop specify shop id by default : PS_SHOP_DEFAULT ');
         $this->addUsage('--modifyemployeepwd to change all employees password');
         $this->addUsage('--modifycustomerpwd to change all customers password');
         $this->addUsage('--customerpwd password for all customers');
         $this->addUsage('--employeepwd password for all employees');
         $this->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'url to set');
-        $this->addOption('purl', null, InputOption::VALUE_REQUIRED, 'physical url');
+        $this->addOption('purl', 'p', InputOption::VALUE_REQUIRED, 'physical url');
         $this->addOption('vurl', null, InputOption::VALUE_REQUIRED, 'virtual url');
         $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?', 0);
         $this->addOption('modifyemployeepwd', 'mep', InputOption::VALUE_REQUIRED, 'Modify all employee BO password', 0);
@@ -216,7 +216,7 @@ class DevSetupEnv extends Command
         //URL configuration
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SHOP_DOMAIN and PS_SHOP_DOMAIN_SSL</info>', $url));
         $where = sprintf('name in ("%s","%s")', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL');
-        if ($idShop && !$this->isMultiShop) {
+        if ($idShop && $this->isMultiShop) {
             $where = sprintf('name in ("%s","%s") AND id_shop = %s', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL', $idShop);
         }
 
@@ -235,7 +235,7 @@ class DevSetupEnv extends Command
     {
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SSL_ENABLED_EVERYWHERE and PS_SSL_ENABLED</info>', (int) $ssl));
         $where = sprintf('name in ("%s", "%s")', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED');
-        if ($idShop && !$this->isMultiShop) {
+        if ($idShop && $this->isMultiShop) {
             $where = sprintf('name in ("%s", "%s") AND id_shop = %s', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED', $idShop);
         }
 
@@ -245,8 +245,10 @@ class DevSetupEnv extends Command
     /**
      * Update Url in ps_shop_url table
      *
-     * @param $idShop
-     * @param $url
+     * @param int $idShop
+     * @param string $url
+     * @param string $physicalUrl
+     * @param string $virtualUrl
      *
      * @return bool
      */
