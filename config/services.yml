@@ -120,6 +120,6 @@ services:
       - { name: console.command }
 
   fop.console.clean_category.command:
-    class: FOP\Console\Commands\CleanCategory
+    class: FOP\Console\Commands\Categories\CleanCategory
     tags:
       - { name: console.command }

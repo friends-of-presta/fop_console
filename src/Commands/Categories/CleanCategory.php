@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace FOP\Console\Commands;
+namespace FOP\Console\Commands\Categories;
 
 use Category;
 use Configuration;
@@ -78,7 +78,7 @@ final class CleanCategory extends Command
         }
 
         $action = $input->getArgument('action');
-        $id_lang = (int) $input->getOption('id_lang') ?? Configuration::get('PS_LANG_DEFAULT');
+        $id_lang = $input->getOption('id_lang') ? (int) $input->getOption('id_lang') : (int) Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
 
         switch ($action) {
