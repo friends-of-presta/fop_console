@@ -19,8 +19,10 @@
 
 namespace FOP\Console\Commands;
 
+use Configuration;
 use FOP\Console\Command;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
+use ShopUrl;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -48,6 +50,8 @@ class DevSetupEnv extends Command
      * @var Hashing
      */
     protected $crypto;
+
+    protected $isMultiShop;
 
     protected function configure()
     {
@@ -89,6 +93,7 @@ class DevSetupEnv extends Command
         $this->helper = $this->getHelper('question');
         $this->dbi = \Db::getInstance();
         $this->crypto = new Hashing();
+        $this->isMultiShop = (bool) Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE');
 
         $res = true;
 
@@ -101,10 +106,21 @@ class DevSetupEnv extends Command
 
         $ssl = (bool) $input->getOption('ssl');
 
-        $url = $input->getOption('url') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the url you want for your env</question>'));
-        $puri = $input->getOption('purl');
+        $idShop = (int) $input->getOption('id_shop') !== 0 ? (int) $input->getOption('id_shop') : (int) Configuration::get('PS_SHOP_DEFAULT');
+        $shop = new ShopUrl($idShop);
+
+        $url = $input->getOption('url') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the url you want for your env actualy  : ' . $shop->domain . ' Press enter for the same</question>'));
+        $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the phisical url you want for your env actualy : ' . $shop->physical_uri . ' Press enter for the same</question>'));
         $vuri = $input->getOption('vurl');
-        $idShop = (int) $input->getOption('id_shop');
+
+        if (!$url) {
+            $url = $shop->domain;
+        }
+
+        if (!$puri) {
+            $puri = $shop->physical_uri;
+        }
+
         $modifyemployeepwd = (bool) $input->getOption('modifyemployeepwd');
         $modifycustomerpwd = (bool) $input->getOption('modifycustomerpwd');
 
@@ -200,7 +216,7 @@ class DevSetupEnv extends Command
         //URL configuration
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SHOP_DOMAIN and PS_SHOP_DOMAIN_SSL</info>', $url));
         $where = sprintf('name in ("%s","%s")', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL');
-        if ($idShop) {
+        if ($idShop && !$this->isMultiShop) {
             $where = sprintf('name in ("%s","%s") AND id_shop = %s', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL', $idShop);
         }
 
@@ -219,7 +235,7 @@ class DevSetupEnv extends Command
     {
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SSL_ENABLED_EVERYWHERE and PS_SSL_ENABLED</info>', (int) $ssl));
         $where = sprintf('name in ("%s", "%s")', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED');
-        if ($idShop) {
+        if ($idShop && !$this->isMultiShop) {
             $where = sprintf('name in ("%s", "%s") AND id_shop = %s', 'PS_SSL_ENABLED_EVERYWHERE', 'PS_SSL_ENABLED', $idShop);
         }
 
@@ -234,7 +250,7 @@ class DevSetupEnv extends Command
      *
      * @return bool
      */
-    protected function updateShopUrl(int $idShop, string $url, string $physicalUrl = '/', string $virtualUrl = ''): bool
+    protected function updateShopUrl(int $idShop, string $url, ?string $physicalUrl = '/', ?string $virtualUrl = ''): bool
     {
         $this->io->text('<info>Update table ps_shop_url</info>');
         $where = sprintf('id_shop = %s', $idShop);
