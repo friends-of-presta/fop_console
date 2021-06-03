@@ -71,7 +71,7 @@ class UselessModules extends Command
         $modulesInfos = [];
         $modulesStatsInfos = [];
 
-        $uselessModules = ['gamification', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'welcome'];
+        $uselessModules = ['gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
 
         $statsModules = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
             'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
@@ -82,15 +82,17 @@ class UselessModules extends Command
             case 'status':
                 $io->text('<info>Useless Modules Informations</info>');
 
-                foreach ($uselessModules as $uselessModule) {
-                    $modulesInfos[] = ['name' => $uselessModule, 'installed' => Module::isInstalled($uselessModule) ? 'yes' : 'no'];
+                foreach ($uselessModules as $key => $uselessModule) {
+                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'installed' => Module::isInstalled($uselessModule) ? 'yes' : 'no'];
                 }
 
-                $io->table(['Name', 'Installed?'], $modulesInfos);
+                $io->table(['ID', 'Name', 'Installed?'], $modulesInfos);
                 $io->text('You can'
-                    . PHP_EOL . '    - uninstall this modules by running  : `./bin/console fop:modules uninstall`'
+                    . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules uninstall`'
+                    . PHP_EOL . '    - uninstall modules by runing     : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
                     . PHP_EOL . '    - uninstall one module by runing     : `./bin/console fop:modules uninstall --modulename ModuleName`'
                     . PHP_EOL . '    - install this modules by running    : `./bin/console fop:modules install`'
+                    . PHP_EOL . '    - install modules by runing     : `./bin/console fop:modules install --idsmodule x,y,z`'
                     . PHP_EOL . '    - install one module by running      : `./bin/console fop:modules install --modulename ModuleName`');
 
                 return 0;
