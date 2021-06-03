@@ -20,7 +20,8 @@
 namespace FOP\Console\Commands\Modules;
 
 use FOP\Console\Command;
-use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
+use Module;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,7 +32,7 @@ class UninstallUselessModules extends Command
     /**
      * @var array possible allowed dev mode passed in command
      */
-    const ALLOWED_COMMAND = ['status', 'enable', 'disable', 'toggle'];
+    const ALLOWED_COMMAND = ['status', 'uninstall', 'install', 'modulestats'];
 
     /**
      * {@inheritdoc}
@@ -40,12 +41,12 @@ class UninstallUselessModules extends Command
     {
         $this
             ->setName('fop:modules')
-            ->setDescription('Enable or Disable debug mode.')
-            ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
+            ->setDescription('Uninstall useless mdoules.')
+            ->setHelp('This command Uninstall useless modules')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
+                '( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             );
     }
@@ -58,43 +59,77 @@ class UninstallUselessModules extends Command
         $io = new SymfonyStyle($input, $output);
         $returnCode = null;
         $action = $input->getArgument('action');
-        $debugMode = new DebugAdapter();
-        $isDebugModEnabled = $debugMode->isDebugModeEnabled();
+        $modulesInfos = [];
+        $modulesStatsInfos = [];
 
-        //$uselessModules = ['gamification', 'welcome'];
+        $uselessModules = ['gamification', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'welcome'];
+
+        $statsModules = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
+            'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
+            'statsequipment', 'statsforecast', 'statslive', 'statsnewsletter', 'statsorigin', 'statspersonalinfos',
+            'statsproduct', 'statsregistrations', 'statssales', 'statssearch', 'statsstock', 'statsvisits', ];
 
         switch ($action) {
             case 'status':
-                $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
+                $io->text('<info>Useless Modules Informations</info>');
+
+                foreach ($uselessModules as $uselessModule) {
+                    $modulesInfos[] = ['name' => $uselessModule, 'installed' => Module::isInstalled($uselessModule) ? 'yes' : 'no'];
+                }
+
+                $io->table(['Name', 'Installed?'], $modulesInfos);
+                $io->text('You can uninstall this modules by running : `./bin/console fop:modules uninstall`');
+                $io->text('You can install this modules by running : `./bin/console fop:modules install`');
 
                 return 0;
                 break;
-            case 'toggle':
-                $returnCode = $isDebugModEnabled
-                    ? $debugMode->disable()
-                    : $debugMode->enable();
+            case 'uninstall':
+                foreach ($uselessModules as $uselessModule) {
+                    if (Module::isInstalled($uselessModule)) {
+                        $arguments = [
+                            'action' => 'uninstall',
+                            'module name' => $uselessModule,
+                        ];
+
+                        $command = $this->getApplication()->find('prestashop:module');
+                        $greetInput = new ArrayInput($arguments);
+                        $returnCode = $command->run($greetInput, $output);
+                    }
+                }
+
+                return 0;
+
                 break;
-            case 'enable':
-                $returnCode = $debugMode->enable();
+            case 'install':
+                foreach ($uselessModules as $uselessModule) {
+                    if (!Module::isInstalled($uselessModule)) {
+                        $arguments = [
+                            'action' => 'install',
+                            'module name' => $uselessModule,
+                        ];
+
+                        $command = $this->getApplication()->find('prestashop:module');
+                        $greetInput = new ArrayInput($arguments);
+                        $returnCode = $command->run($greetInput, $output);
+                    }
+                }
+
+                return 0;
+
                 break;
-            case 'disable':
-                $returnCode = $debugMode->disable();
+            case 'modulestats':
+                foreach ($statsModules as $statsModule) {
+                    $modulesStatsInfos[] = ['name' => $statsModule, 'installed' => Module::isInstalled($statsModule) ? 'yes' : 'no'];
+                }
+
+                $io->table(['Name', 'Installed?'], $modulesStatsInfos);
+
                 break;
             default:
                 $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
                 return 1;
         }
-
-        if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
-
-            return 0;
-        }
-
-        $io->error('An error occured while updating debug mode. ' . DebugAdapter::class . ' error code ' . $returnCode . ' .');
-
-        return 1;
     }
 
     private function getPossibleActions(): string
