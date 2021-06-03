@@ -118,3 +118,8 @@ services:
     class: FOP\Console\Commands\Customers\CustomersGroups
     tags:
       - { name: console.command }
+
+  fop.console.modules.command:
+    class: FOP\Console\Commands\Modules\UninstallUselessModules
+    tags:
+      - { name: console.command }
