@@ -24,13 +24,15 @@ use Module;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class UninstallUselessModules extends Command
+class UselessModules extends Command
 {
     /**
-     * @var array possible allowed dev mode passed in command
+     * @var array possible allowed command
      */
     const ALLOWED_COMMAND = ['status', 'uninstall', 'install', 'modulestats'];
 
@@ -48,6 +50,12 @@ class UninstallUselessModules extends Command
                 InputArgument::OPTIONAL,
                 '( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
+            )
+            ->addOption(
+                'modulename',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Module to Install / Uninstall'
             );
     }
 
@@ -57,6 +65,7 @@ class UninstallUselessModules extends Command
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
+        $helper = $this->getHelper('question');
         $returnCode = null;
         $action = $input->getArgument('action');
         $modulesInfos = [];
@@ -78,22 +87,41 @@ class UninstallUselessModules extends Command
                 }
 
                 $io->table(['Name', 'Installed?'], $modulesInfos);
-                $io->text('You can uninstall this modules by running : `./bin/console fop:modules uninstall`');
-                $io->text('You can install this modules by running : `./bin/console fop:modules install`');
+                $io->text('You can'
+                    . PHP_EOL . '    - uninstall this modules by running  : `./bin/console fop:modules uninstall`'
+                    . PHP_EOL . '    - uninstall one module by runing     : `./bin/console fop:modules uninstall --modulename ModuleName`'
+                    . PHP_EOL . '    - install this modules by running    : `./bin/console fop:modules install`'
+                    . PHP_EOL . '    - install one module by running      : `./bin/console fop:modules install --modulename ModuleName`');
 
                 return 0;
                 break;
             case 'uninstall':
-                foreach ($uselessModules as $uselessModule) {
-                    if (Module::isInstalled($uselessModule)) {
+                $moduleToUninstall = $input->getOption('modulename') ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
+                if ($moduleToUninstall) {
+                    if (Module::isInstalled($moduleToUninstall)) {
                         $arguments = [
                             'action' => 'uninstall',
-                            'module name' => $uselessModule,
+                            'module name' => $moduleToUninstall,
                         ];
 
                         $command = $this->getApplication()->find('prestashop:module');
                         $greetInput = new ArrayInput($arguments);
                         $returnCode = $command->run($greetInput, $output);
+                    } else {
+                        $io->error('Module ' . $moduleToUninstall . ' is not installed');
+                    }
+                } else {
+                    foreach ($uselessModules as $uselessModule) {
+                        if (Module::isInstalled($uselessModule)) {
+                            $arguments = [
+                                'action' => 'uninstall',
+                                'module name' => $uselessModule,
+                            ];
+
+                            $command = $this->getApplication()->find('prestashop:module');
+                            $greetInput = new ArrayInput($arguments);
+                            $returnCode = $command->run($greetInput, $output);
+                        }
                     }
                 }
 
@@ -101,16 +129,33 @@ class UninstallUselessModules extends Command
 
                 break;
             case 'install':
-                foreach ($uselessModules as $uselessModule) {
-                    if (!Module::isInstalled($uselessModule)) {
+                $moduleToInstall = $input->getOption('modulename') ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
+
+                if ($moduleToInstall) {
+                    if (!Module::isInstalled($moduleToInstall)) {
                         $arguments = [
                             'action' => 'install',
-                            'module name' => $uselessModule,
+                            'module name' => $moduleToInstall,
                         ];
 
                         $command = $this->getApplication()->find('prestashop:module');
                         $greetInput = new ArrayInput($arguments);
                         $returnCode = $command->run($greetInput, $output);
+                    } else {
+                        $io->error('Module ' . $moduleToInstall . ' is not installed');
+                    }
+                } else {
+                    foreach ($uselessModules as $uselessModule) {
+                        if (!Module::isInstalled($uselessModule)) {
+                            $arguments = [
+                                'action' => 'install',
+                                'module name' => $uselessModule,
+                            ];
+
+                            $command = $this->getApplication()->find('prestashop:module');
+                            $greetInput = new ArrayInput($arguments);
+                            $returnCode = $command->run($greetInput, $output);
+                        }
                     }
                 }
 
@@ -125,12 +170,44 @@ class UninstallUselessModules extends Command
                 $io->table(['Name', 'Installed?'], $modulesStatsInfos);
 
                 break;
+            case 'uninstallstats':
+                foreach ($statsModules as $statsModule) {
+                    if (Module::isInstalled($statsModule)) {
+                        $arguments = [
+                            'action' => 'uninstall',
+                            'module name' => $statsModule,
+                        ];
+
+                        $command = $this->getApplication()->find('prestashop:module');
+                        $greetInput = new ArrayInput($arguments);
+                        $returnCode = $command->run($greetInput, $output);
+                    }
+                }
+
+                return 0;
+
+                break;
             default:
                 $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
                 return 1;
         }
     }
+
+    /*
+    private function createCommand($string $action, string $module ) {
+
+        $arguments = [
+            'action' => $action,
+            'module name' => $module,
+        ];
+
+        $command = $this->getApplication()->find('prestashop:module');
+        $greetInput = new ArrayInput($arguments);
+        return $command->run($greetInput, $output);
+
+    }
+    */
 
     private function getPossibleActions(): string
     {

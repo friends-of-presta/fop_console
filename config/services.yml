@@ -120,6 +120,6 @@ services:
       - { name: console.command }
 
   fop.console.modules.command:
-    class: FOP\Console\Commands\Modules\UninstallUselessModules
+    class: FOP\Console\Commands\Modules\UselessModules
     tags:
       - { name: console.command }
