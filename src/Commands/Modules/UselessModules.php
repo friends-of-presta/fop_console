@@ -34,7 +34,7 @@ class UselessModules extends Command
     /**
      * @var array possible allowed command
      */
-    const ALLOWED_COMMAND = ['status', 'uninstall', 'install', 'modulestats'];
+    const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
 
     /**
      * {@inheritdoc}
@@ -56,6 +56,12 @@ class UselessModules extends Command
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Module to Install / Uninstall'
+            )
+            ->addOption(
+                'idsmodule',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'IDs module separate by coma'
             );
     }
 
@@ -71,7 +77,7 @@ class UselessModules extends Command
         $modulesInfos = [];
         $modulesStatsInfos = [];
 
-        $uselessModules = ['gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
+        $uselessModules = ['emarketing', 'gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
 
         $statsModules = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
             'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
@@ -89,17 +95,35 @@ class UselessModules extends Command
                 $io->table(['ID', 'Name', 'Installed?'], $modulesInfos);
                 $io->text('You can'
                     . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules uninstall`'
-                    . PHP_EOL . '    - uninstall modules by runing     : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
-                    . PHP_EOL . '    - uninstall one module by runing     : `./bin/console fop:modules uninstall --modulename ModuleName`'
-                    . PHP_EOL . '    - install this modules by running    : `./bin/console fop:modules install`'
-                    . PHP_EOL . '    - install modules by runing     : `./bin/console fop:modules install --idsmodule x,y,z`'
-                    . PHP_EOL . '    - install one module by running      : `./bin/console fop:modules install --modulename ModuleName`');
+                    . PHP_EOL . '    - uninstall modules by runing       : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
+                    . PHP_EOL . '    - uninstall one module by runing    : `./bin/console fop:modules uninstall --modulename ModuleName`'
+                    . PHP_EOL . '    - install all modules by running    : `./bin/console fop:modules install`'
+                    . PHP_EOL . '    - install modules by runing         : `./bin/console fop:modules install --idsmodule x,y,z`'
+                    . PHP_EOL . '    - install one module by running     : `./bin/console fop:modules install --modulename ModuleName`');
 
                 return 0;
                 break;
             case 'uninstall':
-                $moduleToUninstall = $input->getOption('modulename') ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
-                if ($moduleToUninstall) {
+                $moduleToUninstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
+                $idsModule = $input->getOption('idsmodule');
+
+                if ($idsModule) {
+                    $idsModule = explode(',', $idsModule);
+                    foreach ($idsModule as $idModule) {
+                        if (Module::isInstalled($uselessModules[$idModule])) {
+                            $arguments = [
+                                'action' => 'uninstall',
+                                'module name' => $uselessModules[$idModule],
+                            ];
+
+                            $command = $this->getApplication()->find('prestashop:module');
+                            $greetInput = new ArrayInput($arguments);
+                            $returnCode = $command->run($greetInput, $output);
+                        } else {
+                            $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
+                        }
+                    }
+                } elseif ($moduleToUninstall) {
                     if (Module::isInstalled($moduleToUninstall)) {
                         $arguments = [
                             'action' => 'uninstall',
@@ -131,9 +155,26 @@ class UselessModules extends Command
 
                 break;
             case 'install':
-                $moduleToInstall = $input->getOption('modulename') ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
+                $moduleToInstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
+                $idsModule = $input->getOption('idsmodule');
 
-                if ($moduleToInstall) {
+                if ($idsModule) {
+                    $idsModule = explode(',', $idsModule);
+                    foreach ($idsModule as $idModule) {
+                        if (!Module::isInstalled($uselessModules[$idModule])) {
+                            $arguments = [
+                                'action' => 'install',
+                                'module name' => $uselessModules[$idModule],
+                            ];
+
+                            $command = $this->getApplication()->find('prestashop:module');
+                            $greetInput = new ArrayInput($arguments);
+                            $returnCode = $command->run($greetInput, $output);
+                        } else {
+                            $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
+                        }
+                    }
+                } elseif ($moduleToInstall) {
                     if (!Module::isInstalled($moduleToInstall)) {
                         $arguments = [
                             'action' => 'install',
