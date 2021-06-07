@@ -45,8 +45,8 @@ class UselessModules extends Command
     {
         $this
             ->setName('fop:modules')
-            ->setDescription('Manage useless and stats modules.')
-            ->setHelp('This command Uninstall or Install useless and stats modules.')
+            ->setDescription('Manage non-essential and stats modules.')
+            ->setHelp('This command Uninstall or Install non-essential and stats modules.')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
@@ -88,7 +88,7 @@ class UselessModules extends Command
 
         switch ($action) {
             case 'status':
-                $io->text('<info>Useless Modules Informations</info>');
+                $io->text('<info>Non-essential Modules Informations</info>');
 
                 foreach ($uselessModules as $key => $uselessModule) {
                     $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'installed' => Module::isInstalled($uselessModule) ? 'yes' : 'no'];
