@@ -36,7 +36,7 @@ class UselessModules extends Command
     /**
      * @var array possible allowed command
      */
-    const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
+    private const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
 
     /**
      * {@inheritdoc}
