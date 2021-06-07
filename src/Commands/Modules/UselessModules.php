@@ -213,7 +213,7 @@ class UselessModules extends Command
      * @param string $action
      * @param string $module
      *
-     * @return object
+     * @return ArrayInput
      */
     private function createArguments(string $action, string $module): ArrayInput
     {
