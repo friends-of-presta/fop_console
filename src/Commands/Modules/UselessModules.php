@@ -179,6 +179,8 @@ class UselessModules extends Command
 
                 $io->table(['Name', 'Installed?'], $modulesStatsInfos);
 
+                return 0;
+
                 break;
             case 'uninstallstats':
                 foreach ($statsModules as $statsModule) {
@@ -221,6 +223,7 @@ class UselessModules extends Command
             'action' => $action,
             'module name' => $module,
         ];
+
         return new ArrayInput($arguments);
     }
 
