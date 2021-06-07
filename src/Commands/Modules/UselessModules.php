@@ -215,7 +215,7 @@ class UselessModules extends Command
      *
      * @return object
      */
-    private function createArguments(string $action, string $module): object
+    private function createArguments(string $action, string $module): ArrayInput
     {
         $arguments = [
             'action' => $action,
