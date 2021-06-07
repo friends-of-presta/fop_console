@@ -61,7 +61,7 @@ class UselessModules extends Command
                 'idsmodule',
                 null,
                 InputOption::VALUE_OPTIONAL,
-                'IDs module separate by coma'
+                'IDs module to Install or Uninstall separate by coma'
             );
     }
 
@@ -104,11 +104,11 @@ class UselessModules extends Command
                 return 0;
                 break;
             case 'uninstall':
-                $moduleToUninstall = $input->getOption('modulename');// ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
+                $moduleToUninstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
                 $idsModule = $input->getOption('idsmodule');
 
                 if ($idsModule) {
-                    $idsModule = explode(',',$idsModule);
+                    $idsModule = explode(',', $idsModule);
                     foreach ($idsModule as $idModule) {
                         if (Module::isInstalled($uselessModules[$idModule])) {
                             $command = $this->getApplication()->find('prestashop:module');
@@ -117,7 +117,7 @@ class UselessModules extends Command
                             $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
                         }
                     }
-                } else if ($moduleToUninstall) {
+                } elseif ($moduleToUninstall) {
                     if (Module::isInstalled($moduleToUninstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('uninstall', $moduleToUninstall), $output);
@@ -137,12 +137,12 @@ class UselessModules extends Command
 
                 break;
             case 'install':
-                $moduleToInstall = $input->getOption('modulename');// ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
+                $moduleToInstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
                 $idsModule = $input->getOption('idsmodule');
 
                 if ($idsModule) {
-                    $idsModule = explode(',',$idsModule);
-                    foreach($idsModule as $idModule) {
+                    $idsModule = explode(',', $idsModule);
+                    foreach ($idsModule as $idModule) {
                         if (!Module::isInstalled($uselessModules[$idModule])) {
                             $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('install', $uselessModules[$idModule]), $output);
@@ -150,7 +150,7 @@ class UselessModules extends Command
                             $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
                         }
                     }
-                } else if ($moduleToInstall) {
+                } elseif ($moduleToInstall) {
                     if (!Module::isInstalled($moduleToInstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('install', $moduleToInstall), $output);
@@ -220,8 +220,9 @@ class UselessModules extends Command
             'module name' => $module,
         ];
         $greetInput = new ArrayInput($arguments);
+
         return $greetInput;
-    }    
+    }
 
     private function getPossibleActions(): string
     {
