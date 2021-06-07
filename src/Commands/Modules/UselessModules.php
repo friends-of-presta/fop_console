@@ -221,9 +221,7 @@ class UselessModules extends Command
             'action' => $action,
             'module name' => $module,
         ];
-        $greetInput = new ArrayInput($arguments);
-
-        return $greetInput;
+        return new ArrayInput($arguments);
     }
 
     private function getPossibleActions(): string
