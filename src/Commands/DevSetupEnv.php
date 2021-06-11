@@ -75,10 +75,10 @@ class DevSetupEnv extends Command
         $this->addOption('purl', 'p', InputOption::VALUE_REQUIRED, 'physical url');
         $this->addOption('vurl', null, InputOption::VALUE_REQUIRED, 'virtual url');
         $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?', 0);
-        $this->addOption('modify-employee-pwd', 'mep', InputOption::VALUE_REQUIRED, 'Modify all employee BO password', 0);
-        $this->addOption('modify-customer-pwd', 'mcp', InputOption::VALUE_REQUIRED, 'Modify all customers password', 0);
-        $this->addOption('customer-pwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Define all customers passwords', false);
-        $this->addOption('employee-pwd', 'epwd', InputOption::VALUE_REQUIRED, 'Define all employees passwords', false);
+        $this->addOption('modify-employee-pwd', 'mep', InputOption::VALUE_NONE, 'Interactively modify all employee BO password', 0);
+        $this->addOption('modify-customer-pwd', 'mcp', InputOption::VALUE_NONE, 'Interactively modify all customers password', 0);
+        $this->addOption('customer-pwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Modify all customers passwords', false);
+        $this->addOption('employee-pwd', 'epwd', InputOption::VALUE_REQUIRED, 'Modify all employees passwords', false);
     }
 
     /**
