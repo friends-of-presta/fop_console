@@ -68,7 +68,7 @@ final class CleanCategory extends Command
 
         if (1 < Shop::getTotalShops(false)) {
             if (!$force) {
-                $io->error('Actualy this command don\'t work with MultiShop.'
+                $io->error('Currently this command don\'t work with MultiShop.'
                 . PHP_EOL . 'Use force (-f) option to run the command.');
 
                 return 1;
