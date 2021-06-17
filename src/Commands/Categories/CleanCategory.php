@@ -92,7 +92,7 @@ final class CleanCategory extends Command
                 }
 
                 if ($categories['empty']) {
-                    $io->title('The following categorie(s) are enabled but without product active');
+                    $io->title('The following category(s) are enabled but without active product');
                     $io->text(implode(' / ', $categories['empty']));
                     $io->text(' -- You can run `./bin/console fop:category disable-empty` to fix it');
                     $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
