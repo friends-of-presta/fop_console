@@ -49,15 +49,15 @@ final class CleanCategory extends Command
                 . PHP_EOL . '   - Enable final categories with an active product.'
                 . PHP_EOL . '   - This command DON\'T SUPPORT multi-shop.')
             ->addUsage('./bin/console fop:category toggle -c 3 ( enable or disable the category with id 3')
-            ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
+            ->addUsage('--exclude=[XX,YY,ZZ] (id-category separate by coma)')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
                 'Disable, Enable, Disable empty categories or Enable no empty categories ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             )
-            ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
-            ->addOption('id_category', 'c', InputOption::VALUE_OPTIONAL)
+            ->addOption('id-lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
+            ->addOption('id-category', 'c', InputOption::VALUE_OPTIONAL)
             ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force the command when the MultiShop is enable.');
     }
@@ -79,7 +79,7 @@ final class CleanCategory extends Command
         }
 
         $action = $input->getArgument('action');
-        $id_lang = $input->getOption('id_lang') ? (int) $input->getOption('id_lang') : (int) Configuration::get('PS_LANG_DEFAULT');
+        $id_lang = $input->getOption('id-lang') ? (int) $input->getOption('id-lang') : (int) Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
 
         switch ($action) {
@@ -118,7 +118,7 @@ final class CleanCategory extends Command
                 }
 
                 if (!$categories['empty']) {
-                    $io->title('No Categories to update');
+                    $io->title('All categories without product active are disable.');
 
                     return 0;
                 } else {
@@ -138,7 +138,7 @@ final class CleanCategory extends Command
                 }
 
                 if (!$categories['noempty']) {
-                    $io->title('No Categories to update');
+                    $io->title('All categories with active product are enable.');
 
                     return 0;
                 } else {
@@ -150,7 +150,7 @@ final class CleanCategory extends Command
 
             case 'toggle':
                 $helper = $this->getHelper('question');
-                $id_category = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
+                $id_category = $input->getOption('id-category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
                 if (!Category::categoryExists($id_category)) {
                     $io->error('Hum i don\'t think id_category ' . $id_category . ' exist');
 
@@ -212,7 +212,7 @@ final class CleanCategory extends Command
         foreach ($categories as $categorie) {
             if (!in_array($categorie['id_category'], $exclude) && !in_array($categorie['id_category'], $excludeDefault)) {
                 if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                    $categorieToCheck = new Category($categorie['id_category'], $id_lang);
+                    $categorieToCheck = new Category($categorie['id_category'], $id_lang); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
 
                     $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
