@@ -41,41 +41,6 @@ parameters:
 			path: ../src/Commands/DebugMode.php
 
 		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Export\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Export.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\GenerateHtaccess\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/GenerateHtaccess.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\GenerateRobots\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/GenerateRobots.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\HookModule\\:\\:execute\\(\\) should return bool but returns int\\.$#"
-			count: 3
-			path: ../src/Commands/HookModule.php
-
-		-
-			message: "#^Return type \\(bool\\) of method FOP\\\\Console\\\\Commands\\\\HookModule\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: ../src/Commands/HookModule.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$dir\\)\\: Unexpected token \"\\$dir\", expected type at offset 51$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
@@ -99,11 +64,6 @@ parameters:
 			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected type at offset 82$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\LatestProducts\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/LatestProducts.php
 
 		-
 			message: "#^Negated boolean expression is always false\\.$#"
@@ -139,29 +99,4 @@ parameters:
 			message: "#^Call to an undefined method Shop\\:\\:getThemeName\\(\\)\\.$#"
 			count: 1
 			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\ShopStatus\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\ThemeResetLayout\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/ThemeResetLayout.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\UnhookModule\\:\\:execute\\(\\) should return bool but returns int\\.$#"
-			count: 3
-			path: ../src/Commands/UnhookModule.php
-
-		-
-			message: "#^Return type \\(bool\\) of method FOP\\\\Console\\\\Commands\\\\UnhookModule\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: ../src/Commands/UnhookModule.php
-
-		-
-			message: "#^Parameter \\#1 \\$id of class Employee constructor expects int\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
-			count: 1
-			path: ../src/Context/ConsoleLoader.php
 
