@@ -86,7 +86,7 @@ final class CleanCategory extends Command
                 $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
 
                 if (!$categories['empty'] && !$categories['noempty']) {
-                    $io->title('No Categories to update');
+                    $io->title('All categories with active product are enable and all categories without product active are disable.');
 
                     return 0;
                 }
@@ -107,7 +107,6 @@ final class CleanCategory extends Command
 
                 return 0;
 
-                break;
             case 'disable-empty':
                 try {
                     $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
@@ -128,7 +127,6 @@ final class CleanCategory extends Command
                     return 0;
                 }
 
-                break;
             case 'enable-noempty':
                 try {
                     $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
@@ -149,7 +147,6 @@ final class CleanCategory extends Command
                     return 0;
                 }
 
-                break;
             case 'toggle':
                 $helper = $this->getHelper('question');
                 $id_category = $input->getOption('id_category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
@@ -161,7 +158,7 @@ final class CleanCategory extends Command
                 $category = new Category($id_category, $id_lang);
 
                 if (0 === (int) $category->active) {
-                    $category->active = 1;
+                    $category->active = true;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_category);
 
@@ -184,7 +181,7 @@ final class CleanCategory extends Command
                     return 0;
                 }
 
-                break;
+                // no break
             default:
                 $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
@@ -220,7 +217,7 @@ final class CleanCategory extends Command
 
                     if (!$NbProducts && 1 === (int) $categorieToCheck->active) {
                         if ($action === 'disable-empty') {
-                            $categorieToCheck->active = 0;
+                            $categorieToCheck->active = true;
                             if (!$categorieToCheck->update()) {
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                             }
