@@ -50,10 +50,10 @@ class ModuleHooks extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $moduleName = (string) $input->getArgument('name');  /** @phpstan-ignore-line */
+        $moduleName = (string) $input->getArgument('name');  /** @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
         $io = new SymfonyStyle($input, $output);
 
-        if ($module = Module::getInstanceByName($moduleName)) { /** @phpstan-ignore-line */
+        if ($module = Module::getInstanceByName($moduleName)) {/** @-phpstan-ignore-line - annotation disabled - not an error at level 5 - not checked */
             $possibleHooksList = $module->getPossibleHooksList();
             $moduleHooks = [];
 
