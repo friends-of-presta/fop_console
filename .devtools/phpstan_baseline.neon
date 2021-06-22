@@ -1,8 +1,8 @@
 parameters:
 	ignoreErrors:
 		-
-			message : "#Parameter \#2 \$idLang of class Category constructor expects null, int given.#"
-			count : 1
+			message : "#Parameter \\#2 \\$idLang of class Category constructor expects null, int given.#"
+			count : 0
 			path : ../src/Commands/Categories/CleanCategory.php
 		
 		-
