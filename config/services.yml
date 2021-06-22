@@ -1,0 +1,126 @@
+services:
+  _defaults:
+    public: true
+
+  fop.console.console_loader:
+    class: FOP\Console\Context\ConsoleLoader
+    arguments:
+      - '@prestashop.adapter.legacy.context'
+      - '@prestashop.adapter.shop.context'
+      - '%kernel.root_dir%'
+
+  fop.console.unhook_module.command:
+    class: FOP\Console\Commands\UnhookModule
+    tags:
+      - { name: console.command }
+
+  fop.console.hook_module.command:
+    class: FOP\Console\Commands\HookModule
+    tags:
+      - { name: console.command }
+
+  fop.console.list_module_hooks.command:
+    class: FOP\Console\Commands\ModuleHooks
+    tags:
+      - { name: console.command }
+
+  fop.console.latest_products.command:
+    class: FOP\Console\Commands\LatestProducts
+    tags:
+      - { name: console.command }
+
+  fop.console.export.command:
+    class: FOP\Console\Commands\Export
+    tags:
+      - { name: console.command }
+
+  fop.console.status.command:
+    class: FOP\Console\Commands\ShopStatus
+    tags:
+      - { name: console.command }
+
+  fop.console.check_service_container.command:
+    class: FOP\Console\Commands\CheckServiceContainer
+    tags:
+      - { name: console.command }
+
+  fop.console.debug_mode.command:
+    class: FOP\Console\Commands\DebugMode
+    tags:
+      - { name: console.command }
+
+  fop.console.maintenance.command:
+    class: FOP\Console\Commands\Maintenance
+    tags:
+      - { name: console.command }
+
+  fop.console.generate_htaccess.command:
+    class: FOP\Console\Commands\GenerateHtaccess
+    tags:
+      - { name: console.command }
+
+  fop.console.generate_robots.command:
+    class: FOP\Console\Commands\GenerateRobots
+    tags:
+      - { name: console.command }
+
+  fop.console.clear_cache_files.command:
+    class: FOP\Console\Commands\ClearCacheFiles
+    tags:
+      - { name: console.command }
+
+  fop.console.add_hook.command:
+    class: FOP\Console\Commands\AddHook
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_products.command:
+    class: FOP\Console\Commands\Images\GenerateProducts
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_categories.command:
+    class: FOP\Console\Commands\Images\GenerateCategories
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_manufacturers.command:
+    class: FOP\Console\Commands\Images\GenerateManufacturers
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_suppliers.command:
+    class: FOP\Console\Commands\Images\GenerateSuppliers
+    tags:
+      - { name: console.command }
+
+  fop.console.images_generate_stores.command:
+    class: FOP\Console\Commands\Images\GenerateStores
+    tags:
+      - { name: console.command }
+
+  fop.console.theme-reset.command:
+    class: FOP\Console\Commands\ThemeResetLayout
+
+  fop.console.override.make.command:
+    class: FOP\Console\Commands\MakeOverride
+    tags:
+      - { name: console.command }
+
+  fop.console.configuration.export:
+    class: FOP\Console\Commands\Configuration\Export
+    tags:
+      - { name: console.command }
+
+  fop.console.configuration.import:
+    class: FOP\Console\Commands\Configuration\Import
+    tags:
+      - { name: console.command }
+
+  fop.console.customers.groups.command:
+    class: FOP\Console\Commands\Customers\CustomersGroups
+    tags:
+      - { name: console.command }
+
+imports:
+  - { resource: overriders.yml }
