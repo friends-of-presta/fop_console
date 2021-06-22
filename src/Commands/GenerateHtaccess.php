@@ -45,6 +45,8 @@ class GenerateHtaccess extends Command
         $io = new SymfonyStyle($input, $output);
         if (true === Tools::generateHtaccess()) {
             $io->success('htaccess file generated with success');
+
+            return 0;
         } else {
             $io->error('An error occurs while generating .htaccess file');
 

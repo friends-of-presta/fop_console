@@ -77,5 +77,7 @@ final class Export extends Command
         $serializer = $this->getContainer()->get('serializer');
 
         $io->text($serializer->serialize([strtolower($objectModel) => $objects], 'xml', ['xml_format_output' => true]));
+
+        return 0;
     }
 }
