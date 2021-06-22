@@ -38,7 +38,7 @@ class UselessModules extends Command
 
     private const NON_ESSENTIAL_MODULES = ['emarketing', 'gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
 
-    private const STATS_MODULES = = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
+    private const STATS_MODULES = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
         'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
         'statsequipment', 'statsforecast', 'statslive', 'statsnewsletter', 'statsorigin', 'statspersonalinfos',
         'statsproduct', 'statsregistrations', 'statssales', 'statssearch', 'statsstock', 'statsvisits', ];
