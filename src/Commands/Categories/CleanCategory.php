@@ -34,7 +34,7 @@ final class CleanCategory extends Command
     /**
      * @var array possible command
      */
-    const ALLOWED_COMMAND = ['status', 'toggle', 'enable-noempty', 'disable-empty'];
+    const ALLOWED_COMMAND = ['status', 'toggle', 'enable-no-empty', 'disable-empty'];
 
     /**
      * {@inheritdoc}
@@ -48,6 +48,7 @@ final class CleanCategory extends Command
                 . PHP_EOL . '   - Disable final categories without product.'
                 . PHP_EOL . '   - Enable final categories with an active product.'
                 . PHP_EOL . '   - This command DON\'T SUPPORT multi-shop.')
+            ->addUsage('./bin/console fop:category toggle -c 3 ( enable or disable the category with id 3')
             ->addUsage('--exclude=[XX,YY,ZZ] (id_category separate by coma)')
             ->addArgument(
                 'action',
@@ -56,7 +57,7 @@ final class CleanCategory extends Command
                 'status'
             )
             ->addOption('id_lang', null, InputOption::VALUE_OPTIONAL, 'Id lang')
-            ->addOption('id_category', null, InputOption::VALUE_OPTIONAL)
+            ->addOption('id_category', 'c', InputOption::VALUE_OPTIONAL)
             ->addOption('exclude', null, InputOption::VALUE_OPTIONAL, 'Ids Category to exclude')
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force the command when the MultiShop is enable.');
     }
@@ -101,7 +102,7 @@ final class CleanCategory extends Command
                 if ($categories['noempty']) {
                     $io->title('The following categorie(s) are disabled but with product active in the category');
                     $io->text(implode(' / ', $categories['noempty']));
-                    $io->text(' -- You can run `./bin/console fop:category enable-noempty` to fix it');
+                    $io->text(' -- You can run `./bin/console fop:category enable-no-empty` to fix it');
                     $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
@@ -127,7 +128,7 @@ final class CleanCategory extends Command
                     return 0;
                 }
 
-            case 'enable-noempty':
+            case 'enable-no-empty':
                 try {
                     $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
                 } catch (\Exception $e) {
@@ -169,7 +170,7 @@ final class CleanCategory extends Command
 
                     return 0;
                 } else {
-                    $category->active = 0;
+                    $category->active = false;
                     if (!$category->update()) {
                         $io->error('Failed to update Category with ID : ' . $id_category);
 
@@ -217,15 +218,15 @@ final class CleanCategory extends Command
 
                     if (!$NbProducts && 1 === (int) $categorieToCheck->active) {
                         if ($action === 'disable-empty') {
-                            $categorieToCheck->active = true;
+                            $categorieToCheck->active = false;
                             if (!$categorieToCheck->update()) {
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                             }
                         }
                         $categoriesToDesactive[] = $categorieToCheck->name . ' (' . $categorie['id_category'] . ')';
                     } elseif ($NbProducts && 1 != $categorieToCheck->active) {
-                        if ($action === 'enable-noempty') {
-                            $categorieToCheck->active = 1;
+                        if ($action === 'enable-no-empty') {
+                            $categorieToCheck->active = true;
                             if (!$categorieToCheck->update()) {
                                 throw new \Exception('Failed to update Category : ' . $categorieToCheck->name);
                             }
