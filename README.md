@@ -34,7 +34,7 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 ## Install from release (recommended)
 
-Donwload the zip release and install it like any other module.
+[Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
 
 ## Install from sources
 
