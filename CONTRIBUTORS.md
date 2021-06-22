@@ -18,3 +18,9 @@
 ## Arnaud Scote
 * company : Arnaud Scote
 * Github : [Mch0](https://github.com/Mch0)
+## André Pululu Kinanga
+* company : 
+* Github : [PululuK](https://github.com/PululuK)
+## Thomas Roux
+* company : Rouage Communication
+* Github : [Okom3pom](https://github.com/okom3pom)
