@@ -22,13 +22,11 @@ declare(strict_types=1);
 namespace FOP\Console\Commands\Modules;
 
 use FOP\Console\Command;
-use Module;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class UselessModules extends Command
@@ -37,6 +35,13 @@ class UselessModules extends Command
      * @var array possible allowed command
      */
     private const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
+
+    private const NON_ESSENTIAL_MODULES = ['emarketing', 'gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
+
+    private const STATS_MODULES = = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
+        'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
+        'statsequipment', 'statsforecast', 'statslive', 'statsnewsletter', 'statsorigin', 'statspersonalinfos',
+        'statsproduct', 'statsregistrations', 'statssales', 'statssearch', 'statsstock', 'statsvisits', ];
 
     /**
      * {@inheritdoc}
@@ -73,25 +78,17 @@ class UselessModules extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $helper = $this->getHelper('question');
-        $returnCode = null;
+        $moduleManager = $this->getContainer()->get('prestashop.module.manager');
         $action = $input->getArgument('action');
         $modulesInfos = [];
         $modulesStatsInfos = [];
-
-        $uselessModules = ['emarketing', 'gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
-
-        $statsModules = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
-            'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
-            'statsequipment', 'statsforecast', 'statslive', 'statsnewsletter', 'statsorigin', 'statspersonalinfos',
-            'statsproduct', 'statsregistrations', 'statssales', 'statssearch', 'statsstock', 'statsvisits', ];
 
         switch ($action) {
             case 'status':
                 $io->text('<info>Non-essential Modules Informations</info>');
 
-                foreach ($uselessModules as $key => $uselessModule) {
-                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'installed' => Module::isInstalled($uselessModule) ? 'yes' : 'no'];
+                foreach (self::NON_ESSENTIAL_MODULES as $key => $uselessModule) {
+                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
                 }
 
                 $io->table(['ID', 'Name', 'Installed?'], $modulesInfos);
@@ -106,29 +103,29 @@ class UselessModules extends Command
                 return 0;
                 break;
             case 'uninstall':
-                $moduleToUninstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to uninstall Press ENTER for all</question>'));
+                $moduleToUninstall = $input->getOption('modulename');
                 $idsModule = $input->getOption('idsmodule');
 
                 if ($idsModule) {
                     $idsModule = explode(',', $idsModule);
                     foreach ($idsModule as $idModule) {
-                        if (Module::isInstalled($uselessModules[$idModule])) {
+                        if ($moduleManager->isInstalled(self::NON_ESSENTIAL_MODULES[$idModule])) {
                             $command = $this->getApplication()->find('prestashop:module');
-                            $returnCode = $command->run($this->createArguments('uninstall', $uselessModules[$idModule]), $output);
+                            $returnCode = $command->run($this->createArguments('uninstall', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                         } else {
-                            $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
+                            $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
                         }
                     }
                 } elseif ($moduleToUninstall) {
-                    if (Module::isInstalled($moduleToUninstall)) {
+                    if ($moduleManager->isInstalled($moduleToUninstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('uninstall', $moduleToUninstall), $output);
                     } else {
                         $io->error('Module ' . $moduleToUninstall . ' is not installed');
                     }
                 } else {
-                    foreach ($uselessModules as $uselessModule) {
-                        if (Module::isInstalled($uselessModule)) {
+                    foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
+                        if ($moduleManager->isInstalled($uselessModule)) {
                             $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('uninstall', $uselessModule), $output);
                         }
@@ -139,29 +136,29 @@ class UselessModules extends Command
 
                 break;
             case 'install':
-                $moduleToInstall = $input->getOption('modulename'); // ?? $helper->ask($input, $output, new Question('<question>Name of module to install Press ENTER for all</question>'));
+                $moduleToInstall = $input->getOption('modulename');
                 $idsModule = $input->getOption('idsmodule');
 
                 if ($idsModule) {
                     $idsModule = explode(',', $idsModule);
                     foreach ($idsModule as $idModule) {
-                        if (!Module::isInstalled($uselessModules[$idModule])) {
+                        if (!$moduleManager->isInstalled(self::NON_ESSENTIAL_MODULES[$idModule])) {
                             $command = $this->getApplication()->find('prestashop:module');
-                            $returnCode = $command->run($this->createArguments('install', $uselessModules[$idModule]), $output);
+                            $returnCode = $command->run($this->createArguments('install', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                         } else {
-                            $io->error('Module ' . $uselessModules[$idModule] . ' is not installed');
+                            $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
                         }
                     }
                 } elseif ($moduleToInstall) {
-                    if (!Module::isInstalled($moduleToInstall)) {
+                    if (!$moduleManager->isInstalled($moduleToInstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('install', $moduleToInstall), $output);
                     } else {
                         $io->error('Module ' . $moduleToInstall . ' is not installed');
                     }
                 } else {
-                    foreach ($uselessModules as $uselessModule) {
-                        if (!Module::isInstalled($uselessModule)) {
+                    foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
+                        if (!$moduleManager->isInstalled($uselessModule)) {
                             $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('install', $uselessModule), $output);
                         }
@@ -173,8 +170,8 @@ class UselessModules extends Command
                 break;
             case 'modulestats':
                 $io->text('<info>Stats Modules Informations</info>');
-                foreach ($statsModules as $statsModule) {
-                    $modulesStatsInfos[] = ['name' => $statsModule, 'installed' => Module::isInstalled($statsModule) ? 'yes' : 'no'];
+                foreach (self::STATS_MODULES as $statsModule) {
+                    $modulesStatsInfos[] = ['name' => $statsModule, 'installed' => $moduleManager->isInstalled($statsModule) ? 'yes' : 'no'];
                 }
 
                 $io->table(['Name', 'Installed?'], $modulesStatsInfos);
@@ -183,8 +180,8 @@ class UselessModules extends Command
 
                 break;
             case 'uninstallstats':
-                foreach ($statsModules as $statsModule) {
-                    if (Module::isInstalled($statsModule)) {
+                foreach (self::STATS_MODULES as $statsModule) {
+                    if ($moduleManager->isInstalled($statsModule)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('uninstall', $statsModule), $output);
                     }
@@ -194,8 +191,8 @@ class UselessModules extends Command
 
                 break;
             case 'installstats':
-                foreach ($statsModules as $statsModule) {
-                    if (Module::isInstalled($statsModule)) {
+                foreach (self::STATS_MODULES as $statsModule) {
+                    if ($moduleManager->isInstalled($statsModule)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('install', $statsModule), $output);
                     }
