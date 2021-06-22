@@ -101,6 +101,9 @@ services:
 
   fop.console.theme-reset.command:
     class: FOP\Console\Commands\ThemeResetLayout
+
+  fop.console.override.make.command:
+    class: FOP\Console\Commands\MakeOverride
     tags:
       - { name: console.command }
 
@@ -119,7 +122,5 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.clean_category.command:
-    class: FOP\Console\Commands\Categories\CleanCategory
-    tags:
-      - { name: console.command }
+imports:
+  - { resource: overriders.yml }
