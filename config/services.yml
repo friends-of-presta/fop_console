@@ -123,7 +123,7 @@ services:
       - { name: console.command }
 
   fop.console.modules.command:
-    class: FOP\Console\Commands\Modules\UselessModules
+    class: FOP\Console\Commands\Modules\NonEssentialModules
     tags:
       - { name: console.command }
 
