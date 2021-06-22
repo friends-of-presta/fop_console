@@ -101,7 +101,6 @@ class NonEssentialModules extends Command
                     . PHP_EOL . '    - install one module by running     : `./bin/console fop:modules install --modulename ModuleName`');
 
                 return 0;
-                break;
             case 'uninstall':
                 $moduleToUninstall = $input->getOption('modulename');
                 $idsModule = $input->getOption('idsmodule');
@@ -134,7 +133,6 @@ class NonEssentialModules extends Command
 
                 return 0;
 
-                break;
             case 'install':
                 $moduleToInstall = $input->getOption('modulename');
                 $idsModule = $input->getOption('idsmodule');
@@ -167,7 +165,6 @@ class NonEssentialModules extends Command
 
                 return 0;
 
-                break;
             case 'modulestats':
                 $io->text('<info>Stats Modules Informations</info>');
                 foreach (self::STATS_MODULES as $statsModule) {
@@ -178,7 +175,6 @@ class NonEssentialModules extends Command
 
                 return 0;
 
-                break;
             case 'uninstallstats':
                 foreach (self::STATS_MODULES as $statsModule) {
                     if ($moduleManager->isInstalled($statsModule)) {
@@ -189,7 +185,6 @@ class NonEssentialModules extends Command
 
                 return 0;
 
-                break;
             case 'installstats':
                 foreach (self::STATS_MODULES as $statsModule) {
                     if ($moduleManager->isInstalled($statsModule)) {
@@ -200,7 +195,6 @@ class NonEssentialModules extends Command
 
                 return 0;
 
-                break;
             default:
                 $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
