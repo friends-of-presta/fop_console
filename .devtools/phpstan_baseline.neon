@@ -41,6 +41,11 @@ parameters:
 			path: ../src/Commands/DebugMode.php
 
 		-
+			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
+			count: 1
+			path: ../src/Commands/Images/GenerateAbstract.php
+
+		-
 			message: "#^PHPDoc tag @param has invalid value \\(\\$dir\\)\\: Unexpected token \"\\$dir\", expected type at offset 51$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
