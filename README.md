@@ -7,31 +7,6 @@ Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdo
 This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
 These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
-## Fop Console commands
-
-* fop:add-hook                                 Create hook in database
-* fop:check-container                          Health check of the Service Container
-* fop:clear-cache                              Replace the cache directory with an empty one.
-* fop:configuration:export                     Export configuration values (from ps_configuration table).
-* fop:configuration:import                     Import configuration values
-* fop:customer-groups                          Customer groups
-* fop:debug-mode                               Enable or Disable debug mode.
-* fop:export                                   Allows to export data in XML
-* fop:generate:htaccess                        Generate the .htaccess file
-* fop:generate:robots                          Generate the robots.txt file
-* fop:hook-module                              Attach one module on specific hook
-* fop:images:generate:categories               Regenerate categories thumbnails
-* fop:images:generate:manufacturers            Regenerate manufacturers thumbnails
-* fop:images:generate:products                 Regenerate products thumbnails
-* fop:images:generate:stores                   Regenerate stores thumbnails
-* fop:images:generate:suppliers                Regenerate suppliers thumbnails
-* fop:latest-products                          Displays the latest products
-* fop:maintenance                              Configure maintenance mode
-* fop:module:hooks                             Get modules list
-* fop:shop-status                              Display shops statuses
-* fop:theme-reset                              Reset current theme layout
-* fop:unhook-module                            Detach module from hoo
-
 ## Install from release (recommended)
 
 [Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
