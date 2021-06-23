@@ -29,7 +29,12 @@ parameters:
 			message: "#^PHPDoc tag @param references unknown parameter\\: \\$type$#"
 			count: 1
 			path: ../src/Commands/Customers/CustomersGroups.php
-			
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../src/Commands/Customers/CustomersGroups.php
+
 		-
 			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
 			count: 1
