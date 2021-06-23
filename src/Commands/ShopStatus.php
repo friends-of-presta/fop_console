@@ -90,6 +90,8 @@ final class ShopStatus extends Command
                 }
             }
             $io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
+
+            return 0;
         }
     }
 

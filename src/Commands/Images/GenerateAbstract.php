@@ -102,6 +102,8 @@ abstract class GenerateAbstract extends Command
         }
 
         $io->success('Thumbnails generated with success for ' . static::IMAGE_TYPE);
+
+        return 0;
     }
 
     /**
