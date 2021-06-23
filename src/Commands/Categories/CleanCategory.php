@@ -212,8 +212,7 @@ final class CleanCategory extends Command
         foreach ($categories as $categorie) {
             if (!in_array($categorie['id_category'], $exclude) && !in_array($categorie['id_category'], $excludeDefault)) {
                 if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                    $categorieToCheck = new Category($categorie['id_category'], $id_lang); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
-
+                    $categorieToCheck = new Category($categorie['id_category'], $id_lang);
                     $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                     if (!$NbProducts && 1 === (int) $categorieToCheck->active) {

@@ -1,10 +1,8 @@
 parameters:
+	reportUnmatchedIgnoredErrors: false
 	ignoreErrors:
-		-
-			message : "#Parameter \\#2 \\$idLang of class Category constructor expects null, int given.#"
-			count : 0
-			path : ../src/Commands/Categories/CleanCategory.php
-		
+		-	'#Parameter \#2 \$idLang of class Category constructor expects null, int given.#'
+
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Application\\:\\:getKernel\\(\\)\\.$#"
 			count: 1
