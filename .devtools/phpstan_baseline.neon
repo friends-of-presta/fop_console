@@ -29,17 +29,7 @@ parameters:
 			message: "#^PHPDoc tag @param references unknown parameter\\: \\$type$#"
 			count: 1
 			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../src/Commands/DebugMode.php
-
+			
 		-
 			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
 			count: 1
@@ -69,16 +59,6 @@ parameters:
 			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected type at offset 82$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: ../src/Commands/Maintenance.php
-
-		-
-			message: "#^Variable \\$ips might not be defined\\.$#"
-			count: 3
-			path: ../src/Commands/Maintenance.php
 
 		-
 			message: "#^Call to an undefined method Shop\\:\\:getActive\\(\\)\\.$#"
