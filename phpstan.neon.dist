@@ -5,6 +5,8 @@ parameters:
     - vendor/
   reportUnmatchedIgnoredErrors: true
   level: 5
+  stubFiles: 
+      - .devtools/phpstan/stubs/Category.stub
 
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
