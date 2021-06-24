@@ -88,16 +88,16 @@ class NonEssentialModules extends Command
                 $io->text('<info>Non-essential Modules Informations</info>');
 
                 foreach (self::NON_ESSENTIAL_MODULES as $key => $uselessModule) {
-                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
+                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'present' => $this->moduleExist($uselessModule) ? 'yes' : 'no', 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
                 }
 
-                $io->table(['ID', 'Name', 'Installed?'], $modulesInfos);
+                $io->table(['ID', 'Name', 'Present?', 'Installed?'], $modulesInfos);
                 $io->text('You can'
                     . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules uninstall`'
-                    . PHP_EOL . '    - uninstall modules by runing       : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
-                    . PHP_EOL . '    - uninstall one module by runing    : `./bin/console fop:modules uninstall --modulename ModuleName`'
+                    . PHP_EOL . '    - uninstall modules by running       : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
+                    . PHP_EOL . '    - uninstall one module by running    : `./bin/console fop:modules uninstall --modulename ModuleName`'
                     . PHP_EOL . '    - install all modules by running    : `./bin/console fop:modules install`'
-                    . PHP_EOL . '    - install modules by runing         : `./bin/console fop:modules install --idsmodule x,y,z`'
+                    . PHP_EOL . '    - install modules by running         : `./bin/console fop:modules install --idsmodule x,y,z`'
                     . PHP_EOL . '    - install one module by running     : `./bin/console fop:modules install --modulename ModuleName`');
 
                 return 0;
@@ -113,6 +113,8 @@ class NonEssentialModules extends Command
                             $returnCode = $command->run($this->createArguments('uninstall', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                         } else {
                             $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
+
+                            return 1;
                         }
                     }
                 } elseif ($moduleToUninstall) {
@@ -121,6 +123,8 @@ class NonEssentialModules extends Command
                         $returnCode = $command->run($this->createArguments('uninstall', $moduleToUninstall), $output);
                     } else {
                         $io->error('Module ' . $moduleToUninstall . ' is not installed');
+
+                        return 1;
                     }
                 } else {
                     foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
@@ -145,6 +149,8 @@ class NonEssentialModules extends Command
                             $returnCode = $command->run($this->createArguments('install', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                         } else {
                             $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
+
+                            return 1;
                         }
                     }
                 } elseif ($moduleToInstall) {
@@ -153,10 +159,12 @@ class NonEssentialModules extends Command
                         $returnCode = $command->run($this->createArguments('install', $moduleToInstall), $output);
                     } else {
                         $io->error('Module ' . $moduleToInstall . ' is not installed');
+
+                        return 1;
                     }
                 } else {
                     foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
-                        if (!$moduleManager->isInstalled($uselessModule)) {
+                        if (!$moduleManager->isInstalled($uselessModule) && $this->moduleExist($uselessModule)) {
                             $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('install', $uselessModule), $output);
                         }
@@ -221,5 +229,10 @@ class NonEssentialModules extends Command
     private function getPossibleActions(): string
     {
         return implode(',', self::ALLOWED_COMMAND);
+    }
+
+    private function moduleExist($name): bool
+    {
+        return file_exists('../../modules/' . $name . '/' . $name . '.php');
     }
 }
