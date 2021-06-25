@@ -11,31 +11,6 @@ parameters:
 			path: ../src/Commands/Configuration/Export.php
 
 		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Customers\\\\CustomersGroups\\:\\:groupCustomersTransfer\\(\\) never returns null so it can be removed from the return typehint\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Customers\\\\CustomersGroups\\:\\:groupCustomersTransfer\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^PHPDoc tag @param references unknown parameter\\: \\$type$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
 			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
