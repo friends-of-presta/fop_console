@@ -62,6 +62,7 @@ final class Maintenance extends Command
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
         $ipaddress = trim($input->getArgument('ipaddress'));
+        $ips = false;
         $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
 
         //check if action is allowed
