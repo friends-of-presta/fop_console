@@ -208,7 +208,7 @@ final class CustomersGroups extends Command
         }
 
         // Delete the form group
-        if (self::ACTION_DELETE_FROM_GROUP == (int) $actionAfter && $hasError != 0) {
+        if (self::ACTION_DELETE_FROM_GROUP == (int) $actionAfter && 0 == $hasError) {
             try {
                 $groupFrom->delete();
             } catch (\Exception $e) {
