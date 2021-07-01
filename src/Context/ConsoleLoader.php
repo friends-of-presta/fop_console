@@ -19,6 +19,7 @@
 
 namespace FOP\Console\Context;
 
+use Configuration;
 use Currency;
 use Employee;
 use FOP\Console\Controllers\ConsoleController;
@@ -69,6 +70,6 @@ final class ConsoleLoader
         if ($shopGroupId !== null) {
             $this->shopContext->setShopGroupContext($shopGroupId);
         }
-        $this->legacyContext->getContext()->currency = new Currency();
+        $this->legacyContext->getContext()->currency = new Currency(Configuration::get('PS_CURRENCY_DEFAULT') ?: null);
     }
 }

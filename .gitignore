@@ -1,4 +1,14 @@
-vendor
-.php_cs.cache
+; composer dependencies
+/vendor
 
+; prestashop module files
 /config_*.xml
+/config.xml
+
+; dev tools
+.php_cs.cache
+/.devtools/.phpstan_bootstrap_config.php
+grumphp.yml
+
+; ide
+/.idea

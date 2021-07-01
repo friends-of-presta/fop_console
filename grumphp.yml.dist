@@ -1,0 +1,10 @@
+grumphp:
+  tasks:
+    phpcsfixer:
+      config: .php_cs.dist
+    phpstan: ~
+  parallel:
+    enabled: false
+  fixer:
+    enabled: true
+    fix_by_default: true
