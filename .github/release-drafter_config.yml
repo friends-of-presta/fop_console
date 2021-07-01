@@ -1,14 +1,4 @@
 template: |
-
-  Toi qui va release : Mode d\'emploi ici : https://github.com/friends-of-presta/fop_console/blob/dev/docs/RELEASE.md
-  En résumé :
-  - modifie et copie ce contenu (1)
-  - ne publie pas !
-  - pousse un tag sur le dépot
-  - ça a généré une release : modifie là pour y coller le texte copié en (1)
-  - efface cette notice
-  - publie !
-
   ## What’s New
   $CHANGES
 
