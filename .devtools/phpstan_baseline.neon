@@ -9,29 +9,3 @@ parameters:
 			message: "#^Function dump invoked with 2 parameters, 1 required\\.$#"
 			count: 1
 			path: ../src/Commands/Configuration/Export.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getActive\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getDeleted\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getName\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getThemeName\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-

@@ -103,7 +103,7 @@ final class ShopStatus extends Command
     private function formatShopsInformation(array $shops)
     {
         $shopsInformation = [];
-        /** @var Shop $shop */
+        /** @var \PrestaShopBundle\Entity\Shop $shop */
         foreach ($shops as $shop) {
             $shopsInformation[] = [
                 $shop->getId(),
