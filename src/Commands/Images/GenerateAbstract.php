@@ -337,9 +337,9 @@ abstract class GenerateAbstract extends Command
     /**
      * Regenerate no-pictures images.
      *
-     * @param $dir
-     * @param $type
-     * @param $languages
+     * @param string $dir
+     * @param array $type
+     * @param array $languages
      *
      * @return bool
      */

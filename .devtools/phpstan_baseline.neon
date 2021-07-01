@@ -11,21 +11,6 @@ parameters:
 			path: ../src/Commands/Configuration/Export.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$dir\\)\\: Unexpected token \"\\$dir\", expected type at offset 63$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$languages\\)\\: Unexpected token \"\\$languages\", expected type at offset 102$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected type at offset 82$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
 			message: "#^Call to an undefined method Shop\\:\\:getActive\\(\\)\\.$#"
 			count: 1
 			path: ../src/Commands/ShopStatus.php
