@@ -238,13 +238,13 @@ abstract class GenerateAbstract extends Command
     /**
      * Regenerate images.
      *
-     * @param $dir
-     * @param $type
+     * @param string $dir
+     * @param array $type
      * @param bool $productsImages
      *
      * @return bool|string
      */
-    protected function regenerateNewImages($dir, $type, $productsImages = false)
+    protected function regenerateNewImages(string $dir, array $type, bool $productsImages = false)
     {
         $processTypes = [];
         array_map(function ($row) use (&$processTypes) {
