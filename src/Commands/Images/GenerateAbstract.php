@@ -195,9 +195,9 @@ abstract class GenerateAbstract extends Command
      * @param array $type
      * @param bool $product
      *
-     * @return bool
+     * @return void
      */
-    protected function deleteOldImages($dir, $type, $product = false)
+    protected function deleteOldImages($dir, $type, $product = false): void
     {
         $toDel = scandir($dir, SCANDIR_SORT_NONE);
 
