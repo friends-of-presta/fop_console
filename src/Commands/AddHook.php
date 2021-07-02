@@ -69,26 +69,24 @@ final class AddHook extends Command
         $title = $input->getOption('title') ?? $helper->ask($input, $output, new Question('<question>Give me the title</question>'));
         $description = $input->getOption('description') ?? $helper->ask($input, $output, new Question('<question>Give me the description</question>'));
 
-        if (!empty($name) && !empty($title) && !empty($description)) {
-            try {
-                $hook = new \Hook();
-                $hook->name = $name;
-                $hook->title = $title;
-                $hook->description = $description;
-                if ($hook->save()) {
-                    $io->getErrorStyle()->success('Your hook has been add !');
-
-                    return 0;
-                }
-            } catch (\Exception $e) {
-                $io->getErrorStyle()->error($e->getMessage());
-
-                return 1;
+        try {
+            if (empty($name) || empty($title) || empty($description)) {
+                throw new \Exception('You must give me a name, title and description !');
             }
-        } else {
-            $io->getErrorStyle()->error('You must give me a name, title and description !');
+
+            $hook = new \Hook();
+            $hook->name = $name;
+            $hook->title = $title;
+            $hook->description = $description;
+            if (!$hook->save()) {
+                throw new \Exception('Failed to save Hook : ' . $hook->validateFields(false, true));
+            }
+        } catch (\Exception $e) {
+            $io->getErrorStyle()->error($e->getMessage());
 
             return 1;
         }
+
+        return 0;
     }
 }
