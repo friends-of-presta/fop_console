@@ -30,6 +30,7 @@ php bin/console pr:mo install fop_console
 ## Current commands
 
 * `fop:add-hook`                       Create hook in database
+* `fop:category`                       Manage empty categories
 * `fop:check-container`                Health check of the Service Container
 * `fop:clear-cache`                    Replace the cache directory with an empty one.
 * `fop:configuration:export`           Export configuration values (from ps_configuration table).
