@@ -7,31 +7,6 @@ Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdo
 This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
 These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
-## Fop Console commands
-
-* fop:add-hook                                 Create hook in database
-* fop:check-container                          Health check of the Service Container
-* fop:clear-cache                              Replace the cache directory with an empty one.
-* fop:configuration:export                     Export configuration values (from ps_configuration table).
-* fop:configuration:import                     Import configuration values
-* fop:customer-groups                          Customer groups
-* fop:debug-mode                               Enable or Disable debug mode.
-* fop:export                                   Allows to export data in XML
-* fop:generate:htaccess                        Generate the .htaccess file
-* fop:generate:robots                          Generate the robots.txt file
-* fop:hook-module                              Attach one module on specific hook
-* fop:images:generate:categories               Regenerate categories thumbnails
-* fop:images:generate:manufacturers            Regenerate manufacturers thumbnails
-* fop:images:generate:products                 Regenerate products thumbnails
-* fop:images:generate:stores                   Regenerate stores thumbnails
-* fop:images:generate:suppliers                Regenerate suppliers thumbnails
-* fop:latest-products                          Displays the latest products
-* fop:maintenance                              Configure maintenance mode
-* fop:module:hooks                             Get modules list
-* fop:shop-status                              Display shops statuses
-* fop:theme-reset                              Reset current theme layout
-* fop:unhook-module                            Detach module from hoo
-
 ## Install from release (recommended)
 
 [Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
@@ -54,28 +29,29 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:clear-cache` Clear the cache folder super fast
-* `fop:debug-mode` Enable or Disable debug mode
-* `fop:shop-status` Display shop(s) status(es)
-* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
-* `fop:images:generate:categories` Regenerate categories thumbnails
-* `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
-* `fop:images:generate:products` Regenerate products thumbnails
-* `fop:images:generate:stores` Regenerate stores thumbnails
-* `fop:images:generate:suppliers` Regenerate suppliers thumbnails
-* `fop:generate:htaccess` Generate the .htaccess file
-* `fop:generate:robots`   Generate the robots.txt file
-* `fop:theme-reset` Reset current (or selected) theme
-* `fop:add-hook` : Create a new hook in database
-* `fop:unhook-module` : Ungraft module on specific hook
-* `fop:hook-module` : Graft module on specific hook
-* `fop:latest-products`: Displays the latest products
-* `fop:export`: Exports object models in XML
-* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
-* `fop:configuration:export` Export configuration values to a json file
-* `fop:configuration:import` Import configuration values from a json file
-* `fop:customer-groups`: Move or add in bulk clients from one group client to another
-* `fop:override:make` Create an override file ready for implementation
+* `fop:add-hook`                       Create hook in database
+* `fop:category`                       Manage empty categories
+* `fop:check-container`                Health check of the Service Container
+* `fop:clear-cache`                    Replace the cache directory with an empty one.
+* `fop:configuration:export`           Export configuration values (from ps_configuration table).
+* `fop:configuration:import`           Import configuration values
+* `fop:customer-groups`                Customer groups
+* `fop:debug-mode`                     Enable or Disable debug mode.
+* `fop:export`                         Allows to export data in XML
+* `fop:generate:htaccess`              Generate the .htaccess file
+* `fop:generate:robots`                Generate the robots.txt file
+* `fop:hook-module`                    Attach one module on specific hook
+* `fop:images:generate:categories`     Regenerate categories thumbnails
+* `fop:images:generate:manufacturers`  Regenerate manufacturers thumbnails
+* `fop:images:generate:products`       Regenerate products thumbnails
+* `fop:images:generate:stores`         Regenerate stores thumbnails
+* `fop:images:generate:suppliers`      Regenerate suppliers thumbnails
+* `fop:latest-products`                Displays the latest products
+* `fop:maintenance`                    Configure maintenance mode
+* `fop:module:hooks`                   Get modules list
+* `fop:override:make`                  Generate a file to make an override.
+* `fop:shop-status`                    Display shops statuses
+* `fop:unhook-module`                  Detach module from hook
 
 ## Create your owns Commands
 
@@ -119,17 +95,19 @@ final class MyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->text('Hello friends of PrestaShop!');
 
-        return 0; // return 0 on success or 1 on failure.        
+        return 0; // return 0 on success or 1 on failure.
     }
 }
+```
 
 ## Getting started
 
 In a shell (call it shell, console or terminal), at the root of a Prestashop installation, type this command to list all available commands.
 You'll see commands provided by Symfony, Prestashop and installed modules.
+
 ```shell
 ./bin/console list
-```
+
 
 To list only fop commands :
 ```shell

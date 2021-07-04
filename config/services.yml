@@ -127,6 +127,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.category.command:
+    class: FOP\Console\Commands\Categories\CleanCategory
+    tags:
+      - { name: console.command }
+
 imports:
   - { resource: overriders.yml }
 

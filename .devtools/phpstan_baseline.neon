@@ -11,67 +11,7 @@ parameters:
 			path: ../src/Commands/Configuration/Export.php
 
 		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Customers\\\\CustomersGroups\\:\\:groupCustomersTransfer\\(\\) never returns null so it can be removed from the return typehint\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Customers\\\\CustomersGroups\\:\\:groupCustomersTransfer\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Negated boolean expression is always true\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^PHPDoc tag @param references unknown parameter\\: \\$type$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../src/Commands/Customers/CustomersGroups.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: ../src/Commands/DebugMode.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Export\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Export.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\GenerateHtaccess\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/GenerateHtaccess.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\GenerateRobots\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/GenerateRobots.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\HookModule\\:\\:execute\\(\\) should return bool but returns int\\.$#"
-			count: 3
-			path: ../src/Commands/HookModule.php
-
-		-
-			message: "#^Return type \\(bool\\) of method FOP\\\\Console\\\\Commands\\\\HookModule\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: ../src/Commands/HookModule.php
-
-		-
 			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
 			count: 1
 			path: ../src/Commands/Images/GenerateAbstract.php
 
@@ -101,21 +41,6 @@ parameters:
 			path: ../src/Commands/Images/GenerateAbstract.php
 
 		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\LatestProducts\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/LatestProducts.php
-
-		-
-			message: "#^Negated boolean expression is always false\\.$#"
-			count: 1
-			path: ../src/Commands/Maintenance.php
-
-		-
-			message: "#^Variable \\$ips might not be defined\\.$#"
-			count: 3
-			path: ../src/Commands/Maintenance.php
-
-		-
 			message: "#^Call to an undefined method Shop\\:\\:getActive\\(\\)\\.$#"
 			count: 1
 			path: ../src/Commands/ShopStatus.php
@@ -139,29 +64,4 @@ parameters:
 			message: "#^Call to an undefined method Shop\\:\\:getThemeName\\(\\)\\.$#"
 			count: 1
 			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\ShopStatus\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\ThemeResetLayout\\:\\:execute\\(\\) should return int\\|null but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/ThemeResetLayout.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\UnhookModule\\:\\:execute\\(\\) should return bool but returns int\\.$#"
-			count: 3
-			path: ../src/Commands/UnhookModule.php
-
-		-
-			message: "#^Return type \\(bool\\) of method FOP\\\\Console\\\\Commands\\\\UnhookModule\\:\\:execute\\(\\) should be compatible with return type \\(int\\|null\\) of method Symfony\\\\Component\\\\Console\\\\Command\\\\Command\\:\\:execute\\(\\)$#"
-			count: 1
-			path: ../src/Commands/UnhookModule.php
-
-		-
-			message: "#^Parameter \\#1 \\$id of class Employee constructor expects int\\|null, array\\<string\\>\\|bool\\|string\\|null given\\.$#"
-			count: 1
-			path: ../src/Context/ConsoleLoader.php
 

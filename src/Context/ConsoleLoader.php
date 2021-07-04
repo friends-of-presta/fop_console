@@ -58,7 +58,7 @@ final class ConsoleLoader
         }
         $this->legacyContext->getContext()->controller = new ConsoleController();
         if (!$this->legacyContext->getContext()->employee) {
-            $this->legacyContext->getContext()->employee = new Employee($employeeId);
+            $this->legacyContext->getContext()->employee = new Employee((int) $employeeId);
         }
         $shop = $this->legacyContext->getContext()->shop;
         $shop::setContext(1);

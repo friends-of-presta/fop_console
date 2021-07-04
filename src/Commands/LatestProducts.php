@@ -56,6 +56,8 @@ final class LatestProducts extends Command
             ['ID', 'Name', 'Quantity', 'Price', 'Activated?'],
             $this->formatProductInformation($products)
         );
+
+        return 0;
     }
 
     /**
