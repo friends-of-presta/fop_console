@@ -10,17 +10,17 @@ services:
       - '%kernel.root_dir%'
 
   fop.console.unhook_module.command:
-    class: FOP\Console\Commands\UnhookModule
+    class: FOP\Console\Commands\Modules\UnhookModule
     tags:
       - { name: console.command }
 
   fop.console.hook_module.command:
-    class: FOP\Console\Commands\HookModule
+    class: FOP\Console\Commands\Modules\HookModule
     tags:
       - { name: console.command }
 
   fop.console.list_module_hooks.command:
-    class: FOP\Console\Commands\ModuleHooks
+    class: FOP\Console\Commands\Modules\ModuleHooks
     tags:
       - { name: console.command }
 
