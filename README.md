@@ -13,7 +13,8 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 ## Install from sources
 
-If you want to contribute or use the dev branch, you can install from github
+If you want use the dev branch, you can install from github.
+If you want to contribute, first create a fork and follow the same steps using your forked repository url instead of the original one.
 
 ```
 cd modules 
@@ -129,7 +130,7 @@ You are ready to go !
 ## Contribute
 
 Any contributions are very welcome :)
-See [Contributing](/CONTRIBUTING.md) for details.
+First [install from sources](/README.md#install-from-sources) and see [Contributing](/CONTRIBUTING.md) for details.
 
 [Current contributors](https://github.com/friends-of-presta/fop_console/graphs/contributors) or [contributors](/CONTRIBUTORS.md).
 
