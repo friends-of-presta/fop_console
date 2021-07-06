@@ -5,63 +5,8 @@ parameters:
 			count: 1
 			path: ../src/Commands/CheckServiceContainer.php
 
+# That's fine, dump() can handle multiple values - This is not an error. https://github.com/symfony/var-dumper/blob/3.4/Resources/functions/dump.php
 		-
 			message: "#^Function dump invoked with 2 parameters, 1 required\\.$#"
 			count: 1
 			path: ../src/Commands/Configuration/Export.php
-
-		-
-			message: "#^Method FOP\\\\Console\\\\Commands\\\\Images\\\\GenerateAbstract\\:\\:deleteOldImages\\(\\) should return bool but return statement is missing\\.$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$dir\\)\\: Unexpected token \"\\$dir\", expected type at offset 51$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$dir\\)\\: Unexpected token \"\\$dir\", expected type at offset 63$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$languages\\)\\: Unexpected token \"\\$languages\", expected type at offset 102$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected type at offset 70$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$type\\)\\: Unexpected token \"\\$type\", expected type at offset 82$#"
-			count: 1
-			path: ../src/Commands/Images/GenerateAbstract.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getActive\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getDeleted\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getName\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-
-		-
-			message: "#^Call to an undefined method Shop\\:\\:getThemeName\\(\\)\\.$#"
-			count: 1
-			path: ../src/Commands/ShopStatus.php
-

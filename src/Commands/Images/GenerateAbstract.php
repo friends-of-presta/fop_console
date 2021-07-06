@@ -195,9 +195,9 @@ abstract class GenerateAbstract extends Command
      * @param array $type
      * @param bool $product
      *
-     * @return bool
+     * @return void
      */
-    protected function deleteOldImages($dir, $type, $product = false)
+    protected function deleteOldImages($dir, $type, $product = false): void
     {
         $toDel = scandir($dir, SCANDIR_SORT_NONE);
 
@@ -238,13 +238,13 @@ abstract class GenerateAbstract extends Command
     /**
      * Regenerate images.
      *
-     * @param $dir
-     * @param $type
+     * @param string $dir
+     * @param array $type
      * @param bool $productsImages
      *
      * @return bool|string
      */
-    protected function regenerateNewImages($dir, $type, $productsImages = false)
+    protected function regenerateNewImages(string $dir, array $type, bool $productsImages = false)
     {
         $processTypes = [];
         array_map(function ($row) use (&$processTypes) {
@@ -337,9 +337,9 @@ abstract class GenerateAbstract extends Command
     /**
      * Regenerate no-pictures images.
      *
-     * @param $dir
-     * @param $type
-     * @param $languages
+     * @param string $dir
+     * @param array $type
+     * @param array $languages
      *
      * @return bool
      */
