@@ -129,7 +129,7 @@ You are ready to go !
 
 ## Contribute
 
-Any contributions are very welcome :) <br>
+Any contributions are very welcome :)
 First [install from sources](/README.md#install-from-sources) and see [Contributing](/CONTRIBUTING.md) for details.
 
 [Current contributors](https://github.com/friends-of-presta/fop_console/graphs/contributors) or [contributors](/CONTRIBUTORS.md).
