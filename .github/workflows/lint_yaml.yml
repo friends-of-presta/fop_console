@@ -4,7 +4,7 @@ on:
   - pull_request
 jobs:
   php-cs-fixer:
-    name: PHP-CS-Fixer
+    name: Yaml Lint
     runs-on: ubuntu-latest
     steps:
       - name: Cache composer folder
