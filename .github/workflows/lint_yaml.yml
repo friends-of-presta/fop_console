@@ -24,7 +24,7 @@ jobs:
       - name: "Install Composer"
         run: composer install
 
-      - name: Run PHP-CS-Fixer
+      - name: Run Yaml Linter
         run : |
           cd ${{ github.workspace }}
           find  -name '*.yml' -not -path './vendor/*' | xargs ./vendor/bin/yaml-lint
