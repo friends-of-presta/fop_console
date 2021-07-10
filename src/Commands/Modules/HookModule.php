@@ -33,7 +33,7 @@ class HookModule extends Command
      */
     protected function configure()
     {
-        $this->setName('fop:hook-module')
+        $this->setName('fop:modules:hook')
             ->setDescription('Attach one module on specific hook')
             ->setHelp('This command allows you to attach a module on one hook');
         $this->addUsage('--module=[modulename]');

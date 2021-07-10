@@ -33,7 +33,7 @@ class UnhookModule extends Command
      */
     protected function configure()
     {
-        $this->setName('fop:unhook-module')
+        $this->setName('fop:modules:unhook')
             ->setDescription('Detach module from hook')
             ->setHelp('This command allows you to detach a module from one hook');
         $this->addUsage('--module=[modulename]');
