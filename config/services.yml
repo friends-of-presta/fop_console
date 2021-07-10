@@ -9,18 +9,23 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
-  fop.console.unhook_module.command:
+  fop.console.modules.unhook_module.command:
     class: FOP\Console\Commands\Modules\UnhookModule
     tags:
       - { name: console.command }
 
-  fop.console.hook_module.command:
+  fop.console.modules.hook_module.command:
     class: FOP\Console\Commands\Modules\HookModule
     tags:
       - { name: console.command }
 
-  fop.console.list_module_hooks.command:
+  fop.console.modules.list_module_hooks.command:
     class: FOP\Console\Commands\Modules\ModuleHooks
+    tags:
+      - { name: console.command }
+
+  fop.console.modules.rename_module.command:
+    class: FOP\Console\Commands\Modules\RenameModule
     tags:
       - { name: console.command }
 

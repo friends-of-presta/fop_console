@@ -35,7 +35,7 @@ class ModuleHooks extends Command
     protected function configure(): void
     {
         $this
-            ->setName('fop:module:hooks')
+            ->setName('fop:modules:hooks')
             ->setDescription('Get modules list')
             ->addArgument(
                 'name',
