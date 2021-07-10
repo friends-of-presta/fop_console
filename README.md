@@ -148,7 +148,7 @@ First [install from sources](/README.md#install-from-sources) and see [Contribut
 | 7.1 and below | :x: |
 | 7.2 | :heavy_check_mark: |
 | 7.3| :heavy_check_mark: |
-| 7.4 | :interrobang: Not yet tested |
+| 7.4 | :heavy_check_mark: |
 | 8.0 | :interrobang: Not yet tested |
 
 ## License
