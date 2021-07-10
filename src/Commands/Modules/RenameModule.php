@@ -196,22 +196,13 @@ final class RenameModule extends Command
             return 0;
         }
 
-        $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
-        $moduleManager = $moduleManagerBuilder->build();
-        $keepOld = $input->getOption('keep-old');
-        if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
-            if ($oldModule->uninstall()) {
-                $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
-            } else {
-                $io->error('The old module ' . $oldModuleName . ' couldn\'t be uninstalled.');
-
-                return 1;
-            }
-        }
-
         $oldFolderName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
         $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($newFullName['prefix'] . $newFullName['name']) . '/';
+
+        $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
+        $moduleManager = $moduleManagerBuilder->build();
+        $keepOld = $input->getOption('keep-old');
 
         if (is_dir($newFolderPath)) {
             $question = new ConfirmationQuestion(
@@ -233,6 +224,16 @@ final class RenameModule extends Command
                 }
             }
             exec('rm -rf ' . $newFolderPath);
+        }
+
+        if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
+            if ($oldModule->uninstall()) {
+                $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
+            } else {
+                $io->error('The old module ' . $oldModuleName . ' couldn\'t be uninstalled.');
+
+                return 1;
+            }
         }
         exec('cp -R ' . $oldFolderPath . '. ' . $newFolderPath);
         if (!$keepOld) {
