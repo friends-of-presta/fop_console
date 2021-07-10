@@ -2,21 +2,20 @@
 
 namespace FOP\Console\Commands\Modules;
 
+use Composer\Console\Application;
 use FOP\Console\Command;
 use Module;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Output\NullOutput;
-use Composer\Console\Application;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Finder\Finder;
 
 final class RenameModule extends Command
 {
@@ -56,11 +55,13 @@ final class RenameModule extends Command
 
         if (!($oldFullName = $this->mapModuleName($input->getArgument('old-name')))) {
             $io->error('Please check the required format for the module old name');
+
             return 1;
         }
-        
+
         if (!($newFullName = $this->mapModuleName($input->getArgument('new-name')))) {
             $io->error('Please check the required format for the module new name');
+
             return 1;
         }
 
@@ -68,6 +69,7 @@ final class RenameModule extends Command
         $oldModule = Module::getInstanceByName($oldModuleName);
 
         $newAuthor = $input->getOption('new-author');
+        $oldAuthor = '';
         if ($newAuthor) {
             $oldAuthor = $oldModule->author;
             if ($newAuthor == $oldAuthor) {
@@ -80,10 +82,11 @@ final class RenameModule extends Command
 
         $extraReplacements = $input->getOption('extra-replacements');
         if ($extraReplacements) {
-            foreach($extraReplacements as $replacement) {
+            foreach ($extraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
                 if (count($terms) != 2) {
                     $io->error('Each extra replacement must be a pair of two words separated by a comma');
+
                     return 1;
                 }
                 $replace_pairs[$terms[0]] = $terms[1];
@@ -92,7 +95,7 @@ final class RenameModule extends Command
 
         $prefixReplaceFormats = [
             //PREFIXModuleName
-            function($fullName) {
+            function ($fullName) {
                 return strtoupper($fullName['prefix']) . $fullName['name'];
             },
         ];
@@ -105,42 +108,42 @@ final class RenameModule extends Command
 
         $moduleNameReplaceFormats = [
             //ModuleName
-            function($moduleName) {
+            function ($moduleName) {
                 return $moduleName;
             },
             //moduleName
-            function($moduleName) {
+            function ($moduleName) {
                 return lcfirst($moduleName);
             },
             //Modulename
-            function($moduleName) {
+            function ($moduleName) {
                 return ucfirst(strtolower($moduleName));
             },
             //modulename
-            function($moduleName) {
+            function ($moduleName) {
                 return strtolower($moduleName);
             },
             //MODULE_NAME
-            function($moduleName) {
-                return strtoupper(implode('_', 
+            function ($moduleName) {
+                return strtoupper(implode('_',
                     preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
                 ));
             },
             //module_name
-            function($moduleName) {
-                return strtolower(implode('_', 
+            function ($moduleName) {
+                return strtolower(implode('_',
                     preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
                 ));
             },
             //Module Name
-            function($moduleName) {
-                return implode(' ', 
+            function ($moduleName) {
+                return implode(' ',
                     preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
                 );
             },
             //Module name
-            function($moduleName) {
-                return strtolower(implode(' ', 
+            function ($moduleName) {
+                return strtolower(implode(' ',
                     preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
                 ));
             },
@@ -169,10 +172,10 @@ final class RenameModule extends Command
                 //authorName
                 function ($authorName) {
                     return lcfirst($authorName);
-                }
+                },
             ];
 
-            foreach($authorReplaceFormats as $replaceFormat) {
+            foreach ($authorReplaceFormats as $replaceFormat) {
                 $search = $replaceFormat($oldAuthor);
                 $replace = $replaceFormat($newAuthor);
                 $replace_pairs[$search] = $replace;
@@ -201,6 +204,7 @@ final class RenameModule extends Command
                 $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
             } else {
                 $io->error('The old module ' . $oldModuleName . ' couldn\'t be uninstalled.');
+
                 return 1;
             }
         }
@@ -211,11 +215,11 @@ final class RenameModule extends Command
 
         if (is_dir($newFolderPath)) {
             $question = new ConfirmationQuestion(
-                'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module uninstalled.' 
+                'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module uninstalled.'
                 . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?', false);
             if (!$questionHelper->ask($input, $output, $question)) {
                 return 0;
-            }  
+            }
 
             $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
             if ($moduleManager->isInstalled($newModuleName)) {
@@ -224,6 +228,7 @@ final class RenameModule extends Command
                     $io->success('The module ' . $newModuleName . ' has been uninstalled.');
                 } else {
                     $io->error('The module ' . $newModuleName . ' couldn\'t be uninstalled.');
+
                     return 1;
                 }
             }
@@ -249,10 +254,10 @@ final class RenameModule extends Command
             }
         }
 
-        // Composer\Factory::getHomeDir() method 
+        // Composer\Factory::getHomeDir() method
         // needs COMPOSER_HOME environment variable set
         //putenv('COMPOSER_HOME=' . __DIR__ . '/vendor/bin/composer');
-        
+
         chdir($newFolderPath);
         exec('rm -rf vendor');
         $installCommand = new ArrayInput(['command' => 'update']);
@@ -271,10 +276,11 @@ final class RenameModule extends Command
             $io->error('The module ' . $oldModuleName . ' couldn\'t be installed.');
         }
 
-        return 0;  
+        return 0;
     }
 
-    function mapModuleName($arg) {
+    public function mapModuleName($arg)
+    {
         if (!$arg) {
             return false;
         }
@@ -291,8 +297,8 @@ final class RenameModule extends Command
         }
 
         return [
-            'prefix' => $prefix, 
-            'name' => $name
+            'prefix' => $prefix,
+            'name' => $name,
         ];
     }
 }
