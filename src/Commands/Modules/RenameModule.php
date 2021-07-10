@@ -2,8 +2,10 @@
 
 namespace FOP\Console\Commands\Modules;
 
-use Module;
 use FOP\Console\Command;
+use Module;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManager;
+use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,11 +43,8 @@ final class RenameModule extends Command
             ->addOption('new-author', null, InputOption::VALUE_REQUIRED, 'New author name')
             ->addUsage('--extra-replacements=[search,replace]')
             ->addOption('extra-replacements', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Extra search/replace pairs')
-            ->addUsage('--only-files=[directory]')
-            ->addOption('only-files', null, InputOption::VALUE_OPTIONAL, 
-                'Process only files without affecting database. You can pass a directory name if it doesn\'t match the current module name.')
-            ->addUsage('--duplicate')
-            ->addOption('duplicate', null, InputOption::VALUE_NONE, 'Duplicate the module with a new name instead of renaming it');
+            ->addUsage('--keep-old')
+            ->addOption('keep-old', null, InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name');
     }
 
     /**
@@ -193,34 +192,45 @@ final class RenameModule extends Command
         if (!$questionHelper->ask($input, $output, $question)) {
             return 0;
         }
-        
-        $onlyFiles = $input->getOption('only-files');
-        $duplicate = $input->getOption('duplicate');
-        if (!$onlyFiles && !$duplicate && $oldModule && $oldModule->uninstall()) {
-            $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
+
+        $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
+        $moduleManager = $moduleManagerBuilder->build();
+        $keepOld = $input->getOption('keep-old');
+        if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
+            if ($oldModule->uninstall()) {
+                $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
+            } else {
+                $io->error('The old module ' . $oldModuleName . ' couldn\'t be uninstalled.');
+                return 1;
+            }
         }
 
-        $oldFolderName = is_string($onlyFiles) ? $onlyFiles : strtolower($oldFullName['prefix'] . $oldFullName['name']);
+        $oldFolderName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
         $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($newFullName['prefix'] . $newFullName['name']) . '/';
 
         if (is_dir($newFolderPath)) {
             $question = new ConfirmationQuestion(
-                'The destination module already exists. The folder will be removed and the module uninstalled.' 
+                'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module uninstalled.' 
                 . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?', false);
             if (!$questionHelper->ask($input, $output, $question)) {
                 return 0;
             }  
 
             $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
-            $newModule = Module::getInstanceByName($newModuleName);
-            if (!$onlyFiles && $newModule && $newModule->uninstall()) {
-                $io->success('The module ' . $newModuleName . ' has been uninstalled.');
+            if ($moduleManager->isInstalled($newModuleName)) {
+                $newModule = Module::getInstanceByName($newModuleName);
+                if ($newModule && $newModule->uninstall()) {
+                    $io->success('The module ' . $newModuleName . ' has been uninstalled.');
+                } else {
+                    $io->error('The module ' . $newModuleName . ' couldn\'t be uninstalled.');
+                    return 1;
+                }
             }
             exec('rm -rf ' . $newFolderPath);
         }
         exec('cp -R ' . $oldFolderPath . '. ' . $newFolderPath);
-        if (!$duplicate) {
+        if (!$keepOld) {
             exec('rm -rf ' . $oldFolderPath);
         }
 
@@ -255,8 +265,10 @@ final class RenameModule extends Command
 
         $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
         $newModule = Module::getInstanceByName($newModuleName);
-        if (!$onlyFiles && $newModule && $newModule->install()) {
+        if ($newModule && $newModule->install()) {
             $io->success('The fresh module ' . $newModuleName . ' has been installed.');
+        } else {
+            $io->error('The module ' . $oldModuleName . ' couldn\'t be installed.');
         }
 
         return 0;  
