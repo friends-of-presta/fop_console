@@ -1,0 +1,30 @@
+name: Yaml lint/checker
+on:
+  - push
+  - pull_request
+jobs:
+  php-cs-fixer:
+    name: Yaml Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache composer folder
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: "Setup Php 7.2"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.2'
+
+      - name: "Install Composer"
+        run: composer install
+
+      - name: Run Yaml Linter
+        run : |
+          cd ${{ github.workspace }}
+          find  -name '*.yml' -not -path './vendor/*' | xargs ./vendor/bin/yaml-lint
