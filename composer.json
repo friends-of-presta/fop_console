@@ -26,7 +26,8 @@
   "require-dev": {
     "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
-    "phpstan/phpstan": "^0.12.58"
+    "phpstan/phpstan": "^0.12.58",
+    "composer/composer": "^2.1"
   },
   "scripts": {
     "fop_check": [
