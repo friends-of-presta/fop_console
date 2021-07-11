@@ -84,6 +84,10 @@ final class RenameModule extends Command
 
         $oldModuleName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
         $oldModule = Module::getInstanceByName($oldModuleName);
+        if (!$oldModule) {
+            $oldModuleName = strtolower($oldFullName['prefix'] . '_' . $oldFullName['name']);
+            $oldModule = Module::getInstanceByName($oldModuleName);
+        }
 
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
@@ -115,11 +119,15 @@ final class RenameModule extends Command
             function ($fullName) {
                 return strtoupper($fullName['prefix']) . $fullName['name'];
             },
+            //PREFIX_ModuleName
+            function ($fullName) {
+                return strtoupper($fullName['prefix']) . '_' . $fullName['name'];
+            },
         ];
 
         foreach ($prefixReplaceFormats as $replaceFormat) {
             $search = $replaceFormat($oldFullName);
-            $replace = $replaceFormat($newFullName);
+            $replace = str_replace('_', '', $replaceFormat($newFullName));
             $replace_pairs[$search] = $replace;
         }
 
@@ -142,33 +150,50 @@ final class RenameModule extends Command
             },
             //MODULE_NAME
             function ($moduleName) {
-                return strtoupper(implode('_',
-                    preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
-                ));
+                return strtoupper(
+                    implode('_',
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                    ))
+                );
             },
             //module_name
             function ($moduleName) {
-                return strtolower(implode('_',
-                    preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
-                ));
+                return strtolower(
+                    implode('_',
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                    ))
+                );
             },
             //Module Name
             function ($moduleName) {
                 return implode(' ',
-                    preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                    )
                 );
             },
             //Module name
             function ($moduleName) {
-                return strtolower(implode(' ',
-                    preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
-                ));
+                return ucfirst(
+                    strtolower(
+                        implode(' ',
+                        str_replace('_', '',
+                            preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                        ))
+                    )
+                );
             },
         ];
 
         foreach ($moduleNameReplaceFormats as $replaceFormat) {
             if (!empty($oldFullName['prefix'])) {
                 $search = $replaceFormat($oldFullName['prefix'] . $oldFullName['name']);
+                $replace = $replaceFormat($newFullName['prefix'] . $newFullName['name']);
+                $replace_pairs[$search] = $replace;
+
+                $search = $replaceFormat($oldFullName['prefix'] . '_' . $oldFullName['name']);
                 $replace = $replaceFormat($newFullName['prefix'] . $newFullName['name']);
                 $replace_pairs[$search] = $replace;
             }
@@ -215,6 +240,10 @@ final class RenameModule extends Command
 
         $oldFolderName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
         $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
+        if (!is_dir($oldFolderPath)) {
+            $oldFolderName = strtolower($oldFullName['prefix'] . '_' . $oldFullName['name']);
+            $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
+        }
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($newFullName['prefix'] . $newFullName['name']) . '/';
 
         $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
