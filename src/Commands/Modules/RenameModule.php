@@ -260,7 +260,7 @@ final class RenameModule extends Command
         $moduleManager = $moduleManagerBuilder->build();
         $keepOld = $input->getOption('keep-old');
 
-        if (is_dir($newFolderPath)) {
+        if (file_exists($newFolderPath)) {
             $question = new ConfirmationQuestion(
                 'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module uninstalled.'
                 . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?', false);
@@ -314,16 +314,17 @@ final class RenameModule extends Command
         // Composer\Factory::getHomeDir() method
         // needs COMPOSER_HOME environment variable set
         //putenv('COMPOSER_HOME=' . __DIR__ . '/vendor/bin/composer');
-
-        chdir($newFolderPath);
-        exec('rm -rf vendor');
-        $installCommand = new ArrayInput(['command' => 'update']);
-        $dumpautoloadCommand = new ArrayInput(['command' => 'dumpautoload', '-a']);
-        $application = new Application();
-        $application->setAutoExit(false);
-        $application->run($installCommand, new NullOutput());
-        $application->run($dumpautoloadCommand, new NullOutput());
-        chdir('../..');
+        if (file_exists($newFolderPath . 'composer.json')) {
+            chdir($newFolderPath);
+            exec('rm -rf vendor');
+            $installCommand = new ArrayInput(['command' => 'update']);
+            $dumpautoloadCommand = new ArrayInput(['command' => 'dumpautoload', '-a']);
+            $application = new Application();
+            $application->setAutoExit(false);
+            $application->run($installCommand, new NullOutput());
+            $application->run($dumpautoloadCommand, new NullOutput());
+            chdir('../..');
+        }
 
         $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
         $newModule = Module::getInstanceByName($newModuleName);
