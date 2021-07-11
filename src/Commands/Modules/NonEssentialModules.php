@@ -36,12 +36,8 @@ class NonEssentialModules extends Command
      */
     private const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
 
-    private const NON_ESSENTIAL_MODULES = ['emarketing', 'gamification', 'ps_checkout', 'ps_eventbus', 'ps_metrics', 'psaddonsconnect', 'statsvisits', 'welcome'];
-
-    private const STATS_MODULES = ['statsbestcategories', 'statsbestcustomers', 'statsbestmanufacturers', 'statsbestproducts',
-        'statsbestsuppliers', 'statsbestvouchers', 'statscarrier', 'statscatalog', 'statscheckup', 'statsdata',
-        'statsequipment', 'statsforecast', 'statslive', 'statsnewsletter', 'statsorigin', 'statspersonalinfos',
-        'statsproduct', 'statsregistrations', 'statssales', 'statssearch', 'statsstock', 'statsvisits', ];
+    private const NON_ESSENTIAL_MODULES = ['emarketing', 'gamification', 'ps_checkout',
+        'ps_eventbus', 'psaddonsconnect', 'statsvisits', 'welcome', 'ps_metrics', 'ps_facebook', 'ps_accounts', ];
 
     /**
      * {@inheritdoc}
@@ -49,9 +45,9 @@ class NonEssentialModules extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:modules')
-            ->setDescription('Manage non-essential and stats modules.')
-            ->setHelp('This command Uninstall or Install non-essential and stats modules.')
+            ->setName('fop:modules:non-essential')
+            ->setDescription('Manage non-essential modules.')
+            ->setHelp('This command Uninstall or Install non-essential modules.')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
@@ -80,8 +76,8 @@ class NonEssentialModules extends Command
         $io = new SymfonyStyle($input, $output);
         $moduleManager = $this->getContainer()->get('prestashop.module.manager');
         $action = $input->getArgument('action');
+        $update = false;
         $modulesInfos = [];
-        $modulesStatsInfos = [];
 
         switch ($action) {
             case 'status':
@@ -93,12 +89,12 @@ class NonEssentialModules extends Command
 
                 $io->table(['ID', 'Name', 'Present?', 'Installed?'], $modulesInfos);
                 $io->text('You can'
-                    . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules uninstall`'
-                    . PHP_EOL . '    - uninstall modules by running       : `./bin/console fop:modules uninstall --idsmodule x,y,z`'
-                    . PHP_EOL . '    - uninstall one module by running    : `./bin/console fop:modules uninstall --modulename ModuleName`'
-                    . PHP_EOL . '    - install all modules by running    : `./bin/console fop:modules install`'
-                    . PHP_EOL . '    - install modules by running         : `./bin/console fop:modules install --idsmodule x,y,z`'
-                    . PHP_EOL . '    - install one module by running     : `./bin/console fop:modules install --modulename ModuleName`');
+                    . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules:non-essential uninstall`'
+                    . PHP_EOL . '    - uninstall modules by running       : `./bin/console fop:modules:non-essential uninstall --idsmodule x,y,z`'
+                    . PHP_EOL . '    - uninstall one module by running    : `./bin/console fop:modules:non-essential uninstall --modulename ModuleName`'
+                    . PHP_EOL . '    - install all modules by running    : `./bin/console fop:modules:non-essential install`'
+                    . PHP_EOL . '    - install modules by running         : `./bin/console fop:modules:non-essential install --idsmodule x,y,z`'
+                    . PHP_EOL . '    - install one module by running     : `./bin/console fop:modules:non-essential install --modulename ModuleName`');
 
                 return 0;
             case 'uninstall':
@@ -108,9 +104,10 @@ class NonEssentialModules extends Command
                 if ($idsModule) {
                     $idsModule = explode(',', $idsModule);
                     foreach ($idsModule as $idModule) {
+                        $command = $this->getApplication()->find('prestashop:module');
                         if ($moduleManager->isInstalled(self::NON_ESSENTIAL_MODULES[$idModule])) {
-                            $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('uninstall', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
+                            $update = true;
                         } else {
                             $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
 
@@ -121,6 +118,7 @@ class NonEssentialModules extends Command
                     if ($moduleManager->isInstalled($moduleToUninstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('uninstall', $moduleToUninstall), $output);
+                        $update = true;
                     } else {
                         $io->error('Module ' . $moduleToUninstall . ' is not installed');
 
@@ -128,11 +126,18 @@ class NonEssentialModules extends Command
                     }
                 } else {
                     foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
+                        $command = $this->getApplication()->find('prestashop:module');
                         if ($moduleManager->isInstalled($uselessModule)) {
-                            $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('uninstall', $uselessModule), $output);
+                            $update = true;
                         }
                     }
+                }
+
+                if ($update == false) {
+                    $io->text('<info>No module to uninstall</info>');
+
+                    return 0;
                 }
 
                 return 0;
@@ -144,9 +149,10 @@ class NonEssentialModules extends Command
                 if ($idsModule) {
                     $idsModule = explode(',', $idsModule);
                     foreach ($idsModule as $idModule) {
+                        $command = $this->getApplication()->find('prestashop:module');
                         if (!$moduleManager->isInstalled(self::NON_ESSENTIAL_MODULES[$idModule])) {
-                            $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('install', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
+                            $update = true;
                         } else {
                             $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
 
@@ -157,6 +163,7 @@ class NonEssentialModules extends Command
                     if (!$moduleManager->isInstalled($moduleToInstall)) {
                         $command = $this->getApplication()->find('prestashop:module');
                         $returnCode = $command->run($this->createArguments('install', $moduleToInstall), $output);
+                        $update = true;
                     } else {
                         $io->error('Module ' . $moduleToInstall . ' is not installed');
 
@@ -164,41 +171,18 @@ class NonEssentialModules extends Command
                     }
                 } else {
                     foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
+                        $command = $this->getApplication()->find('prestashop:module');
                         if (!$moduleManager->isInstalled($uselessModule) && $this->moduleExist($uselessModule)) {
-                            $command = $this->getApplication()->find('prestashop:module');
                             $returnCode = $command->run($this->createArguments('install', $uselessModule), $output);
+                            $update = true;
                         }
                     }
                 }
 
-                return 0;
+                if ($update == false) {
+                    $io->text('<info>No module to install</info>');
 
-            case 'modulestats':
-                $io->text('<info>Stats Modules Informations</info>');
-                foreach (self::STATS_MODULES as $statsModule) {
-                    $modulesStatsInfos[] = ['name' => $statsModule, 'installed' => $moduleManager->isInstalled($statsModule) ? 'yes' : 'no'];
-                }
-
-                $io->table(['Name', 'Installed?'], $modulesStatsInfos);
-
-                return 0;
-
-            case 'uninstallstats':
-                foreach (self::STATS_MODULES as $statsModule) {
-                    if ($moduleManager->isInstalled($statsModule)) {
-                        $command = $this->getApplication()->find('prestashop:module');
-                        $returnCode = $command->run($this->createArguments('uninstall', $statsModule), $output);
-                    }
-                }
-
-                return 0;
-
-            case 'installstats':
-                foreach (self::STATS_MODULES as $statsModule) {
-                    if ($moduleManager->isInstalled($statsModule)) {
-                        $command = $this->getApplication()->find('prestashop:module');
-                        $returnCode = $command->run($this->createArguments('install', $statsModule), $output);
-                    }
+                    return 0;
                 }
 
                 return 0;
@@ -233,6 +217,6 @@ class NonEssentialModules extends Command
 
     private function moduleExist($name): bool
     {
-        return file_exists('../../modules/' . $name . '/' . $name . '.php');
+        return file_exists('modules/' . $name . '/' . $name . '.php');
     }
 }
