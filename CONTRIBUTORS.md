@@ -24,3 +24,6 @@
 ## Thomas Roux
 * company : Rouage Communication
 * Github : [Okom3pom](https://github.com/okom3pom)
+## Tom Combet
+* company : Kaudaj
+* Github : [Kaudaj](https://github.com/Kaudaj)
