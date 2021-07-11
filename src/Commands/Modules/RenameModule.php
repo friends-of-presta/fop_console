@@ -291,7 +291,7 @@ final class RenameModule extends Command
         if ($newModule && $newModule->install()) {
             $io->success('The fresh module ' . $newModuleName . ' has been installed.');
         } else {
-            $io->error('The module ' . $oldModuleName . ' couldn\'t be installed.');
+            $io->error('The fresh module ' . $newModuleName . ' couldn\'t be installed.');
         }
 
         return 0;
