@@ -57,8 +57,8 @@ final class RenameModule extends Command
             )
             ->addUsage('--new-author=[AuthorCamelCased]')
             ->addOption('new-author', null, InputOption::VALUE_REQUIRED, 'New author name')
-            ->addUsage('--extra-replacements=[search,replace]')
-            ->addOption('extra-replacements', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Extra search/replace pairs')
+            ->addUsage('--extra-replacement=[search,replace]')
+            ->addOption('extra-replacement', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Extra search/replace pairs')
             ->addUsage('--keep-old')
             ->addOption('keep-old', null, InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name');
     }
@@ -97,7 +97,7 @@ final class RenameModule extends Command
 
         $replace_pairs = [];
 
-        $extraReplacements = $input->getOption('extra-replacements');
+        $extraReplacements = $input->getOption('extra-replacement');
         if ($extraReplacements) {
             foreach ($extraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
