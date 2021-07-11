@@ -31,6 +31,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 
@@ -89,13 +90,23 @@ final class RenameModule extends Command
             $oldModule = Module::getInstanceByName($oldModuleName);
         }
 
+        $questionHelper = $this->getHelper('question');
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
         if ($newAuthor) {
-            $oldAuthor = $oldModule->author;
-            if ($newAuthor == $oldAuthor) {
-                $io->text('Author replacements have been ignored since the old and the new one are equal');
-                $newAuthor = false;
+            if ($oldModule) {
+                $oldAuthor = $oldModule->author;
+                if ($newAuthor == $oldAuthor) {
+                    $io->text('Author replacements have been ignored since the old and the new one are equal');
+                    $newAuthor = false;
+                }
+            } else {
+                $question = new Question('Can\'t create old module instance to retrieve old author name. '
+                . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
+                $oldAuthor = $questionHelper->ask($input, $output, $question);
+                if (empty($oldAuthor)) {
+                    $newAuthor = false;
+                }
             }
         }
 
@@ -232,7 +243,6 @@ final class RenameModule extends Command
         }
         $table->render();
 
-        $questionHelper = $this->getHelper('question');
         $question = new ConfirmationQuestion('Do you confirm these replacements (y for yes, n for no)?', false);
         if (!$questionHelper->ask($input, $output, $question)) {
             return 0;
