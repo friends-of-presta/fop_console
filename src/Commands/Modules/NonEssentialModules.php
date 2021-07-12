@@ -136,8 +136,6 @@ class NonEssentialModules extends Command
 
                 if ($update == false) {
                     $io->text('<info>No module to uninstall</info>');
-
-                    return 0;
                 }
 
                 return 0;
@@ -181,8 +179,6 @@ class NonEssentialModules extends Command
 
                 if ($update == false) {
                     $io->text('<info>No module to install</info>');
-
-                    return 0;
                 }
 
                 return 0;
@@ -217,6 +213,6 @@ class NonEssentialModules extends Command
 
     private function moduleExist($name): bool
     {
-        return file_exists('modules/' . $name . '/' . $name . '.php');
+        return file_exists(_PS_MODULE_DIR_ . $name . '/' . $name . '.php');
     }
 }
