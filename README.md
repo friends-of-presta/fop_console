@@ -1,3 +1,7 @@
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
+[![GitHub release](https://img.shields.io/github/v/release/friends-of-presta/fop_console)](https://github.com/friends-of-presta/fop_console)
+[![Slack chat](https://img.shields.io/badge/Chat-on%20Slack-red)](https://github.com/friends-of-presta/who-we-are#what-we-do)
+
 # Friends of Presta Console
 
 Fop console is a module which provides a set a commands to extend PrestaShop 1.7 commands.
