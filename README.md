@@ -50,6 +50,7 @@ php bin/console pr:mo install fop_console
 * `fop:latest-products`                Displays the latest products
 * `fop:maintenance`                    Configure maintenance mode
 * `fop:module:hooks`                   Get modules list
+* `fop:modules:non-essential`          Manage non essential modules
 * `fop:override:make`                  Generate a file to make an override.
 * `fop:shop-status`                    Display shops statuses
 * `fop:unhook-module`                  Detach module from hook

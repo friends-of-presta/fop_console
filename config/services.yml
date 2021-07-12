@@ -122,6 +122,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.modules.command:
+    class: FOP\Console\Commands\Modules\NonEssentialModules
+    tags:
+      - { name: console.command }
+
   fop.console.category.command:
     class: FOP\Console\Commands\Categories\CleanCategory
     tags:
@@ -129,3 +134,4 @@ services:
 
 imports:
   - { resource: overriders.yml }
+
