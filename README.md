@@ -1,4 +1,5 @@
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.1-8892BF.svg?style=flat-square)](https://php.net/)
+[![PHP tests](https://github.com/friends-of-presta/actions/workflows/phpstan.yml/badge.svg)](https://github.com/okom3pom/fop_console/blob/Add-badge/.github/workflows/phpstan.yml)
 [![GitHub release](https://img.shields.io/github/v/release/friends-of-presta/fop_console)](https://github.com/friends-of-presta/fop_console)
 [![Slack chat](https://img.shields.io/badge/Chat-on%20Slack-red)](https://github.com/friends-of-presta/who-we-are#what-we-do)
 
