@@ -37,8 +37,6 @@ jobs:
           name: ${{ github.event.repository.name }}
       - id: release_info
       - uses: release-drafter/release-drafter@v5
-        with:
-          config-name: release-drafter_config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Prepare for Release
