@@ -84,7 +84,7 @@ class NonEssentialModules extends Command
                 $io->text('<info>Non-essential Modules Informations</info>');
 
                 foreach (self::NON_ESSENTIAL_MODULES as $key => $uselessModule) {
-                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'present' => $this->moduleExist($uselessModule) ? 'yes' : 'no', 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
+                    $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'present' => $this->moduleExists($uselessModule) ? 'yes' : 'no', 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
                 }
 
                 $io->table(['ID', 'Name', 'Present?', 'Installed?'], $modulesInfos);
@@ -170,7 +170,7 @@ class NonEssentialModules extends Command
                 } else {
                     foreach (self::NON_ESSENTIAL_MODULES as $uselessModule) {
                         $command = $this->getApplication()->find('prestashop:module');
-                        if (!$moduleManager->isInstalled($uselessModule) && $this->moduleExist($uselessModule)) {
+                        if (!$moduleManager->isInstalled($uselessModule) && $this->moduleExists($uselessModule)) {
                             $returnCode = $command->run($this->createArguments('install', $uselessModule), $output);
                             $update = true;
                         }
@@ -211,7 +211,7 @@ class NonEssentialModules extends Command
         return implode(',', self::ALLOWED_COMMAND);
     }
 
-    private function moduleExist($name): bool
+    private function moduleExists($name): bool
     {
         return file_exists(_PS_MODULE_DIR_ . $name . '/' . $name . '.php');
     }
