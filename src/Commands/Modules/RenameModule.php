@@ -76,11 +76,26 @@ final class RenameModule extends Command
 
             return 1;
         }
+        $questionHelper = $this->getHelper('question');
+        if (!preg_match('/[A-Z]/', $oldFullName['prefix'] . $oldFullName['name'])) {
+            $question = new ConfirmationQuestion('The old name is not camel cased, so the camel cased occurences won\'t be replaced.'
+            . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y for yes, n for no)', false);
+            if (!$questionHelper->ask($input, $output, $question)) {
+                return 0;
+            }
+        }
 
         if (!($newFullName = $this->mapModuleName($input->getArgument('new-name')))) {
             $io->error('Please check the required format for the module new name');
 
             return 1;
+        }
+        if (!preg_match('/[A-Z]/', $newFullName['prefix'] . $newFullName['name'])) {
+            $question = new ConfirmationQuestion('The new name is not camel cased, so it will be counted as one word. It can cause aesthetic issues.'
+            . PHP_EOL . 'Are you sure that you didn\'t to camel case it ? (y for yes, n for no)', false);
+            if (!$questionHelper->ask($input, $output, $question)) {
+                return 0;
+            }
         }
 
         $oldModuleName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
@@ -90,7 +105,6 @@ final class RenameModule extends Command
             $oldModule = Module::getInstanceByName($oldModuleName);
         }
 
-        $questionHelper = $this->getHelper('question');
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
         if ($newAuthor) {
