@@ -45,16 +45,19 @@ final class RenameModule extends Command
         $this
             ->setName('fop:modules:rename')
             ->setDescription('Rename module')
-            ->setHelp('This command allows you to replace the name of a module in the files and database.')
+            ->setHelp('This command allows you to replace the name of a module in the files and database.'
+                . PHP_EOL . 'Here are some examples:'
+                . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample to rename ps_customersignin into kjmoduleexample'
+                . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 to rename kjmoduleexample into kjmoduleexample2')
             ->addArgument(
                 'old-name',
                 InputArgument::REQUIRED,
-                'Module current name with following format : Prefix_ModuleCurrentNameCamelCased'
+                'Module current name with following format : Prefix,ModuleCurrentNameCamelCased'
             )
             ->addArgument(
                 'new-name',
                 InputArgument::REQUIRED,
-                'Module new name with following format : Prefix_ModuleNewNameCamelCased'
+                'Module new name with following format : Prefix,ModuleNewNameCamelCased'
             )
             ->addUsage('--new-author=[AuthorCamelCased]')
             ->addOption('new-author', null, InputOption::VALUE_REQUIRED, 'New author name')
@@ -70,39 +73,58 @@ final class RenameModule extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+        $questionHelper = $this->getHelper('question');
 
-        if (!($oldFullName = $this->mapModuleName($input->getArgument('old-name')))) {
-            $io->error('Please check the required format for the module old name');
+        if (!($oldFullName = $this->formatModuleName($input, $output, $input->getArgument('old-name')))) {
+            $io->error('The module old name format is not valid. Please check --help for valid examples.');
 
             return 1;
         }
-        $questionHelper = $this->getHelper('question');
+        $oldModuleName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
+        $oldFolderPath = _PS_MODULE_DIR_ . $oldModuleName . '/';
+        if (!file_exists($oldFolderPath)) {
+            $io->error('The old module folder ' . $oldFolderPath . ' wasn\'t found.');
+
+            return 1;
+        }
+        $oldModule = Module::getInstanceByName($oldModuleName);
         if (!preg_match('/[A-Z]/', $oldFullName['prefix'] . $oldFullName['name'])) {
-            $question = new ConfirmationQuestion('The old name is not camel cased, so the camel cased occurences won\'t be replaced.'
-            . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y for yes, n for no)', false);
-            if (!$questionHelper->ask($input, $output, $question)) {
-                return 0;
+            if ($oldModule) {
+                $oldModuleClass = get_class($oldModule);
+                if (!empty($oldFullName['prefix'])) {
+                    $oldFullName['prefix'] = substr(
+                        $oldModuleClass,
+                        stripos($oldModuleClass, $oldFullName['prefix']),
+                        strlen($oldFullName['prefix'])
+                    ) ?: $oldFullName['prefix'];
+                }
+                $oldFullName['name'] = substr(
+                    $oldModuleClass,
+                    stripos(
+                        $oldModuleClass,
+                        $oldFullName['name']
+                    )
+                ) ?: $oldFullName['name'];
+            } else {
+                $question = new ConfirmationQuestion('The old name is not camel cased, so the camel cased occurences won\'t be replaced.'
+                    . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y to continue, n to abort)', false);
+                if (!$questionHelper->ask($input, $output, $question)) {
+                    return 0;
+                }
             }
         }
 
-        if (!($newFullName = $this->mapModuleName($input->getArgument('new-name')))) {
-            $io->error('Please check the required format for the module new name');
+        if (!($newFullName = $this->formatModuleName($input, $output, $input->getArgument('new-name')))) {
+            $io->error('The module new name format is not valid. Please check --help for valid examples.');
 
             return 1;
         }
         if (!preg_match('/[A-Z]/', $newFullName['prefix'] . $newFullName['name'])) {
             $question = new ConfirmationQuestion('The new name is not camel cased, so it will be counted as one word. It can cause aesthetic issues.'
-            . PHP_EOL . 'Are you sure that you didn\'t to camel case it ? (y for yes, n for no)', false);
+            . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y to continue, n to abort)', false);
             if (!$questionHelper->ask($input, $output, $question)) {
                 return 0;
             }
-        }
-
-        $oldModuleName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
-        $oldModule = Module::getInstanceByName($oldModuleName);
-        if (!$oldModule) {
-            $oldModuleName = strtolower($oldFullName['prefix'] . '_' . $oldFullName['name']);
-            $oldModule = Module::getInstanceByName($oldModuleName);
         }
 
         $newAuthor = $input->getOption('new-author');
@@ -116,7 +138,7 @@ final class RenameModule extends Command
                 }
             } else {
                 $question = new Question('Can\'t create old module instance to retrieve old author name. '
-                . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
+                    . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
                 $oldAuthor = $questionHelper->ask($input, $output, $question);
                 if (empty($oldAuthor)) {
                     $newAuthor = false;
@@ -139,94 +161,78 @@ final class RenameModule extends Command
             }
         }
 
-        $prefixReplaceFormats = [
+        $fullNameReplaceFormats = [
             //PREFIXModuleName
             function ($fullName) {
                 return strtoupper($fullName['prefix']) . $fullName['name'];
             },
-            //PREFIX_ModuleName
-            function ($fullName) {
-                return strtoupper($fullName['prefix']) . '_' . $fullName['name'];
-            },
-        ];
-
-        foreach ($prefixReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat($oldFullName);
-            $replace = str_replace('_', '', $replaceFormat($newFullName));
-            $replace_pairs[$search] = $replace;
-        }
-
-        $moduleNameReplaceFormats = [
-            //ModuleName
-            function ($moduleName) {
-                return $moduleName;
-            },
             //moduleName
-            function ($moduleName) {
-                return lcfirst($moduleName);
-            },
-            //Modulename
-            function ($moduleName) {
-                return ucfirst(strtolower($moduleName));
-            },
-            //modulename
-            function ($moduleName) {
-                return strtolower($moduleName);
-            },
-            //MODULE_NAME
-            function ($moduleName) {
-                return strtoupper(
-                    implode('_',
-                    str_replace('_', '',
-                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
-                    ))
-                );
-            },
-            //module_name
-            function ($moduleName) {
-                return strtolower(
-                    implode('_',
-                    str_replace('_', '',
-                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
-                    ))
-                );
+            function ($fullName) {
+                return lcfirst($fullName['name']);
             },
             //Module Name
-            function ($moduleName) {
+            function ($fullName) {
                 return implode(' ',
                     str_replace('_', '',
-                        preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                        preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
                     )
                 );
             },
             //Module name
-            function ($moduleName) {
+            function ($fullName) {
                 return ucfirst(
                     strtolower(
                         implode(' ',
                         str_replace('_', '',
-                            preg_split('/(?=[A-Z])/', $moduleName, -1, PREG_SPLIT_NO_EMPTY)
+                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
                         ))
                     )
                 );
             },
+            //PREFIX_MODULE_NAME
+            function ($fullName) {
+                return strtoupper(str_replace('_', '', $fullName['prefix']))
+                    . (!empty($fullName['prefix']) ? '_' : '')
+                    . strtoupper(
+                        implode('_',
+                        str_replace('_', '',
+                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
+                        ))
+                    );
+            },
+            //prefix_module_name
+            function ($fullName) {
+                return strtolower(str_replace('_', '', $fullName['prefix']))
+                    . (!empty($fullName['prefix']) ? '_' : '')
+                    . strtolower(
+                        implode('_',
+                        str_replace('_', '',
+                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
+                        ))
+                    );
+            },
+            //PrefixModuleName
+            function ($fullName) {
+                return $fullName['prefix'] . $fullName['name'];
+            },
+            //Prefixmodulename
+            function ($fullName) {
+                return str_replace('_', '', ucfirst(strtolower($fullName['prefix'] . $fullName['name'])));
+            },
+            //prefixmodulename
+            function ($fullName) {
+                return strtolower($fullName['prefix'] . $fullName['name']);
+            },
         ];
 
-        foreach ($moduleNameReplaceFormats as $replaceFormat) {
-            if (!empty($oldFullName['prefix'])) {
-                $search = $replaceFormat($oldFullName['prefix'] . $oldFullName['name']);
-                $replace = $replaceFormat($newFullName['prefix'] . $newFullName['name']);
-                $replace_pairs[$search] = $replace;
-
-                $search = $replaceFormat($oldFullName['prefix'] . '_' . $oldFullName['name']);
-                $replace = $replaceFormat($newFullName['prefix'] . $newFullName['name']);
-                $replace_pairs[$search] = $replace;
-            }
+        foreach ($fullNameReplaceFormats as $replaceFormat) {
+            $search = $replaceFormat($oldFullName);
+            $replace = $replaceFormat($newFullName);
+            $replace_pairs[$search] = $replace;
         }
-
-        foreach ($moduleNameReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat($oldFullName['name']);
-            $replace = $replaceFormat($newFullName['name']);
+        foreach ($fullNameReplaceFormats as $replaceFormat) {
+            $search = $replaceFormat(['prefix' => '', 'name' => $oldFullName['name']]);
+            $replace = $replaceFormat(['prefix' => '', 'name' => $newFullName['name']]);
             $replace_pairs[$search] = $replace;
         }
 
@@ -252,6 +258,7 @@ final class RenameModule extends Command
         $io->title('The following replacements will occur:');
         $table = new Table($output);
         $table->setHeaders(['Occurence', 'Replacement']);
+        ksort($replace_pairs, SORT_STRING | SORT_FLAG_CASE);
         foreach ($replace_pairs as $search => $replace) {
             $table->addRow([$search, $replace]);
         }
@@ -351,26 +358,44 @@ final class RenameModule extends Command
         return 0;
     }
 
-    public function mapModuleName($arg)
+    public function formatModuleName($input, $output, $arg)
     {
         if (!$arg) {
             return false;
         }
 
-        $fullName = explode('_', $arg);
-        if (count($fullName) > 2) {
+        $explodedArg = explode(',', $arg);
+        if (count($explodedArg) > 2) {
             return false;
         }
 
-        $prefix = count($fullName) == 2 ? $fullName[0] : '';
-        $name = $fullName[count($fullName) - 1];
-        if (empty($name)) {
+        $fullName = [];
+        $fullName['prefix'] = count($explodedArg) == 2 ? $explodedArg[0] : '';
+        $fullName['name'] = $explodedArg[count($explodedArg) - 1];
+        if (empty($fullName['name'])) {
             return false;
         }
 
-        return [
-            'prefix' => $prefix,
-            'name' => $name,
+        if (!empty($fullName['prefix'])) {
+            return $fullName;
+        }
+
+        $questionHelper = $this->getHelper('question');
+        $splitIndex = strpos($fullName['name'], '_');
+        if ($splitIndex === false) {
+            return $fullName;
+        }
+
+        $potentialFullName = [
+            'prefix' => substr($fullName['name'], 0, $splitIndex + 1),
+            'name' => substr($fullName['name'], $splitIndex + 1),
         ];
+        $question = new ConfirmationQuestion($potentialFullName['prefix'] . ' has been identified as a potential prefix.'
+            . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
+        if ($questionHelper->ask($input, $output, $question)) {
+            return $potentialFullName;
+        }
+
+        return $fullName;
     }
 }
