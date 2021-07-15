@@ -201,6 +201,14 @@ final class RenameModule extends Command
             }
         }
 
+        $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
+        $keepOld = $input->getOption('keep-old');
+        if ($oldModuleName === $newModuleName && $keepOld) {
+            $io->error('You can\'t keep the old module when the new module name is equal to the old one.');
+
+            return 1;
+        }
+
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
         if ($newAuthor) {
@@ -223,10 +231,9 @@ final class RenameModule extends Command
         $replace_pairs = [];
 
         $fullNameReplaceFormats = [
-            //PREFIXModuleName
+            //PrefixModuleName
             function ($fullName) {
-                return $this->caseReplaceFormats['upperCase']($fullName['prefix'])
-                    . $this->caseReplaceFormats['pascalCase']($fullName['name']);
+                return $this->caseReplaceFormats['pascalCase']($fullName['prefix'] . $fullName['name']);
             },
             //moduleName
             function ($fullName) {
@@ -251,10 +258,6 @@ final class RenameModule extends Command
                 return strtolower(str_replace('_', '', $fullName['prefix']))
                     . (!empty($fullName['prefix']) ? '_' : '')
                     . $this->caseReplaceFormats['snakeCase']($fullName['name']);
-            },
-            //PrefixModuleName
-            function ($fullName) {
-                return $this->caseReplaceFormats['pascalCase']($fullName['prefix'] . $fullName['name']);
             },
             //Prefixmodulename
             function ($fullName) {
@@ -348,17 +351,17 @@ final class RenameModule extends Command
 
         $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
         $moduleManager = $moduleManagerBuilder->build();
-        $keepOld = $input->getOption('keep-old');
 
-        if (file_exists($newFolderPath)) {
+        if (file_exists($newFolderPath) && $oldFolderPath != $newFolderPath) {
             $question = new ConfirmationQuestion(
-                'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module uninstalled.'
-                . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?', false);
+                'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module will be uninstalled.'
+                . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?',
+                false
+            );
             if (!$questionHelper->ask($input, $output, $question)) {
                 return 0;
             }
 
-            $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
             if ($moduleManager->isInstalled($newModuleName)) {
                 $newModule = Module::getInstanceByName($newModuleName);
                 if ($newModule && $newModule->uninstall()) {
@@ -381,9 +384,12 @@ final class RenameModule extends Command
                 return 1;
             }
         }
-        exec('cp -R ' . $oldFolderPath . '. ' . $newFolderPath);
-        if (!$keepOld) {
-            exec('rm -rf ' . $oldFolderPath);
+
+        if ($oldFolderPath != $newFolderPath) {
+            exec('cp -R ' . $oldFolderPath . '. ' . $newFolderPath);
+            if (!$keepOld) {
+                exec('rm -rf ' . $oldFolderPath);
+            }
         }
 
         $finder = new Finder();
