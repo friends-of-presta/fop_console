@@ -180,8 +180,8 @@ final class RenameModule extends Command
                     )
                 ) ?: $oldFullName['name'];
             } else {
-                $question = new ConfirmationQuestion('The old name is not camel cased, so the camel cased occurences won\'t be replaced.'
-                    . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y to continue, n to abort)', false);
+                $question = new ConfirmationQuestion('The old name is not pascal cased, so the pascal cased occurences won\'t be replaced.'
+                    . PHP_EOL . 'Are you sure that you didn\'t forget to pascal case it ? (y to continue, n to abort)', false);
                 if (!$questionHelper->ask($input, $output, $question)) {
                     return 0;
                 }
@@ -194,8 +194,8 @@ final class RenameModule extends Command
             return 1;
         }
         if (!preg_match('/[A-Z]/', $newFullName['prefix'] . $newFullName['name'])) {
-            $question = new ConfirmationQuestion('The new name is not camel cased, so it will be counted as one word. It can cause aesthetic issues.'
-            . PHP_EOL . 'Are you sure that you didn\'t forget to camel case it ? (y to continue, n to abort)', false);
+            $question = new ConfirmationQuestion('The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues.'
+            . PHP_EOL . 'Are you sure that you didn\'t forget to pascal case it ? (y to continue, n to abort)', false);
             if (!$questionHelper->ask($input, $output, $question)) {
                 return 0;
             }
