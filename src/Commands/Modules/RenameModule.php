@@ -37,6 +37,8 @@ use Symfony\Component\Finder\Finder;
 
 final class RenameModule extends Command
 {
+    private $caseReplaceFormats;
+
     /**
      * {@inheritdoc}
      */
@@ -46,25 +48,97 @@ final class RenameModule extends Command
             ->setName('fop:modules:rename')
             ->setDescription('Rename module')
             ->setHelp('This command allows you to replace the name of a module in the files and database.'
-                . PHP_EOL . 'Here are some examples:'
+                . PHP_EOL . 'Here are some usage examples:'
                 . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample to rename ps_customersignin into kjmoduleexample'
                 . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 to rename kjmoduleexample into kjmoduleexample2')
             ->addArgument(
                 'old-name',
                 InputArgument::REQUIRED,
-                'Module current name with following format : Prefix,ModuleCurrentNameCamelCased'
+                'Module current name with following format : Prefix,ModuleCurrentNamePascalCased'
             )
             ->addArgument(
                 'new-name',
                 InputArgument::REQUIRED,
-                'Module new name with following format : Prefix,ModuleNewNameCamelCased'
+                'Module new name with following format : Prefix,ModuleNewNamePascalCased'
             )
-            ->addUsage('--new-author=[AuthorCamelCased]')
-            ->addOption('new-author', null, InputOption::VALUE_REQUIRED, 'New author name')
-            ->addUsage('--extra-replacement=[search,replace]')
-            ->addOption('extra-replacement', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Extra search/replace pairs')
-            ->addUsage('--keep-old')
-            ->addOption('keep-old', null, InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name');
+            ->addUsage('--new-author=[AuthorNamePascalCased]')
+            ->addOption('new-author', 'a', InputOption::VALUE_REQUIRED, 'New author name')
+            ->addUsage('--extra-replacement=[search,replace], -r [search,replace]')
+            ->addOption('extra-replacement', 'r', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Extra search/replace pairs')
+            ->addUsage('--cased-extra-replacement=[search,replace], -R [search,replace]')
+            ->addOption('cased-extra-replacement', 'R', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Extra search/replace pairs formatted with all usual case formats')
+            ->addUsage('--keep-old, -k')
+            ->addOption('keep-old', 'k', InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name');
+
+        $this->caseReplaceFormats = [
+            //StringToFormat
+            'pascalCase' => function ($string) {
+                return $string;
+            },
+            //stringToFormat
+            'camelCase' => function ($string) {
+                return lcfirst($string);
+            },
+            //String To Format
+            'pascalCaseSpaced' => function ($string) {
+                return implode(
+                    ' ',
+                    preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                );
+            },
+            //String to format
+            'firstUpperCasedSpaced' => function ($string) {
+                return ucfirst(
+                    strtolower(
+                        implode(
+                            ' ',
+                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                        )
+                    )
+                );
+            },
+            //string-to-format
+            'kebabCase' => function ($string) {
+                return strtolower(
+                    implode('-',
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                    ))
+                );
+            },
+            //STRING_TO_FORMAT
+            'upperCaseSnakeCase' => function ($string) {
+                return strtoupper(
+                    implode('_',
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                    ))
+                );
+            },
+            //string_to_format
+            'snakeCase' => function ($string) {
+                return strtolower(
+                    implode('_',
+                    str_replace('_', '',
+                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                    ))
+                );
+            },
+            //Stringtoformat
+            'firstUpperCased' => function ($string) {
+                return ucfirst(strtolower($string));
+            },
+            //STRINGTOFORMAT
+            'upperCase' => function ($string) {
+                return strtoupper($string);
+            },
+            //stringtoformat
+            'lowerCase' => function ($string) {
+                return strtolower($string);
+            },
+        ];
     }
 
     /**
@@ -148,80 +222,47 @@ final class RenameModule extends Command
 
         $replace_pairs = [];
 
-        $extraReplacements = $input->getOption('extra-replacement');
-        if ($extraReplacements) {
-            foreach ($extraReplacements as $replacement) {
-                $terms = explode(',', $replacement);
-                if (count($terms) != 2) {
-                    $io->error('Each extra replacement must be a pair of two words separated by a comma');
-
-                    return 1;
-                }
-                $replace_pairs[$terms[0]] = $terms[1];
-            }
-        }
-
         $fullNameReplaceFormats = [
             //PREFIXModuleName
             function ($fullName) {
-                return strtoupper($fullName['prefix']) . $fullName['name'];
+                return $this->caseReplaceFormats['upperCase']($fullName['prefix'])
+                    . $this->caseReplaceFormats['pascalCase']($fullName['name']);
             },
             //moduleName
             function ($fullName) {
-                return lcfirst($fullName['name']);
+                return $this->caseReplaceFormats['pascalCase']($fullName['name']);
             },
             //Module Name
             function ($fullName) {
-                return implode(' ',
-                    str_replace('_', '',
-                        preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
-                    )
-                );
+                return $this->caseReplaceFormats['pascalCaseSpaced']($fullName['name']);
             },
             //Module name
             function ($fullName) {
-                return ucfirst(
-                    strtolower(
-                        implode(' ',
-                        str_replace('_', '',
-                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
-                        ))
-                    )
-                );
+                return $this->caseReplaceFormats['firstUpperCasedSpaced']($fullName['name']);
             },
             //PREFIX_MODULE_NAME
             function ($fullName) {
                 return strtoupper(str_replace('_', '', $fullName['prefix']))
                     . (!empty($fullName['prefix']) ? '_' : '')
-                    . strtoupper(
-                        implode('_',
-                        str_replace('_', '',
-                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
-                        ))
-                    );
+                    . $this->caseReplaceFormats['upperCaseSnakeCase']($fullName['name']);
             },
             //prefix_module_name
             function ($fullName) {
                 return strtolower(str_replace('_', '', $fullName['prefix']))
                     . (!empty($fullName['prefix']) ? '_' : '')
-                    . strtolower(
-                        implode('_',
-                        str_replace('_', '',
-                            preg_split('/(?=[A-Z])/', $fullName['name'], -1, PREG_SPLIT_NO_EMPTY)
-                        ))
-                    );
+                    . $this->caseReplaceFormats['snakeCase']($fullName['name']);
             },
             //PrefixModuleName
             function ($fullName) {
-                return $fullName['prefix'] . $fullName['name'];
+                return $this->caseReplaceFormats['pascalCase']($fullName['prefix'] . $fullName['name']);
             },
             //Prefixmodulename
             function ($fullName) {
-                return str_replace('_', '', ucfirst(strtolower($fullName['prefix'] . $fullName['name'])));
+                return str_replace('_', '', $this->caseReplaceFormats['firstUpperCased']($fullName['prefix'] . $fullName['name']));
             },
             //prefixmodulename
             function ($fullName) {
-                return strtolower($fullName['prefix'] . $fullName['name']);
+                return $this->caseReplaceFormats['lowerCase']($fullName['prefix'] . $fullName['name']);
             },
         ];
 
@@ -240,11 +281,11 @@ final class RenameModule extends Command
             $authorReplaceFormats = [
                 //AuthorName
                 function ($authorName) {
-                    return $authorName;
+                    return $this->caseReplaceFormats['pascalCase']($authorName);
                 },
-                //authorName
+                //authorname
                 function ($authorName) {
-                    return lcfirst($authorName);
+                    return $this->caseReplaceFormats['lowerCase']($authorName);
                 },
             ];
 
@@ -255,10 +296,38 @@ final class RenameModule extends Command
             }
         }
 
+        $extraReplacements = $input->getOption('extra-replacement');
+        if ($extraReplacements) {
+            foreach ($extraReplacements as $replacement) {
+                $terms = explode(',', $replacement);
+                if (count($terms) != 2) {
+                    $io->error('Each extra replacement must be a pair of two words separated by a comma');
+
+                    return 1;
+                }
+                $replace_pairs[$terms[0]] = $terms[1];
+            }
+        }
+
+        $casedExtraReplacements = $input->getOption('cased-extra-replacement');
+        if ($casedExtraReplacements) {
+            foreach ($casedExtraReplacements as $replacement) {
+                $terms = explode(',', $replacement);
+                if (count($terms) != 2) {
+                    $io->error('Each extra replacement must be a pair of two words separated by a comma');
+
+                    return 1;
+                }
+
+                foreach ($this->caseReplaceFormats as $case => $replaceFormat) {
+                    $replace_pairs[$replaceFormat($terms[0])] = $replaceFormat($terms[1]);
+                }
+            }
+        }
+
         $io->title('The following replacements will occur:');
         $table = new Table($output);
         $table->setHeaders(['Occurence', 'Replacement']);
-        ksort($replace_pairs, SORT_STRING | SORT_FLAG_CASE);
         foreach ($replace_pairs as $search => $replace) {
             $table->addRow([$search, $replace]);
         }
@@ -332,9 +401,6 @@ final class RenameModule extends Command
             }
         }
 
-        // Composer\Factory::getHomeDir() method
-        // needs COMPOSER_HOME environment variable set
-        //putenv('COMPOSER_HOME=' . __DIR__ . '/vendor/bin/composer');
         if (file_exists($newFolderPath . 'composer.json')) {
             chdir($newFolderPath);
             exec('rm -rf vendor');
