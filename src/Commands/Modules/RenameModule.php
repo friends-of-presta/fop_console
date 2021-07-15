@@ -388,17 +388,20 @@ final class RenameModule extends Command
 
         $finder = new Finder();
         $finder->exclude(['vendor', 'node_modules']);
+        $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b) {
+            $depth = substr_count($a->getRealPath(), '/') - substr_count($b->getRealPath(), '/');
+
+            return ($depth === 0) ? strlen($a->getRealPath()) - strlen($b->getRealPath()) : $depth;
+        });
         foreach ($finder->in($newFolderPath) as $file) {
             if ($file->isFile()) {
                 $fileContent = file_get_contents($file->getPathname());
                 file_put_contents($file->getPathname(), strtr($fileContent, $replace_pairs));
             }
-            foreach ($replace_pairs as $search => $replace) {
-                if (strpos($file->getRelativePathname(), $search) !== false) {
-                    rename($file->getPathname(), $newFolderPath . strtr($file->getRelativePathname(), $replace_pairs));
-                    break;
-                }
-            }
+            rename(
+                $newFolderPath . strtr($file->getRelativePath(), $replace_pairs) . '/' . $file->getFilename(),
+                $newFolderPath . strtr($file->getRelativePathname(), $replace_pairs)
+            );
         }
 
         if (file_exists($newFolderPath . 'composer.json')) {
