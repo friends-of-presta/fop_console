@@ -149,6 +149,8 @@ final class RenameModule extends Command
         $io = new SymfonyStyle($input, $output);
         $questionHelper = $this->getHelper('question');
 
+        $io->section('Initialization');
+
         if (!($oldFullName = $this->formatModuleName($input, $output, $input->getArgument('old-name')))) {
             $io->error('The module old name format is not valid. Please check --help for valid examples.');
 
@@ -180,6 +182,7 @@ final class RenameModule extends Command
                     )
                 ) ?: $oldFullName['name'];
             } else {
+                $io->newLine();
                 $question = new ConfirmationQuestion('The old name is not pascal cased, so the pascal cased occurences won\'t be replaced.'
                     . PHP_EOL . 'Are you sure that you didn\'t forget to pascal case it ? (y to continue, n to abort)', false);
                 if (!$questionHelper->ask($input, $output, $question)) {
@@ -194,6 +197,7 @@ final class RenameModule extends Command
             return 1;
         }
         if (!preg_match('/[A-Z]/', $newFullName['prefix'] . $newFullName['name'])) {
+            $io->newLine();
             $question = new ConfirmationQuestion('The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues.'
             . PHP_EOL . 'Are you sure that you didn\'t forget to pascal case it ? (y to continue, n to abort)', false);
             if (!$questionHelper->ask($input, $output, $question)) {
@@ -215,10 +219,12 @@ final class RenameModule extends Command
             if ($oldModule) {
                 $oldAuthor = $oldModule->author;
                 if ($newAuthor == $oldAuthor) {
+                    $io->newLine();
                     $io->text('Author replacements have been ignored since the old and the new one are equal');
                     $newAuthor = false;
                 }
             } else {
+                $io->newLine();
                 $question = new Question('Can\'t create old module instance to retrieve old author name. '
                     . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
                 $oldAuthor = $questionHelper->ask($input, $output, $question);
@@ -328,7 +334,8 @@ final class RenameModule extends Command
             }
         }
 
-        $io->title('The following replacements will occur:');
+        $io->newLine();
+        $io->text('The following replacements will occur:');
         $table = new Table($output);
         $table->setHeaders(['Occurence', 'Replacement']);
         foreach ($replace_pairs as $search => $replace) {
@@ -336,6 +343,7 @@ final class RenameModule extends Command
         }
         $table->render();
 
+        $io->newLine();
         $question = new ConfirmationQuestion('Do you confirm these replacements (y for yes, n for no)?', false);
         if (!$questionHelper->ask($input, $output, $question)) {
             return 0;
@@ -343,16 +351,13 @@ final class RenameModule extends Command
 
         $oldFolderName = strtolower($oldFullName['prefix'] . $oldFullName['name']);
         $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
-        if (!is_dir($oldFolderPath)) {
-            $oldFolderName = strtolower($oldFullName['prefix'] . '_' . $oldFullName['name']);
-            $oldFolderPath = _PS_MODULE_DIR_ . $oldFolderName . '/';
-        }
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($newFullName['prefix'] . $newFullName['name']) . '/';
 
         $moduleManagerBuilder = ModuleManagerBuilder::getInstance();
         $moduleManager = $moduleManagerBuilder->build();
 
         if (file_exists($newFolderPath) && $oldFolderPath != $newFolderPath) {
+            $io->newLine();
             $question = new ConfirmationQuestion(
                 'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module will be uninstalled.'
                 . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?',
@@ -376,6 +381,7 @@ final class RenameModule extends Command
         }
 
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
+            $io->section('Uninstalling old module');
             if ($oldModule->uninstall()) {
                 $io->success('The old module ' . $oldModuleName . ' has been uninstalled.');
             } else {
@@ -392,14 +398,19 @@ final class RenameModule extends Command
             }
         }
 
-        $finder = new Finder();
-        $finder->exclude(['vendor', 'node_modules']);
-        $finder->sort(function (\SplFileInfo $a, \SplFileInfo $b) {
-            $depth = substr_count($a->getRealPath(), '/') - substr_count($b->getRealPath(), '/');
+        $io->section('Replacing in files');
 
-            return ($depth === 0) ? strlen($a->getRealPath()) - strlen($b->getRealPath()) : $depth;
-        });
-        foreach ($finder->in($newFolderPath) as $file) {
+        $finder = new Finder();
+        $iterator = $finder
+            ->exclude(['vendor', 'node_modules'])
+            ->sort(function (\SplFileInfo $a, \SplFileInfo $b) {
+                $depth = substr_count($a->getRealPath(), '/') - substr_count($b->getRealPath(), '/');
+
+                return ($depth === 0) ? strlen($a->getRealPath()) - strlen($b->getRealPath()) : $depth;
+            })
+            ->in($newFolderPath);
+        $io->progressStart($iterator->count());
+        foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $fileContent = file_get_contents($file->getPathname());
                 file_put_contents($file->getPathname(), strtr($fileContent, $replace_pairs));
@@ -408,9 +419,15 @@ final class RenameModule extends Command
                 $newFolderPath . strtr($file->getRelativePath(), $replace_pairs) . '/' . $file->getFilename(),
                 $newFolderPath . strtr($file->getRelativePathname(), $replace_pairs)
             );
+            $io->progressAdvance();
         }
+        $io->newLine(3);
+
+        $io->section('Installing new module');
 
         if (file_exists($newFolderPath . 'composer.json')) {
+            $io->text('Installing composer...');
+
             chdir($newFolderPath);
             exec('rm -rf vendor');
             $installCommand = new ArrayInput(['command' => 'update']);
@@ -424,10 +441,13 @@ final class RenameModule extends Command
 
         $newModuleName = strtolower($newFullName['prefix'] . $newFullName['name']);
         $newModule = Module::getInstanceByName($newModuleName);
-        if ($newModule && $newModule->install()) {
-            $io->success('The fresh module ' . $newModuleName . ' has been installed.');
-        } else {
-            $io->error('The fresh module ' . $newModuleName . ' couldn\'t be installed.');
+        if ($newModule) {
+            $io->text('Installing module...');
+            if ($newModule->install()) {
+                $io->success('The fresh module ' . $newModuleName . ' has been installed.');
+            } else {
+                $io->error('The fresh module ' . $newModuleName . ' couldn\'t be installed.');
+            }
         }
 
         return 0;
@@ -465,6 +485,9 @@ final class RenameModule extends Command
             'prefix' => substr($fullName['name'], 0, $splitIndex + 1),
             'name' => substr($fullName['name'], $splitIndex + 1),
         ];
+
+        $io = new SymfonyStyle($input, $output);
+        $io->newLine();
         $question = new ConfirmationQuestion($potentialFullName['prefix'] . ' has been identified as a potential prefix.'
             . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
         if ($questionHelper->ask($input, $output, $question)) {
