@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) Since 2020 Friends of Presta
  *
@@ -18,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 
-namespace FOP\Console\Commands;
+namespace FOP\Console\Commands\Modules;
 
 use FOP\Console\Command;
 use Module;
@@ -36,7 +35,7 @@ class ModuleHooks extends Command
     protected function configure(): void
     {
         $this
-            ->setName('fop:module:hooks')
+            ->setName('fop:modules:hooks')
             ->setDescription('Get modules list')
             ->addArgument(
                 'name',

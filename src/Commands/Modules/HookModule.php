@@ -17,7 +17,7 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
  */
 
-namespace FOP\Console\Commands;
+namespace FOP\Console\Commands\Modules;
 
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,16 +26,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class UnhookModule extends Command
+class HookModule extends Command
 {
     /**
      * {@inheritdoc}
      */
     protected function configure()
     {
-        $this->setName('fop:unhook-module')
-            ->setDescription('Detach module from hook')
-            ->setHelp('This command allows you to detach a module from one hook');
+        $this->setName('fop:modules:hook')
+            ->setDescription('Attach one module on specific hook')
+            ->setHelp('This command allows you to attach a module on one hook');
         $this->addUsage('--module=[modulename]');
         $this->addUsage('--hook=[hookname]');
         $this->addOption('module', null, InputOption::VALUE_OPTIONAL);
@@ -53,7 +53,8 @@ class UnhookModule extends Command
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
 
-        $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want ungraft ?(name)</question>'));
+        $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want graft ?(name)</question>'));
+
         $moduleInst = \Module::getInstanceByName($moduleName);
         if (!($moduleInst instanceof \Module)) {
             $io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
@@ -61,12 +62,12 @@ class UnhookModule extends Command
             return 1;
         }
 
-        $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want ungraft ' . $moduleName . ' ?(name)</question>'));
+        $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want graft ' . $moduleName . ' ?(name)</question>'));
         $hookId = (int) \Hook::getIdByName($hookName);
 
         if (is_int($hookId) && $hookId > 0) {
-            $moduleInst->unregisterHook($hookName);
-            $io->getErrorStyle()->success('Your module ' . $moduleName . ' has been ungraft on hook ' . $hookName);
+            $moduleInst->registerHook($hookName);
+            $io->getErrorStyle()->success('Your module ' . $moduleName . ' has been graft on hook ' . $hookName);
 
             return 0;
         } else {
