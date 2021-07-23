@@ -128,19 +128,20 @@ class DevSetupEnv extends Command
         $this->io->text('<info>Update table ps_configuration</info>');
 
         //URL configuration
-        $res = $res && $this->updateUrlConfiguration($idShop, $url);/** @phpstan-ignore-line */
+        /** @phpstan-ignore-next-line */
+        $res = $res && $this->updateUrlConfiguration($idShop, $url);
 
         //SSL configuration
-        $res = $res && $this->updateSslConfiguration($idShop, $ssl);/** @phpstan-ignore-line */
+        $res = $res && $this->updateSslConfiguration($idShop, $ssl); /** @phpstan-ignore-line */
 
         //URL configuration in shop_url
-        $res = $res && $this->updateShopUrl($idShop, $url, $puri, $vuri);/** @phpstan-ignore-line */
+        $res = $res && $this->updateShopUrl($idShop, $url, $puri, $vuri); /* @phpstan-ignore-line */
 
         //Regenerate htaccess
         $this->io->text('<info>Regenerate htaccess</info>');
         $command = $this->getApplication()->find('fop:generate:htaccess');
         $returnCode = $command->execute($input, $output);
-        $res = $res && !$returnCode;/** @phpstan-ignore-line */
+        $res = $res && !$returnCode; /* @phpstan-ignore-line */
 
         //Change Employee BO pwd
         if ($modifyEmployeePwd) {
@@ -162,13 +163,13 @@ class DevSetupEnv extends Command
         $this->io->text('<info>Disable cache</info>');
 
         //smart cache js css
-        $res = $res && $this->disableSmartCacheJsAndCss();/** @phpstan-ignore-line */
+        $res = $res && $this->disableSmartCacheJsAndCss(); /** @phpstan-ignore-line */
 
         //global cache
-        $res = $res && $this->disableGlobalCache();/** @phpstan-ignore-line */
+        $res = $res && $this->disableGlobalCache(); /** @phpstan-ignore-line */
 
         //smarty cache
-        $res = $res && $this->disableSmartyCache();/** @phpstan-ignore-line */
+        $res = $res && $this->disableSmartyCache(); /* @phpstan-ignore-line */
 
         //Clear all cache
         $this->io->text('<info>Clear all cache</info>');
