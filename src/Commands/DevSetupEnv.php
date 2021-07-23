@@ -59,7 +59,7 @@ class DevSetupEnv extends Command
             ->setDescription('Install your project for local developement')
             ->setHelp('<info>This command update database configuration with dev parameters (url, ssl, passwords). </info>' . PHP_EOL .
                         '<info>How to use : </info>' . PHP_EOL .
-                        '<info>php bin/console fop:dev:setup-env --url=url.local --modifyemployeepwd=1 --modifycustomerpwd=1 --employeepwd=fopisnice --customerpwd=fopisnice --ssl=0</info>'
+                        '<info>php bin/console fop:dev:setup-env --url=url.local --modify-employee-pwd=1 --modify-customer-pwd=1 --employee-pwd=fopisnice --customer-pwd=fopisnice --ssl=0</info>'
                         );
 
         $this->addUsage('--url=[url]');
@@ -67,18 +67,18 @@ class DevSetupEnv extends Command
         $this->addUsage('--vurl=[virutal_url]');
         $this->addUsage('--ssl ssl option ');
         $this->addUsage('--id_shop specify shop id by default : PS_SHOP_DEFAULT ');
-        $this->addUsage('--modifyemployeepwd to change all employees password');
-        $this->addUsage('--modifycustomerpwd to change all customers password');
-        $this->addUsage('--customerpwd password for all customers');
-        $this->addUsage('--employeepwd password for all employees');
+        $this->addUsage('--modify-employee-pwd to change all employees password');
+        $this->addUsage('--modify-customer-pwd to change all customers password');
+        $this->addUsage('--customer-pwd password for all customers');
+        $this->addUsage('--employee-pwd password for all employees');
         $this->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'url to set');
         $this->addOption('purl', 'p', InputOption::VALUE_REQUIRED, 'physical url');
         $this->addOption('vurl', null, InputOption::VALUE_REQUIRED, 'virtual url');
         $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?', 0);
-        $this->addOption('modifyemployeepwd', 'mep', InputOption::VALUE_REQUIRED, 'Modify all employee BO password', 0);
-        $this->addOption('modifycustomerpwd', 'mcp', InputOption::VALUE_REQUIRED, 'Modify all customers password', 0);
-        $this->addOption('customerpwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Define all customers passwords', false);
-        $this->addOption('employeepwd', 'epwd', InputOption::VALUE_REQUIRED, 'Define all employees passwords', false);
+        $this->addOption('modify-employee-pwd', 'mep', InputOption::VALUE_NONE, 'Interactively modify all employee BO password');
+        $this->addOption('modify-customer-pwd', 'mcp', InputOption::VALUE_NONE, 'Interactively modify all customers password');
+        $this->addOption('customer-pwd', 'cpwd', InputOption::VALUE_REQUIRED, 'Modify all customers passwords', false);
+        $this->addOption('employee-pwd', 'epwd', InputOption::VALUE_REQUIRED, 'Modify all employees passwords', false);
     }
 
     /**
@@ -104,6 +104,7 @@ class DevSetupEnv extends Command
 
         $this->dbi->execute('START TRANSACTION');
 
+        //Get options value
         $ssl = (bool) $input->getOption('ssl');
 
         $idShop = (int) $input->getOption('id_shop') !== 0 ? (int) $input->getOption('id_shop') : (int) Configuration::get('PS_SHOP_DEFAULT');
@@ -121,8 +122,8 @@ class DevSetupEnv extends Command
             $puri = $shop->physical_uri;
         }
 
-        $modifyemployeepwd = (bool) $input->getOption('modifyemployeepwd');
-        $modifycustomerpwd = (bool) $input->getOption('modifycustomerpwd');
+        $modifyEmployeePwd = (bool) $input->getOption('modify-employee-pwd');
+        $modifyCustomerPwd = (bool) $input->getOption('modify-customer-pwd');
 
         $this->io->text('<info>Update table ps_configuration</info>');
 
@@ -142,12 +143,12 @@ class DevSetupEnv extends Command
         $res = $res && !$returnCode;
 
         //Change Employee BO pwd
-        if ($modifyemployeepwd) {
+        if ($modifyEmployeePwd) {
             $this->updateEmployeesPwd($input, $output);
         }
 
         //Change all customer pwd
-        if ($modifycustomerpwd) {
+        if ($modifyCustomerPwd) {
             $this->updateCustomersPwd($input, $output);
         }
 
@@ -271,7 +272,7 @@ class DevSetupEnv extends Command
     protected function updateEmployeesPwd(InputInterface $input, OutputInterface $output): bool
     {
         $this->io->text('<info>Modify password for all BO employees</info>');
-        $pwd = ((bool) $input->getOption('employeepwd') === true) ? $input->getOption('employeepwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all employee')));
+        $pwd = ((bool) $input->getOption('employee-pwd') === true) ? $input->getOption('employee-pwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all employee')));
 
         return $this->dbi->update('employee', ['passwd' => $this->crypto->hash($pwd, _COOKIE_KEY_)], '', 0, false, false);
     }
@@ -287,7 +288,7 @@ class DevSetupEnv extends Command
     protected function updateCustomersPwd(InputInterface $input, OutputInterface $output): bool
     {
         $this->io->text('<info>Modify password for all customers</info>');
-        $pwd = ((bool) $input->getOption('customerpwd') === true) ? $input->getOption('customerpwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all customer')));
+        $pwd = ((bool) $input->getOption('customer-pwd') === true) ? $input->getOption('customer-pwd') : $this->helper->ask($input, $output, new Question($this->createQuestionString('Please, define password for all customer')));
 
         return $this->dbi->update('customer', ['passwd' => $this->crypto->hash($pwd, _COOKIE_KEY_)], '', 0, false, false);
     }
