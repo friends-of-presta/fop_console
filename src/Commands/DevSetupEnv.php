@@ -207,8 +207,8 @@ class DevSetupEnv extends Command
     /**
      * Update Shop Url in configuration table
      *
-     * @param $idShop
-     * @param $url
+     * @param int $idShop
+     * @param string $url
      *
      * @return bool
      */
@@ -227,8 +227,8 @@ class DevSetupEnv extends Command
     /**
      * Update ssl in configuration table
      *
-     * @param $idShop
-     * @param $ssl
+     * @param int $idShop
+     * @param bool $ssl
      *
      * @return bool
      */
