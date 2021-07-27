@@ -49,8 +49,8 @@ final class RenameModule extends Command
             ->setDescription('Rename module')
             ->setHelp('This command allows you to replace the name of a module in the files and database.'
                 . PHP_EOL . 'Here are some usage examples:'
-                . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample to rename ps_customersignin into kjmoduleexample'
-                . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 to rename kjmoduleexample into kjmoduleexample2')
+                . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample to rename ps_customersignin module into kjmoduleexample'
+                . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 to rename kjmoduleexample module into kjmoduleexample2')
             ->addArgument(
                 'old-name',
                 InputArgument::REQUIRED,
