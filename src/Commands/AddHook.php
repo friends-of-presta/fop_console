@@ -22,6 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Validate;
 
 final class AddHook extends Command
 {
@@ -65,7 +66,7 @@ final class AddHook extends Command
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
 
-        $name = $input->getOption('name') ?? $helper->ask($input, $output, new Question('<question>Give me the name for your new HOOK</question>'));
+        $name = $input->getOption('name') ?? $helper->ask($input, $output, $this->getHookNameQuestion());
         $title = $input->getOption('title') ?? $helper->ask($input, $output, new Question('<question>Give me the title</question>'));
         $description = $input->getOption('description') ?? $helper->ask($input, $output, new Question('<question>Give me the description</question>'));
 
@@ -88,5 +89,24 @@ final class AddHook extends Command
         }
 
         return 0;
+    }
+
+    /**
+     * Get Hook name question with validation
+     *
+     * @return Question
+     */
+    protected function getHookNameQuestion(): Question
+    {
+        $hookNameQuestion = new Question('<question>Give me the name for your new HOOK</question>');
+        $hookNameQuestion->setValidator(function ($answer) {
+            if (!Validate::isHookName($answer) || preg_match('#^hook#i', $answer)) {
+                throw new \RuntimeException('The hookName is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and cant\'t start with "hook"');
+            }
+
+            return $answer;
+        });
+
+        return $hookNameQuestion;
     }
 }
