@@ -101,7 +101,7 @@ final class AddHook extends Command
         $hookNameQuestion = new Question('<question>Give me the name for your new HOOK</question>');
         $hookNameQuestion->setValidator(function ($answer) {
             if (!Validate::isHookName($answer) || preg_match('#^hook#i', $answer)) {
-                throw new \RuntimeException('The hookName is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and cant\'t start with "hook"');
+                throw new \RuntimeException('The hook name is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and cant\'t start with "hook"');
             }
 
             return $answer;
