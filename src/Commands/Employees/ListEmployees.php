@@ -49,6 +49,7 @@ final class ListEmployees extends Command
                 ['email', 'firstname', 'lastname', 'profile', 'active', 'last_connection_date'],
                 $values
             );
+
             return 0;
         } else {
             $io->error('No employees registered on this shop');
