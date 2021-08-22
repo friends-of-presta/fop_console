@@ -43,6 +43,7 @@ php bin/console pr:mo install fop_console
 * `fop:configuration:import`           Import configuration values
 * `fop:customer-groups`                Customer groups
 * `fop:debug-mode`                     Enable or Disable debug mode.
+* `fop:employees:list`                 List registered employees  
 * `fop:export`                         Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
 * `fop:generate:robots`                Generate the robots.txt file
