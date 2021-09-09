@@ -59,8 +59,8 @@ php bin/console pr:mo install fop_console
 * `fop:modules:non-essential`          Manage non essential modules
 * `fop:override:make`                  Generate a file to make an override.
 * `fop:shop-status`                    Display shops statuses
-* `fop:unhook-module`                  Detach module from hook
 * `fop:theme-reset`                    Reset current (or selected) theme
+* `fop:unhook-module`                  Detach module from hook
 
 ## Create your owns Commands
 
