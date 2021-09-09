@@ -60,6 +60,7 @@ php bin/console pr:mo install fop_console
 * `fop:override:make`                  Generate a file to make an override.
 * `fop:shop-status`                    Display shops statuses
 * `fop:unhook-module`                  Detach module from hook
+* `fop:theme-reset`                    Reset current (or selected) theme
 
 ## Create your owns Commands
 
