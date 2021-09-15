@@ -285,12 +285,18 @@ final class RenameModule extends Command
             },
         ];
         
-        $replacePairs = $this->getFullNameReplacePairs() 
-            + $this->getAuthorReplacePairs()
-            + $this->getExtraReplacePairs(
+        $replacePairs = $this->getFullNameReplacePairs();
+
+        if (isset($this->newModuleInfos['author'])) {
+            $replacePairs += $this->getAuthorReplacePairs();
+        }
+    
+        $replacePairs += $this->getExtraReplacePairs(
+            $input->getOption('extra-replacement'), 
                 $input->getOption('extra-replacement'), 
-                $input->getOption('cased-extra-replacement')
-            );
+            $input->getOption('extra-replacement'), 
+            $input->getOption('cased-extra-replacement')
+        );
 
         $io->newLine();
         $io->text('The following replacements will occur:');
@@ -371,23 +377,21 @@ final class RenameModule extends Command
     private function getAuthorReplacePairs() {
         $authorReplacePairs = [];
 
-        if ($this->newModulesInfos['author']) {
-            $authorReplaceFormats = [
-                //AuthorName
-                function ($authorName) {
-                    return $this->caseReplaceFormats['pascalCase']($authorName);
-                },
-                //authorname
-                function ($authorName) {
-                    return $this->caseReplaceFormats['lowerCase']($authorName);
-                },
-            ];
+        $authorReplaceFormats = [
+            //AuthorName
+            function ($authorName) {
+                return $this->caseReplaceFormats['pascalCase']($authorName);
+            },
+            //authorname
+            function ($authorName) {
+                return $this->caseReplaceFormats['lowerCase']($authorName);
+            },
+        ];
 
-            foreach ($authorReplaceFormats as $replaceFormat) {
-                $search = $replaceFormat($this->oldModulesInfos['author']);
-                $replace = $replaceFormat($this->newModulesInfos['author']);
-                $authorReplacePairs[$search] = $replace;
-            }
+        foreach ($authorReplaceFormats as $replaceFormat) {
+            $search = $replaceFormat($this->oldModulesInfos['author']);
+            $replace = $replaceFormat($this->newModulesInfos['author']);
+            $authorReplacePairs[$search] = $replace;
         }
 
         return $authorReplacePairs;
