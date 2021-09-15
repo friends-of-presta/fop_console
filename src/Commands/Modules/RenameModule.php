@@ -19,17 +19,15 @@
 
 namespace FOP\Console\Commands\Modules;
 
-use Composer\Console\Application;
 use FOP\Console\Command;
 use Module;
 use RuntimeException;
+use Symfony\Component\Process\Process;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -457,7 +455,9 @@ final class RenameModule extends Command
                     throw new RuntimeException("The module $newModuleName couldn't be uninstalled.");
                 }
             }
-            exec('rm -rf ' . $newFolderPath);
+
+            $io->text("Removing $newFolderPath folder...");
+            $this->removeFolder($newFolderPath);
         }
 
         $keepOld = $input->getOption('keep-old');
@@ -480,9 +480,11 @@ final class RenameModule extends Command
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
         $keepOld = $input->getOption('keep-old');
         if ($oldFolderPath != $newFolderPath) {
-            exec('cp -R ' . $oldFolderPath . '. ' . $newFolderPath);
+            $io->text("Copying $oldFolderPath folder to $newFolderPath folder...");
+            $this->copyFolder($oldFolderPath, $newFolderPath);
             if (!$keepOld) {
-                exec('rm -rf ' . $oldFolderPath);
+                $io->text("Removing $oldFolderPath folder...");
+                $this->removeFolder($oldFolderPath);
             }
         }
 
@@ -516,15 +518,9 @@ final class RenameModule extends Command
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
         if (file_exists($newFolderPath . 'composer.json')) {
             $io->text('Installing composer...');
-
             chdir($newFolderPath);
-            exec('rm -rf vendor');
-            $installCommand = new ArrayInput(['command' => 'update']);
-            $dumpautoloadCommand = new ArrayInput(['command' => 'dumpautoload', '-a']);
-            $application = new Application();
-            $application->setAutoExit(false);
-            $application->run($installCommand, new NullOutput());
-            $application->run($dumpautoloadCommand, new NullOutput());
+            $this->removeFolder('vendor');
+            $this->installComposer();
             chdir('../..');
         }
 
@@ -583,5 +579,64 @@ final class RenameModule extends Command
         }
 
         return $fullName;
+    }
+
+    private function removeFolder($folderPath) {
+        if ($this->isWindows()) {
+            $folderPath = str_replace('/', '\\', $folderPath);
+
+            $output = [];
+            $return = 0;
+            $returnLine = exec("rmdir /S /Q $folderPath", $output, $return);
+
+            if ($return !== 0) {
+                throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+            }
+        } else {
+            $process = new Process(['rm', '-rf', $folderPath]);
+            $process->run();
+            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        }
+    }
+
+    private function copyFolder($sourcePath, $destinationPath) {
+        if ($this->isWindows()) {
+            $sourcePath = str_replace('/', '\\', $destinationPath);
+            $destinationPath = str_replace('/', '\\', $destinationPath);
+
+            $output = [];
+            $return = 0;
+            $returnLine = exec("robocopy $sourcePath $destinationPath /E", $output, $return);
+
+            if ($return !== 0) {
+                throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+            }
+        } else {
+            $process = new Process(['cp', '-R', $sourcePath, $destinationPath]);
+            $process->run();
+            $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+        }
+    }
+
+    private function installComposer() {
+        $process = new Process(['composer', 'update']);
+        $process->run();
+        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+
+        $process = new Process(['composer', 'dumpautoload', '-a']);
+        $process->run();
+        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+    }
+
+    private function isWindows()
+    {
+        return 'WIN' === strtoupper(substr(PHP_OS, 0, 3));
+    }
+
+    private function handleUnsucessfullProcess(string $__FUNCTION__, Process $process)
+    {
+        if (!$process->isSuccessful()) {
+            throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
+        }
     }
 }
