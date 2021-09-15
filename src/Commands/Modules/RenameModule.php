@@ -81,7 +81,6 @@ final class RenameModule extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $questionHelper = $this->getHelper('question');
 
         try {
             $io->section('Initialization');
@@ -91,6 +90,7 @@ final class RenameModule extends Command
             $this->setAuthors($input, $output);
             $replacePairs = $this->getReplacePairs($input, $output);
 
+            $io->newLine();
             $io->section('Processing');
 
             $this->uninstallModules($input, $output);
@@ -291,8 +291,6 @@ final class RenameModule extends Command
     
         $replacePairs += $this->getExtraReplacePairs(
             $input->getOption('extra-replacement'), 
-                $input->getOption('extra-replacement'), 
-            $input->getOption('extra-replacement'), 
             $input->getOption('cased-extra-replacement')
         );
 
@@ -434,7 +432,6 @@ final class RenameModule extends Command
         $moduleManager = $moduleManagerBuilder->build();
 
         if (file_exists($newFolderPath) && $oldFolderPath != $newFolderPath) {
-            $io->newLine();
             $question = new ConfirmationQuestion(
                 'The destination folder ' . $newFolderPath . ' already exists. The folder will be removed and the module will be uninstalled.'
                 . PHP_EOL . 'Do you want to continue? (y for yes, n for no)?',
@@ -448,10 +445,9 @@ final class RenameModule extends Command
 
             $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
             if ($moduleManager->isInstalled($newModuleName)) {
+                $io->text("Uninstalling $newModuleName module...");
                 $newModule = Module::getInstanceByName($newModuleName);
-                if ($newModule && $newModule->uninstall()) {
-                    $io->success("The module $newModuleName has been uninstalled.");
-                } else {
+                if (!($newModule && $newModule->uninstall())) {
                     throw new RuntimeException("The module $newModuleName couldn't be uninstalled.");
                 }
             }
@@ -461,13 +457,11 @@ final class RenameModule extends Command
         }
 
         $keepOld = $input->getOption('keep-old');
-        $oldModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
+        $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
         $oldModule = Module::getInstanceByName($oldModuleName);
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
-            $io->section("Uninstalling old module");
-            if ($oldModule->uninstall()) {
-                $io->success("The old module $oldModuleName has been uninstalled.");
-            } else {
+            $io->text("Uninstalling $oldModuleName module...");
+            if (!$oldModule->uninstall()) {
                 throw new RuntimeException("The old module $oldModuleName couldn't be uninstalled.");
             }
         }
@@ -497,6 +491,8 @@ final class RenameModule extends Command
                 return ($depth === 0) ? strlen($a->getRealPath()) - strlen($b->getRealPath()) : $depth;
             })
             ->in($newFolderPath);
+
+        $io->text("Replacing occurences in $newFolderPath folder...");
         $io->progressStart($iterator->count());
         foreach ($iterator as $file) {
             if ($file->isFile()) {
@@ -509,7 +505,6 @@ final class RenameModule extends Command
             );
             $io->progressAdvance();
         }
-        $io->newLine(3);
     }
 
     private function installNewModule($input, $output) {
@@ -527,10 +522,8 @@ final class RenameModule extends Command
         $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
         $newModule = Module::getInstanceByName($newModuleName);
         if ($newModule) {
-            $io->text('Installing module...');
-            if ($newModule->install()) {
-                $io->success('The fresh module ' . $newModuleName . ' has been installed.');
-            } else {
+            $io->text("Installing $newModuleName module...");
+            if (!$newModule->install()) {
                 $io->error('The fresh module ' . $newModuleName . ' couldn\'t be installed.');
             }
         }
