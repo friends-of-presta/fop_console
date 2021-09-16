@@ -21,9 +21,8 @@ namespace FOP\Console\Commands\Modules;
 
 use FOP\Console\Command;
 use Module;
-use RuntimeException;
-use Symfony\Component\Process\Process;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
+use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,6 +32,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 
 final class RenameModule extends Command
 {
@@ -109,7 +109,8 @@ final class RenameModule extends Command
         }
     }
 
-    private function setOldModuleFullName($input, $output) {
+    private function setOldModuleFullName($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $oldModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('old-name'));
@@ -141,10 +142,10 @@ final class RenameModule extends Command
                 $io->newLine();
                 $question = new ConfirmationQuestion("The old name is not pascal cased, so the pascal cased occurences won't be replaced."
                     . PHP_EOL . "Are you sure that you didn't forget to pascal case it ? (y to continue, n to abort)", false);
-                
+
                 $questionHelper = $this->getHelper('question');
                 if (!$questionHelper->ask($input, $output, $question)) {
-                    throw new RuntimeException("Execution aborted by user.");
+                    throw new RuntimeException('Execution aborted by user.');
                 }
             }
         }
@@ -153,19 +154,20 @@ final class RenameModule extends Command
         $this->oldModuleInfos['name'] = $oldModuleFullName['name'];
     }
 
-    private function setNewModuleFullName($input, $output) {
+    private function setNewModuleFullName($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $newModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('new-name'));
 
         if (!preg_match('/[A-Z]/', $newModuleFullName['prefix'] . $newModuleFullName['name'])) {
             $io->newLine();
-            $question = new ConfirmationQuestion("The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues."
-            . PHP_EOL . "Are you sure that you didn\'t forget to pascal case it ? (y to continue, n to abort)", false);
+            $question = new ConfirmationQuestion('The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues.'
+            . PHP_EOL . "Are you sure that you didn't forget to pascal case it ? (y to continue, n to abort)", false);
 
             $questionHelper = $this->getHelper('question');
             if (!$questionHelper->ask($input, $output, $question)) {
-                throw new RuntimeException("Execution aborted by user.");
+                throw new RuntimeException('Execution aborted by user.');
             }
         }
 
@@ -180,7 +182,8 @@ final class RenameModule extends Command
         $this->newModuleInfos['name'] = $newModuleFullName['name'];
     }
 
-    public function setAuthors($input, $output) {
+    public function setAuthors($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $newAuthor = $input->getOption('new-author');
@@ -198,9 +201,9 @@ final class RenameModule extends Command
                 }
             } else {
                 $io->newLine();
-                $question = new Question('Can\'t create old module instance to retrieve old author name. '
-                . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
-            
+                $question = new Question("Can't create old module instance to retrieve old author name. "
+                . PHP_EOL . "Please specify the old author name manually (empty to ignore author replacement):");
+
                 $questionHelper = $this->getHelper('question');
                 $oldAuthor = $questionHelper->ask($input, $output, $question);
                 if (empty($oldAuthor)) {
@@ -208,12 +211,13 @@ final class RenameModule extends Command
                 }
             }
         }
-        
-        $this->oldAuthor = $oldAuthor;
-        $this->newAuthor = $newAuthor;
+
+        $this->oldModuleInfos['author'] = $oldAuthor;
+        $this->newModuleInfos['author'] = $newAuthor;
     }
 
-    private function getReplacePairs($input, $output) {
+    private function getReplacePairs($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $this->caseReplaceFormats = [
@@ -283,15 +287,15 @@ final class RenameModule extends Command
                 return strtolower($string);
             },
         ];
-        
+
         $replacePairs = $this->getFullNameReplacePairs();
 
         if (isset($this->newModuleInfos['author'])) {
             $replacePairs += $this->getAuthorReplacePairs();
         }
-    
+
         $replacePairs += $this->getExtraReplacePairs(
-            $input->getOption('extra-replacement'), 
+            $input->getOption('extra-replacement'),
             $input->getOption('cased-extra-replacement')
         );
 
@@ -309,13 +313,14 @@ final class RenameModule extends Command
 
         $questionHelper = $this->getHelper('question');
         if (!$questionHelper->ask($input, $output, $question)) {
-            throw new RuntimeException("Execution aborted by user.");
+            throw new RuntimeException('Execution aborted by user.');
         }
 
         return $replacePairs;
     }
 
-    private function getFullNameReplacePairs() {
+    private function getFullNameReplacePairs()
+    {
         $fullNameReplaceFormats = [
             //PrefixModuleName
             function ($fullName) {
@@ -358,8 +363,8 @@ final class RenameModule extends Command
         $fullNameReplacePairs = [];
 
         foreach ($fullNameReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat(['prefix' => $this->oldModuleInfos['prefix'] , 'name' => $this->oldModuleInfos['name']]);
-            $replace = $replaceFormat(['prefix' => $this->newModuleInfos['prefix'] , 'name' => $this->newModuleInfos['name']]);
+            $search = $replaceFormat(['prefix' => $this->oldModuleInfos['prefix'], 'name' => $this->oldModuleInfos['name']]);
+            $replace = $replaceFormat(['prefix' => $this->newModuleInfos['prefix'], 'name' => $this->newModuleInfos['name']]);
             $fullNameReplacePairs[$search] = $replace;
         }
         foreach ($fullNameReplaceFormats as $replaceFormat) {
@@ -371,7 +376,8 @@ final class RenameModule extends Command
         return $fullNameReplacePairs;
     }
 
-    private function getAuthorReplacePairs() {
+    private function getAuthorReplacePairs()
+    {
         $authorReplacePairs = [];
 
         $authorReplaceFormats = [
@@ -386,32 +392,33 @@ final class RenameModule extends Command
         ];
 
         foreach ($authorReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat($this->oldModulesInfos['author']);
-            $replace = $replaceFormat($this->newModulesInfos['author']);
+            $search = $replaceFormat($this->oldModuleInfos['author']);
+            $replace = $replaceFormat($this->newModuleInfos['author']);
             $authorReplacePairs[$search] = $replace;
         }
 
         return $authorReplacePairs;
     }
 
-    private function getExtraReplacePairs($extraReplacements, $casedExtraReplacements) {
+    private function getExtraReplacePairs($extraReplacements, $casedExtraReplacements)
+    {
         $extraReplacePairs = [];
 
         if ($extraReplacements) {
             foreach ($extraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
                 if (count($terms) != 2) {
-                    throw new RuntimeException("Each extra replacement must be a pair of two words separated by a comma");
+                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
                 $extraReplacePairs[$terms[0]] = $terms[1];
             }
         }
-        
+
         if ($casedExtraReplacements) {
             foreach ($casedExtraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
                 if (count($terms) != 2) {
-                    throw new RuntimeException("Each extra replacement must be a pair of two words separated by a comma");
+                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
 
                 foreach ($this->caseReplaceFormats as $case => $replaceFormat) {
@@ -423,7 +430,8 @@ final class RenameModule extends Command
         return $extraReplacePairs;
     }
 
-    private function uninstallModules($input, $output) {
+    private function uninstallModules($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
@@ -468,7 +476,8 @@ final class RenameModule extends Command
         }
     }
 
-    private function replaceOccurences($input, $output, $replacePairs) {
+    private function replaceOccurences($input, $output, $replacePairs)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
@@ -508,7 +517,8 @@ final class RenameModule extends Command
         }
     }
 
-    private function installNewModule($input, $output) {
+    private function installNewModule($input, $output)
+    {
         $io = new SymfonyStyle($input, $output);
 
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
@@ -525,7 +535,7 @@ final class RenameModule extends Command
         if ($newModule) {
             $io->text("Installing $newModuleName module...");
             if (!$newModule->install()) {
-                $io->error('The fresh module ' . $newModuleName . ' couldn\'t be installed.');
+                $io->error("The fresh module $newModuleName couldn't be installed.");
             }
         }
     }
@@ -571,8 +581,8 @@ final class RenameModule extends Command
 
         $io = new SymfonyStyle($input, $output);
         $io->newLine();
-        $question = new ConfirmationQuestion($potentialFullName['prefix'] . " has been identified as a potential prefix."
-            . PHP_EOL . "Do you want to use it as such? (y for yes, n for no)", false);
+        $question = new ConfirmationQuestion($potentialFullName['prefix'] . ' has been identified as a potential prefix.'
+            . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
 
         $questionHelper = $this->getHelper('question');
         if ($questionHelper->ask($input, $output, $question)) {
@@ -582,7 +592,8 @@ final class RenameModule extends Command
         return $fullName;
     }
 
-    private function removeFolder($folderPath) {
+    private function removeFolder($folderPath)
+    {
         if ($this->isWindows()) {
             $folderPath = str_replace('/', '\\', $folderPath);
 
@@ -600,7 +611,8 @@ final class RenameModule extends Command
         }
     }
 
-    private function copyFolder($sourcePath, $destinationPath) {
+    private function copyFolder($sourcePath, $destinationPath)
+    {
         if ($this->isWindows()) {
             $sourcePath = str_replace('/', '\\', $destinationPath);
             $destinationPath = str_replace('/', '\\', $destinationPath);
@@ -619,7 +631,8 @@ final class RenameModule extends Command
         }
     }
 
-    private function installComposer() {
+    private function installComposer()
+    {
         $process = new Process(['composer', 'update']);
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
