@@ -112,9 +112,7 @@ final class RenameModule extends Command
     private function setOldModuleFullName($input, $output) {
         $io = new SymfonyStyle($input, $output);
 
-        if (!($oldModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('old-name')))) {
-            throw new RuntimeException("The module old name format is not valid. Please check --help for valid examples.");
-        }
+        $oldModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('old-name'));
 
         $oldModuleName = strtolower($oldModuleFullName['prefix'] . $oldModuleFullName['name']);
         $oldModuleFolderPath = _PS_MODULE_DIR_ . $oldModuleName . '/';
@@ -158,9 +156,8 @@ final class RenameModule extends Command
     private function setNewModuleFullName($input, $output) {
         $io = new SymfonyStyle($input, $output);
 
-        if (!($newModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('new-name')))) {
-            throw new RuntimeException("The module new name format is not valid. Please check --help for valid examples.");
-        }
+        $newModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('new-name'));
+
         if (!preg_match('/[A-Z]/', $newModuleFullName['prefix'] . $newModuleFullName['name'])) {
             $io->newLine();
             $question = new ConfirmationQuestion("The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues."
@@ -533,22 +530,29 @@ final class RenameModule extends Command
         }
     }
 
+    /**
+     * Extracts the prefix and the name from the module class name.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param string $moduleClassName
+     *
+     * @return array{prefix: string, name: string}
+     *
+     * @throws RuntimeException
+     */
     private function getModuleFullName($input, $output, $moduleClassName)
     {
-        if (!$moduleClassName) {
-            return false;
-        }
-
         $explodedName = explode(',', $moduleClassName);
         if (count($explodedName) > 2) {
-            return false;
+            throw new RuntimeException('Only one comma is accepted in module class name argument.');
         }
 
         $fullName = [];
         $fullName['prefix'] = count($explodedName) == 2 ? $explodedName[0] : '';
         $fullName['name'] = $explodedName[count($explodedName) - 1];
         if (empty($fullName['name'])) {
-            return false;
+            throw new RuntimeException("Module name can't be empty.");
         }
 
         if (!empty($fullName['prefix'])) {
