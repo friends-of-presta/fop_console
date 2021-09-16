@@ -58,12 +58,12 @@ final class RenameModule extends Command
             ->addArgument(
                 'old-name',
                 InputArgument::REQUIRED,
-                'Module current class name with following format : Prefix,ModuleCurrentNamePascalCased'
+                'Module current class name with following format : Prefix,ModuleCurrentClassNameWithoutPrefix'
             )
             ->addArgument(
                 'new-name',
                 InputArgument::REQUIRED,
-                'Module new class name with following format : Prefix,ModuleNewNamePascalCased'
+                'Module new class name with following format : Prefix,ModuleNewClassNameWithoutPrefix'
             )
 
             ->addOption('new-author', 'a', InputOption::VALUE_REQUIRED, 'New author name')
