@@ -202,7 +202,7 @@ final class RenameModule extends Command
             } else {
                 $io->newLine();
                 $question = new Question("Can't create old module instance to retrieve old author name. "
-                . PHP_EOL . "Please specify the old author name manually (empty to ignore author replacement):");
+                . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
 
                 $questionHelper = $this->getHelper('question');
                 $oldAuthor = $questionHelper->ask($input, $output, $question);
