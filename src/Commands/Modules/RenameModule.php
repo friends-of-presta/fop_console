@@ -49,30 +49,34 @@ final class RenameModule extends Command
         $this
             ->setName('fop:modules:rename')
             ->setDescription('Rename module')
-            ->setHelp('This command allows you to replace the name of a module in the files and database.'
-                . PHP_EOL . 'Here are some usage examples:'
-                . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample to rename ps_customersignin module into kjmoduleexample'
-                . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 to rename kjmoduleexample module into kjmoduleexample2')
+
+            ->addUsage('[--new-author] <AuthorNamePascalCased>')
+            ->addUsage('[--extra-replacement] <search,replace>, [-r] <search,replace>')
+            ->addUsage('[--cased-extra-replacement] <search,replace>, [-R] <search,replace>')
+            ->addUsage('[--keep-old], [-k]')
+
             ->addArgument(
                 'old-name',
                 InputArgument::REQUIRED,
-                'Module current name with following format : Prefix,ModuleCurrentNamePascalCased'
+                'Module current class name with following format : Prefix,ModuleCurrentNamePascalCased'
             )
             ->addArgument(
                 'new-name',
                 InputArgument::REQUIRED,
-                'Module new name with following format : Prefix,ModuleNewNamePascalCased'
+                'Module new class name with following format : Prefix,ModuleNewNamePascalCased'
             )
-            ->addUsage('--new-author=[AuthorNamePascalCased]')
+
             ->addOption('new-author', 'a', InputOption::VALUE_REQUIRED, 'New author name')
-            ->addUsage('--extra-replacement=[search,replace], -r [search,replace]')
             ->addOption('extra-replacement', 'r', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Extra search/replace pairs')
-            ->addUsage('--cased-extra-replacement=[search,replace], -R [search,replace]')
             ->addOption('cased-extra-replacement', 'R', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
                 'Extra search/replace pairs formatted with all usual case formats')
-            ->addUsage('--keep-old, -k')
-            ->addOption('keep-old', 'k', InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name');
+            ->addOption('keep-old', 'k', InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name')
+
+            ->setHelp('This command allows you to replace the name of a module in the files and in the database.'
+                . PHP_EOL . 'Here are some concrete usage examples:'
+                . PHP_EOL . '   • fop:modules:rename PS_,CustomerSignIn KJ,ModuleExample => Rename ps_customersignin module into kjmoduleexample'
+                . PHP_EOL . '   • fop:modules:rename KJ,ModuleExample KJ,ModuleExample2 => Rename kjmoduleexample module into kjmoduleexample2');
     }
 
     /**
