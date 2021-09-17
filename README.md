@@ -39,7 +39,7 @@ php bin/console pr:mo install fop_console
 * `fop:category`                       Manage empty categories
 * `fop:check-container`                Health check of the Service Container
 * `fop:clear-cache`                    Replace the cache directory with an empty one.
-* `fop:configuration:export`           Export configuration values (from ps_configuration table).
+* `fop:configuration:export`           Export configuration values (from ps_configuration table)
 * `fop:configuration:import`           Import configuration values
 * `fop:customer-groups`                Customer groups
 * `fop:debug-mode`                     Enable or Disable debug mode.
@@ -47,7 +47,11 @@ php bin/console pr:mo install fop_console
 * `fop:export`                         Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
 * `fop:generate:robots`                Generate the robots.txt file
-* `fop:hook-module`                    Attach one module on specific hook
+* `fop:modules:hook`                   Attach one module on specific hook
+* `fop:modules:unhook`                 Detach module from hook
+* `fop:modules:hooks`                  Get modules list
+* `fop:modules:non-essential`          Manage non essential modules
+* `fop:modules:rename`                 Rename a module
 * `fop:images:generate:categories`     Regenerate categories thumbnails
 * `fop:images:generate:manufacturers`  Regenerate manufacturers thumbnails
 * `fop:images:generate:products`       Regenerate products thumbnails
@@ -55,12 +59,9 @@ php bin/console pr:mo install fop_console
 * `fop:images:generate:suppliers`      Regenerate suppliers thumbnails
 * `fop:latest-products`                Displays the latest products
 * `fop:maintenance`                    Configure maintenance mode
-* `fop:module:hooks`                   Get modules list
-* `fop:modules:non-essential`          Manage non essential modules
-* `fop:override:make`                  Generate a file to make an override.
+* `fop:override:make`                  Generate a file to make an override
 * `fop:shop-status`                    Display shops statuses
 * `fop:theme-reset`                    Reset current (or selected) theme
-* `fop:unhook-module`                  Detach module from hook
 
 ## Create your owns Commands
 
