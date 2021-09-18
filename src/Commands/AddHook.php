@@ -101,6 +101,7 @@ final class AddHook extends Command
     {
         $hookNameQuestion = new Question('<question>Give me the name for your new HOOK</question>');
         $hookNameQuestion->setValidator($this->getHookNameValidator());
+        $hookNameQuestion->setMaxAttempts(5);
 
         return $hookNameQuestion;
     }
