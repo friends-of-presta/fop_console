@@ -29,7 +29,7 @@ final class AddHook extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:add-hook')
             ->setDescription('Create hook in database')
