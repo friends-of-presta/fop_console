@@ -29,7 +29,7 @@ final class AddHook extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:add-hook')
             ->setDescription('Create hook in database')
@@ -79,6 +79,7 @@ final class AddHook extends Command
             $hook->name = $name;
             $hook->title = $title;
             $hook->description = $description;
+            $this->getHookNameValidator()($hook->name);
             if (!$hook->save()) {
                 throw new \Exception('Failed to save Hook : ' . $hook->validateFields(false, true));
             }
@@ -99,14 +100,23 @@ final class AddHook extends Command
     protected function getHookNameQuestion(): Question
     {
         $hookNameQuestion = new Question('<question>Give me the name for your new HOOK</question>');
-        $hookNameQuestion->setValidator(function ($answer) {
+        $hookNameQuestion->setValidator($this->getHookNameValidator());
+        $hookNameQuestion->setMaxAttempts(5);
+
+        return $hookNameQuestion;
+    }
+
+    /**
+     * @return \Closure
+     */
+    private function getHookNameValidator(): \Closure
+    {
+        return function ($answer) {
             if (!Validate::isHookName($answer) || preg_match('#^hook#i', $answer)) {
-                throw new \RuntimeException('The hook name is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and cant\'t start with "hook"');
+                throw new \RuntimeException('The hook name is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and can\'t start with "hook"');
             }
 
             return $answer;
-        });
-
-        return $hookNameQuestion;
+        };
     }
 }
