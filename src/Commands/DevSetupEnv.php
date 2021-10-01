@@ -111,7 +111,7 @@ class DevSetupEnv extends Command
         $shop = new ShopUrl($idShop);
 
         $host = $input->getOption('host') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the host you want for your env, currently  : ' . $shop->domain . ' Press enter for the same</question>'));
-        $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the phisical url you want for your env actualy : ' . $shop->physical_uri . ' Press enter for the same</question>'));
+        $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the physical url you want for your env, currently : ' . $shop->physical_uri . ' Press enter for the same</question>'));
         $vuri = $input->getOption('vurl');
 
         if (!$url) {
