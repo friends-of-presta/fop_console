@@ -299,7 +299,7 @@ class DevSetupEnv extends Command
      *
      * @return int
      */
-    protected function enableDecbugMode(): int
+    protected function enableDebugMode(): int
     {
         $this->io->text('<info>Active debug mode</info>');
         $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
