@@ -90,6 +90,8 @@ final class ShopStatus extends Command
                 }
             }
             $io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
+
+            return 0;
         }
     }
 
@@ -101,7 +103,7 @@ final class ShopStatus extends Command
     private function formatShopsInformation(array $shops)
     {
         $shopsInformation = [];
-        /** @var Shop $shop */
+        /** @var \PrestaShopBundle\Entity\Shop $shop */
         foreach ($shops as $shop) {
             $shopsInformation[] = [
                 $shop->getId(),

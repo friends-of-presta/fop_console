@@ -54,6 +54,8 @@ class GenerateRobots extends Command
 
         if (true === Tools::generateRobotsFile($executeHook)) {
             $io->success('robots.txt file generated with success');
+
+            return 0;
         } else {
             $io->error('An error occurs while generating robots.txt file');
 

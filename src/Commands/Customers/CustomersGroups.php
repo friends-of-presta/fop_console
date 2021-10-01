@@ -146,7 +146,7 @@ final class CustomersGroups extends Command
      * @param int $actionAfter
      * @param OutputInterface $output
      *
-     * @return int|null
+     * @return int
      *
      * @throws \Exception
      */
@@ -181,7 +181,6 @@ final class CustomersGroups extends Command
                 case self::ACTION_JUST_COPY:
                     $customer->addGroups([$GroupTo->id]);
                     continue 2;
-                    break;
                 case self::ACTION_REMOVE_CUSTOMERS_TO_FROM_GROUP:
                     $customerGroups = array_diff($customerGroups, [$groupFrom->id]); // remove group from
                     break;
@@ -209,7 +208,7 @@ final class CustomersGroups extends Command
         }
 
         // Delete the form group
-        if (self::ACTION_DELETE_FROM_GROUP == (int) $actionAfter && !$hasError) {
+        if (self::ACTION_DELETE_FROM_GROUP == (int) $actionAfter && 0 == $hasError) {
             try {
                 $groupFrom->delete();
             } catch (\Exception $e) {
@@ -222,6 +221,8 @@ final class CustomersGroups extends Command
                 return self::FAILURE;
             }
         }
+
+        return self::SUCCESS;
     }
 
     /**
@@ -259,7 +260,7 @@ final class CustomersGroups extends Command
     }
 
     /**
-     * @param int $type
+     * @param int $idGroup
      *
      * @return string
      */

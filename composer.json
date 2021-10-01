@@ -15,6 +15,7 @@
   },
   "require": {
     "php": "^7.1",
+    "laminas/laminas-code": "3.4.1",
     "ext-json": "*"
   },
   "config": {
@@ -23,7 +24,7 @@
   "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "^v3.11",
+    "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
     "phpstan/phpstan": "^0.12.58"
   },

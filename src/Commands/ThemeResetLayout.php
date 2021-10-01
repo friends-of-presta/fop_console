@@ -79,6 +79,8 @@ final class ThemeResetLayout extends Command
         }
 
         $io->success(sprintf('Theme "%s" has been successfully reset.', $theme));
+
+        return 0;
     }
 
     private function findShopById(int $shopId)
