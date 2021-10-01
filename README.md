@@ -43,6 +43,7 @@ php bin/console pr:mo install fop_console
 * `fop:configuration:import`           Import configuration values
 * `fop:customer-groups`                Customer groups
 * `fop:debug-mode`                     Enable or Disable debug mode.
+* `fop:dev:setup-env`                  Install your project for local developement
 * `fop:employees:list`                 List registered employees  
 * `fop:export`                         Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
@@ -62,6 +63,7 @@ php bin/console pr:mo install fop_console
 * `fop:override:make`                  Generate a file to make an override
 * `fop:shop-status`                    Display shops statuses
 * `fop:theme-reset`                    Reset current (or selected) theme
+
 
 ## Create your owns Commands
 
@@ -117,7 +119,7 @@ You'll see commands provided by Symfony, Prestashop and installed modules.
 
 ```shell
 ./bin/console list
-```
+
 
 To list only fop commands :
 ```shell

@@ -112,6 +112,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.dev_setup_env.command:
+    class: FOP\Console\Commands\DevSetupEnv
+    tags:
+      - { name: console.command }
+      
   fop.console.configuration.export:
     class: FOP\Console\Commands\Configuration\Export
     tags:
