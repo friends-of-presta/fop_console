@@ -154,7 +154,7 @@ class DevSetupEnv extends Command
         }
 
         //debug mode on
-        $this->enableDecbugMode();
+        $this->enableDebugMode();
 
         //Disable maintenance mode
         $this->disableMaintenanceMode();
