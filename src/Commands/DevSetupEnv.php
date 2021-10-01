@@ -71,7 +71,7 @@ class DevSetupEnv extends Command
         $this->addUsage('--modify-customer-pwd to change all customers password');
         $this->addUsage('--customer-pwd password for all customers');
         $this->addUsage('--employee-pwd password for all employees');
-        $this->addOption('url', 'u', InputOption::VALUE_REQUIRED, 'url to set');
+        $this->addOption('host', 'u', InputOption::VALUE_REQUIRED, 'host to set');
         $this->addOption('purl', 'p', InputOption::VALUE_REQUIRED, 'physical url');
         $this->addOption('vurl', null, InputOption::VALUE_REQUIRED, 'virtual url');
         $this->addOption('ssl', null, InputOption::VALUE_REQUIRED, 'Use ssl?', 0);
