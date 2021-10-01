@@ -115,7 +115,7 @@ class DevSetupEnv extends Command
         $vuri = $input->getOption('vurl');
 
         if (!$host) {
-            $url = $shop->domain;
+            $host = $shop->domain;
         }
 
         if (!$puri) {
