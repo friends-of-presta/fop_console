@@ -62,7 +62,7 @@ class DevSetupEnv extends Command
                         '<info>php bin/console fop:dev:setup-env --host=localhost --purl="/pro/clients/jojo/"  --modify-employee-pwd=1 --modify-customer-pwd=1 --employee-pwd=fopisnice --customer-pwd=fopisnice --ssl=0</info>'
                         );
 
-        $this->addUsage('--url=[url]');
+        $this->addUsage('--host=[localhost]');
         $this->addUsage('--purl=[physical_url]');
         $this->addUsage('--vurl=[virutal_url]');
         $this->addUsage('--ssl ssl option ');
