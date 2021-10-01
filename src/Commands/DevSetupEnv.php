@@ -114,7 +114,7 @@ class DevSetupEnv extends Command
         $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the physical url you want for your env, currently : ' . $shop->physical_uri . ' Press enter for the same</question>'));
         $vuri = $input->getOption('vurl');
 
-        if (!$url) {
+        if (!$host) {
             $url = $shop->domain;
         }
 
