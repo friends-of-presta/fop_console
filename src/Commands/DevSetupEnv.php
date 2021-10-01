@@ -129,7 +129,7 @@ class DevSetupEnv extends Command
 
         //URL configuration
         /** @phpstan-ignore-next-line */
-        $res = $res && $this->updateUrlConfiguration($idShop, $url);
+        $res = $res && $this->updateUrlConfiguration($idShop, $host);
 
         //SSL configuration
         $res = $res && $this->updateSslConfiguration($idShop, $ssl);
