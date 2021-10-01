@@ -110,7 +110,7 @@ class DevSetupEnv extends Command
         $idShop = (int) $input->getOption('id_shop') !== 0 ? (int) $input->getOption('id_shop') : (int) Configuration::get('PS_SHOP_DEFAULT');
         $shop = new ShopUrl($idShop);
 
-        $url = $input->getOption('url') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the url you want for your env actualy  : ' . $shop->domain . ' Press enter for the same</question>'));
+        $host = $input->getOption('host') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the host you want for your env, currently  : ' . $shop->domain . ' Press enter for the same</question>'));
         $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the phisical url you want for your env actualy : ' . $shop->physical_uri . ' Press enter for the same</question>'));
         $vuri = $input->getOption('vurl');
 
