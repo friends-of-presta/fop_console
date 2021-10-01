@@ -135,7 +135,7 @@ class DevSetupEnv extends Command
         $res = $res && $this->updateSslConfiguration($idShop, $ssl);
 
         //URL configuration in shop_url
-        $res = $res && $this->updateShopUrl($idShop, $url, $puri, $vuri);
+        $res = $res && $this->updateShopUrl($idShop, $host, $puri, $vuri);
 
         //Regenerate htaccess
         $this->io->text('<info>Regenerate htaccess</info>');
