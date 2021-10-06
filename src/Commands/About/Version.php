@@ -35,7 +35,7 @@ class Version extends Command
             ->setDescription('Prints the version of this module FoP Console');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output) : void
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         try {
             parent::initialize($input, $output);
@@ -51,7 +51,7 @@ class Version extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output) : int
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fopModule = $this->moduleRepository->getModule('fop_console');
         $properties = [
