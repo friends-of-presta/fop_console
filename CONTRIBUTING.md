@@ -2,8 +2,7 @@
 
 ## Create your owns Commands
 
-The official documentation from PrestaShop and Symfony Core teams are still right, but you needs
-to extends our class.
+The official documentation from PrestaShop and Symfony Core teams are still right, but you need to extend our class.
 
 ```php
 <?php
@@ -12,7 +11,7 @@ to extends our class.
 
 // if the command is located at src/Commands
 namespace FOP\Console\Commands; 
-// or if command is located in a subfolder
+// or if command is located in a sub folder
 namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration
 
 use FOP\Console\Command;
