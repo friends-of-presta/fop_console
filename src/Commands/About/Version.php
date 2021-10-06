@@ -26,7 +26,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Version extends Command
 {
-    /** @var object|\PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository|null */
+    /** @var \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository */
     private $moduleRepository;
 
     protected function configure(): void
@@ -35,7 +35,7 @@ class Version extends Command
             ->setDescription('Prints the version of this module FoP Console');
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output) : void
     {
         try {
             parent::initialize($input, $output);
