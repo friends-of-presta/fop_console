@@ -54,8 +54,8 @@ class FOPCommandFormatsValidator
             return false;
         }
 
-        ucfirst($commandDomain);
-        ucfirst($action);
+        $commandDomain = ucfirst($commandDomain);
+        $action = ucfirst($action);
 
         $expectedCommandNamePattern = strtolower('fop:' . implode('-', $this->getWords($commandDomain)) . ':'
             . implode('[:-]', $this->getWords($action)));
