@@ -12,3 +12,6 @@ grumphp.yml
 
 ; ide
 /.idea
+
+; tests
+.phpunit.result.cache

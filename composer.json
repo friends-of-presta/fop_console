@@ -13,6 +13,11 @@
       "FOP\\Console\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "FOP\\Console\\Tests\\": "tests/"
+    }
+  },
   "require": {
     "php": "^7.1",
     "laminas/laminas-code": "3.4.1",
