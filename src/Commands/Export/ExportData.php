@@ -32,7 +32,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * This command is an exporter.
  */
-final class Export extends Command
+final class ExportData extends Command
 {
     /**
      * {@inheritdoc}
@@ -40,7 +40,7 @@ final class Export extends Command
     protected function configure(): void
     {
         $this
-            ->setName('fop:export')
+            ->setName('fop:export:data')
             ->setDescription('Allows to export data in XML')
             ->setHelp('This command allows you to export most of your data in XML')
             ->addArgument('model', InputArgument::OPTIONAL, 'The Object Model to export', 'Product')

@@ -26,12 +26,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-<<<<<<< HEAD:src/Commands/Modules/UnhookModule.php
-final class UnhookModule extends Command
-=======
-class ModuleUnHook extends Command
->>>>>>> 55a1e0b... Rearrange src/commands directory following the new conventions:src/Commands/Module/ModuleUnHook.php
-{
+final class UnhookModule extends Command {
     protected function configure(): void
     {
         $this->setName('fop:module:unhook')

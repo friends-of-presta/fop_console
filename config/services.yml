@@ -40,9 +40,9 @@ services:
   fop.console.environment.setup_dev.command:
     class: FOP\Console\Commands\Environment\EnvironmentSetupDev
     tags: [ console.command ]
-
-  fop.console.export.export.command:
-    class: FOP\Console\Commands\Export\Export
+      
+  fop.console.export.data.command:
+    class: FOP\Console\Commands\Export\ExportData
     tags: [ console.command ]
 
   fop.console.generate.htaccess.command:

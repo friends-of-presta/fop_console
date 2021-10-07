@@ -45,7 +45,7 @@ php bin/console pr:mo install fop_console
 * `fop:employee:list`                  List registered employees  
 * `fop:environment:debug-mode`         Enable or Disable debug mode.
 * `fop:environment:setup-dev`          Install your project for local developement
-* `fop:export`                         Allows to export data in XML
+* `fop:export:data`                    Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
 * `fop:generate:robots`                Generate the robots.txt file
 * `fop:group:transfer-customers`       Transfers or add customers from a group to an other
