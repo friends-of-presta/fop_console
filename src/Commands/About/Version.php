@@ -18,16 +18,22 @@ namespace FOP\Console\Commands\About;
 
 use Exception;
 use FOP\Console\Command;
+use GuzzleHttp\Client;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Version extends Command
+final class Version extends Command
 {
+    const GITHUB_RELEASES_YAML_URL = 'https://api.github.com/repos/friends-of-presta/fop_console/releases/latest';
+
     /** @var \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository */
     private $moduleRepository;
+
+    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
+    private $io;
 
     protected function configure(): void
     {
@@ -39,6 +45,7 @@ class Version extends Command
     {
         try {
             parent::initialize($input, $output);
+            $this->io = new SymfonyStyle($input, $output);
 
             // get module's information from the Core, not the Adapter, not the legacy, this is the correct way.
             $this->moduleRepository = $this->getContainer()->get('prestashop.core.admin.module.repository');
@@ -57,12 +64,36 @@ class Version extends Command
         $properties = [
             'registered version' => $fopModule->get('version'),
             'disk version' => $fopModule->get('version_available'),
-//            'last release' => ?
+            'last release' => $this->getLastReleaseVersion(),
             ];
 
         $io = new SymfonyStyle($input, $output);
         $io->table(array_keys($properties), [$properties]);
 
         return 0;
+    }
+
+    private function getLastReleaseVersion(): string
+    {
+        try {
+            $cli = new Client();
+            $response = $cli->get(self::GITHUB_RELEASES_YAML_URL);
+            if ($response->getReasonPhrase() !== 'OK') {
+                throw new \Exception('Not a 200 Response.');
+            }
+
+            return $response->json()['tag_name'];
+        } catch (\Exception $exception) {
+            if ($this->io->isVerbose()) {
+                if (isset($response)) {
+                    dump($response->getReasonPhrase());
+                    dump($response->getHeaders());
+                    dump($response->getBody()->getContents());
+                }
+                $this->io->warning($exception->getMessage());
+            }
+
+            return 'Failed to retrieve version (use -v for details)';
+        }
     }
 }
