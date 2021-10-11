@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace FOP\Console;
+namespace FOP\Console\Validators;
 
 class FOPCommandFormatsValidator
 {
