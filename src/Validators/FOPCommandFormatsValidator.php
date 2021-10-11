@@ -68,11 +68,12 @@ class FOPCommandFormatsValidator
         return true;
     }
 
-    private function isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction) {
+    private function isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction)
+    {
         // Command name pattern = fop:command-domain:command[:-]action
         $expectedCommandNamePattern = strtolower(
-            'fop:' 
-            . implode('-', $this->getWords($commandDomain)) 
+            'fop:'
+            . implode('-', $this->getWords($commandDomain))
             . ':'
             . implode('[:-]', $this->getWords($commandAction))
         );
@@ -91,13 +92,14 @@ class FOPCommandFormatsValidator
         return true;
     }
 
-    private function isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction) {
+    private function isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction)
+    {
         // Command service name pattern = fop.console.command_domain.command[\._]action.command
         $expectedCommandServiceNamePattern = strtolower(
-            'fop.console.' 
-            . implode('_', $this->getWords($commandDomain)) 
+            'fop.console.'
+            . implode('_', $this->getWords($commandDomain))
             . '.'
-            . implode('[\._]', $this->getWords($commandAction)) 
+            . implode('[\._]', $this->getWords($commandAction))
             . '.command'
         );
 
