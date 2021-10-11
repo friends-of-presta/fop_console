@@ -37,7 +37,7 @@ final class Version extends Command
 
     protected function configure(): void
     {
-        $this->setName('fop:version')
+        $this->setName('fop:about:version')
             ->setDescription('Prints the version of this module FoP Console');
     }
 
@@ -53,7 +53,10 @@ final class Version extends Command
                 throw new RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
             }
         } catch (Exception $exception) {
-            $output->write("<fg=red> >>> Error on initialization : {$exception->getMessage()}</fg=red> .");
+            $this->io->isVerbose()
+                ? $this->getApplication()->renderException($exception, $output)
+                : $output->write("<error> >>> Error on initialization : {$exception->getMessage()}</error> .");
+
             exit(1);
         }
     }
@@ -65,10 +68,9 @@ final class Version extends Command
             'registered version' => $fopModule->get('version'),
             'disk version' => $fopModule->get('version_available'),
             'last release' => $this->getLastReleaseVersion(),
-            ];
+        ];
 
-        $io = new SymfonyStyle($input, $output);
-        $io->table(array_keys($properties), [$properties]);
+        $this->io->table(array_keys($properties), [$properties]);
 
         return 0;
     }
@@ -76,8 +78,9 @@ final class Version extends Command
     private function getLastReleaseVersion(): string
     {
         try {
-            $cli = new Client();
-            $response = $cli->get(self::GITHUB_RELEASES_YAML_URL);
+            // file_get_contents() fails with a 403 error.
+            $HttpClient = new Client();
+            $response = $HttpClient->get(self::GITHUB_RELEASES_YAML_URL);
             if ($response->getReasonPhrase() !== 'OK') {
                 throw new \Exception('Not a 200 Response.');
             }
@@ -90,10 +93,10 @@ final class Version extends Command
                     dump($response->getHeaders());
                     dump($response->getBody()->getContents());
                 }
-                $this->io->warning($exception->getMessage());
+                $this->io->error($exception->getMessage());
             }
 
-            return 'Failed to retrieve version (use -v for details)';
+            return 'Failed to retrieve version on GitHub (use -v for details)';
         }
     }
 }
