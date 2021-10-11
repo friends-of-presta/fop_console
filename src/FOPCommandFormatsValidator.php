@@ -43,9 +43,9 @@ class FOPCommandFormatsValidator
             return false;
         }
 
-        $action = str_replace($commandDomain, '', $commandClassName);
+        $commandAction = str_replace($commandDomain, '', $commandClassName);
 
-        if (empty($action)) {
+        if (empty($commandAction)) {
             $this->addValidationMessage(
                 $commandClassName,
                 "Action can't be empty."
@@ -55,10 +55,28 @@ class FOPCommandFormatsValidator
         }
 
         $commandDomain = ucfirst($commandDomain);
-        $action = ucfirst($action);
+        $commandAction = ucfirst($commandAction);
 
-        $expectedCommandNamePattern = strtolower('fop:' . implode('-', $this->getWords($commandDomain)) . ':'
-            . implode('[:-]', $this->getWords($action)));
+        if (!$this->isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction)) {
+            return false;
+        }
+
+        if (!$this->isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private function isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction) {
+        // Command name pattern = fop:command-domain:command[:-]action
+        $expectedCommandNamePattern = strtolower(
+            'fop:' 
+            . implode('-', $this->getWords($commandDomain)) 
+            . ':'
+            . implode('[:-]', $this->getWords($commandAction))
+        );
+
         if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
             $this->addValidationMessage(
                 $commandClassName,
@@ -70,8 +88,19 @@ class FOPCommandFormatsValidator
             return false;
         }
 
-        $expectedCommandServiceNamePattern = strtolower('fop.console.' . implode('_', $this->getWords($commandDomain)) . '.'
-            . implode('[\._]', $this->getWords($action)) . '.command');
+        return true;
+    }
+
+    private function isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction) {
+        // Command service name pattern = fop.console.command_domain.command[\._]action.command
+        $expectedCommandServiceNamePattern = strtolower(
+            'fop.console.' 
+            . implode('_', $this->getWords($commandDomain)) 
+            . '.'
+            . implode('[\._]', $this->getWords($commandAction)) 
+            . '.command'
+        );
+
         if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $commandServiceName)) {
             $this->addValidationMessage(
                 $commandClassName,
