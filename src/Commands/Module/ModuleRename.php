@@ -46,12 +46,20 @@ final class ModuleRename extends Command
     /**
      * @var array{prefix: string, name: string, author: string}
      */
-    private $oldModuleInfos = [];
+    private $oldModuleInfos = [
+        'prefix' => '',
+        'name' => '',
+        'author' => '',
+    ];
 
     /**
      * @var array{prefix: string, name: string, author: string}
      */
-    private $newModuleInfos = [];
+    private $newModuleInfos = [
+        'prefix' => '',
+        'name' => '',
+        'author' => '',
+    ];
 
     /**
      * {@inheritdoc}

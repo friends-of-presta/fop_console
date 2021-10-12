@@ -21,11 +21,23 @@ namespace FOP\Console\Tools;
 
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FindAndReplaceTool
 {
+    /**
+     * @var array
+     */
     const USUAL_SEPARATORS = [' ', '_', '.', ',', '/'];
 
+    /**
+     * Get words separated by separators if provided, otherwise following pascal case format.
+     *
+     * @param string $subject
+     * @param array|string $separators
+     *
+     * @return array $words
+     */
     public function getWords($subject, $separators = [])
     {
         if (!is_array($separators)) {
@@ -57,6 +69,8 @@ class FindAndReplaceTool
      * Return a functions array to format strings in usual case formats.
      * Order is important: if two case formats results are equal, the last will win.
      * When in doubt, put the most common/logic ones last.
+     *
+     * @return array $caseFormats formatting functions array
      */
     public function getUsualCasesFormats()
     {
@@ -112,6 +126,11 @@ class FindAndReplaceTool
         return $caseFormats;
     }
 
+    /**
+     * Reorder case formats to focus on aesthetics over code occurences (can introduce errors if used in code files!).
+     *
+     * @return array $aestheticCaseFormats formatting functions array
+     */
     public function getAestheticCasesFormats()
     {
         $usualCaseFormats = $this->getUsualCasesFormats();
@@ -137,6 +156,15 @@ class FindAndReplaceTool
         return $aestheticCaseFormats;
     }
 
+    /**
+     * Format search and replace with provided case formats
+     *
+     * @param array $caseFormats
+     * @param string $search
+     * @param string $replace
+     *
+     * @return array $replacePairs search => replace
+     */
     public function getCasedReplacePairs($caseFormats, $search, $replace)
     {
         $wordsFunctions = [
@@ -175,6 +203,14 @@ class FindAndReplaceTool
         return $replacePairs;
     }
 
+    /**
+     * Return replace pairs for which the search keyword was found in provided set of files.
+     *
+     * @param Finder $files
+     * @param array $replacePairs search => replace
+     *
+     * @return array $foundReplacePairs
+     */
     public function findReplacePairsInFiles($files, $replacePairs)
     {
         $foundReplacePairs = [];
@@ -192,9 +228,18 @@ class FindAndReplaceTool
         return $foundReplacePairs;
     }
 
+    /**
+     * Return replace pairs for which the search keyword was found in provided file.
+     *
+     * @param SplFileInfo $file
+     * @param array $replacePairs search => replace
+     *
+     * @return array $fileReplacePairs
+     */
     public function findReplacePairsInFile($file, $replacePairs)
     {
         $filePath = $file->getRelativePathname();
+        $fileContent = '';
         if ($file->isFile()) {
             $fileContent = $file->getContents();
         }
@@ -212,6 +257,13 @@ class FindAndReplaceTool
         return $fileReplacePairs;
     }
 
+    /**
+     * Return files set ordered by path depth
+     *
+     * @param array|string $paths
+     *
+     * @return Finder
+     */
     public function getFilesSortedByDepth($paths)
     {
         $finder = new Finder();

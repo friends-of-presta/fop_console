@@ -181,9 +181,9 @@ class FOPModuleToRename extends Module
     protected function getConfigFormValues()
     {
         return [
-            'FOPMODULETORENAME_LIVE_MODE' => Configuration::get('FOPMODULETORENAME_LIVE_MODE', true),
-            'FOPMODULETORENAME_ACCOUNT_EMAIL' => Configuration::get('FOPMODULETORENAME_ACCOUNT_EMAIL', 'contact@prestashop.com'),
-            'FOPMODULETORENAME_ACCOUNT_PASSWORD' => Configuration::get('FOPMODULETORENAME_ACCOUNT_PASSWORD', null),
+            'FOPMODULETORENAME_LIVE_MODE' => Configuration::get('FOPMODULETORENAME_LIVE_MODE', null, null, null, true),
+            'FOPMODULETORENAME_ACCOUNT_EMAIL' => Configuration::get('FOPMODULETORENAME_ACCOUNT_EMAIL', null, null, null, 'contact@prestashop.com'),
+            'FOPMODULETORENAME_ACCOUNT_PASSWORD' => Configuration::get('FOPMODULETORENAME_ACCOUNT_PASSWORD', null, null, null, 'password'),
         ];
     }
 

@@ -4,6 +4,7 @@ parameters:
   excludes_analyse:
     - vendor/
     - .devtools/phpstan/stubs/
+    - tests/Resources/
   reportUnmatchedIgnoredErrors: true
   level: 5
   stubFiles:
