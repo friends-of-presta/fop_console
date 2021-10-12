@@ -43,7 +43,14 @@ final class ModuleRename extends Command
      */
     private $io;
 
+    /**
+     * @var array{prefix: string, name: string, author: string}
+     */
     private $oldModuleInfos = [];
+
+    /**
+     * @var array{prefix: string, name: string, author: string}
+     */
     private $newModuleInfos = [];
 
     /**
