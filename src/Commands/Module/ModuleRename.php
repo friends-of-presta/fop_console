@@ -38,6 +38,11 @@ use Symfony\Component\Process\Process;
 
 final class ModuleRename extends Command
 {
+    /**
+     * @var SymfonyStyle
+     */
+    private $io;
+
     private $oldModuleInfos = [];
     private $newModuleInfos = [];
 
@@ -93,26 +98,28 @@ final class ModuleRename extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
 
         try {
-            $io->section('Initialization');
+            $this->io->section('Initialization');
 
             $this->setOldModuleFullName($input, $output);
             $this->setNewModuleFullName($input, $output);
             $this->setAuthors($input, $output);
             $replacePairs = $this->findReplacePairsInModuleFiles($input, $output);
 
-            $io->newLine();
-            $io->section('Processing');
+            $this->io->newLine();
+            $this->io->section('Processing');
 
             $this->uninstallModules($input, $output);
-            $this->replaceOccurences($input, $output, $replacePairs);
-            $this->installNewModule($input, $output);
+            $this->replaceOccurences($replacePairs, $input->getOption('keep-old'));
+            $this->installNewModule();
+
+            $this->io->success('Success: your new module is ready!');
 
             return 0;
         } catch (RuntimeException $exception) {
-            $io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
+            $this->io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
 
             return 1;
         }
@@ -120,8 +127,6 @@ final class ModuleRename extends Command
 
     private function setOldModuleFullName($input, $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $oldModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('old-name'));
 
         $oldModuleName = strtolower($oldModuleFullName['prefix'] . $oldModuleFullName['name']);
@@ -148,7 +153,7 @@ final class ModuleRename extends Command
                     )
                 ) ?: $oldModuleFullName['name'];
             } else {
-                $io->newLine();
+                $this->io->newLine();
                 $question = new ConfirmationQuestion("The old name is not pascal cased, so the pascal cased occurences won't be replaced."
                     . PHP_EOL . "Are you sure that you didn't forget to pascal case it ? (y to continue, n to abort)", false);
 
@@ -165,12 +170,10 @@ final class ModuleRename extends Command
 
     private function setNewModuleFullName($input, $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $newModuleFullName = $this->getModuleFullName($input, $output, $input->getArgument('new-name'));
 
         if (!preg_match('/[A-Z]/', $newModuleFullName['prefix'] . $newModuleFullName['name'])) {
-            $io->newLine();
+            $this->io->newLine();
             $question = new ConfirmationQuestion('The new name is not pascal cased, so it will be counted as one word. It can cause aesthetic issues.'
             . PHP_EOL . "Are you sure that you didn't forget to pascal case it ? (y to continue, n to abort)", false);
 
@@ -193,8 +196,6 @@ final class ModuleRename extends Command
 
     private function setAuthors($input, $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
@@ -204,12 +205,12 @@ final class ModuleRename extends Command
             if ($oldModule) {
                 $oldAuthor = $oldModule->author;
                 if ($newAuthor == $oldAuthor) {
-                    $io->newLine();
-                    $io->text('Author replacements have been ignored since the old and the new one are equal');
+                    $this->io->newLine();
+                    $this->io->text('Author replacements have been ignored since the old and the new one are equal');
                     $newAuthor = false;
                 }
             } else {
-                $io->newLine();
+                $this->io->newLine();
                 $question = new Question("Can't create old module instance to retrieve old author name. "
                 . PHP_EOL . 'Please specify the old author name manually (empty to ignore author replacement):');
 
@@ -227,8 +228,6 @@ final class ModuleRename extends Command
 
     private function findReplacePairsInModuleFiles($input, $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $findAndReplaceTool = new FindAndReplaceTool();
 
         $usualCaseFormats = $findAndReplaceTool->getUsualCasesFormats();
@@ -302,8 +301,8 @@ final class ModuleRename extends Command
             }
         }
 
-        $io->newLine();
-        $io->text('The following replacements will occur:');
+        $this->io->newLine();
+        $this->io->text('The following replacements will occur:');
         $table = new Table($output);
         $table->setHeaders(['Occurence', 'Replacement']);
         foreach ($replacePairs as $search => $replace) {
@@ -311,7 +310,7 @@ final class ModuleRename extends Command
         }
         $table->render();
 
-        $io->newLine();
+        $this->io->newLine();
         $question = new ConfirmationQuestion('Do you confirm these replacements (y for yes, n for no)?', false);
 
         $questionHelper = $this->getHelper('question');
@@ -324,8 +323,6 @@ final class ModuleRename extends Command
 
     private function uninstallModules($input, $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
 
@@ -346,14 +343,14 @@ final class ModuleRename extends Command
 
             $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
             if ($moduleManager->isInstalled($newModuleName)) {
-                $io->text("Uninstalling $newModuleName module...");
+                $this->io->text("Uninstalling $newModuleName module...");
                 $newModule = Module::getInstanceByName($newModuleName);
                 if (!($newModule && $newModule->uninstall())) {
                     throw new RuntimeException("The module $newModuleName couldn't be uninstalled.");
                 }
             }
 
-            $io->text("Removing $newFolderPath folder...");
+            $this->io->text("Removing $newFolderPath folder...");
             $this->removeFile($newFolderPath);
         }
 
@@ -361,25 +358,22 @@ final class ModuleRename extends Command
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
         $oldModule = Module::getInstanceByName($oldModuleName);
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
-            $io->text("Uninstalling $oldModuleName module...");
+            $this->io->text("Uninstalling $oldModuleName module...");
             if (!$oldModule->uninstall()) {
                 throw new RuntimeException("The old module $oldModuleName couldn't be uninstalled.");
             }
         }
     }
 
-    private function replaceOccurences($input, $output, $replacePairs)
+    private function replaceOccurences($replacePairs, $keepOld)
     {
-        $io = new SymfonyStyle($input, $output);
-
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
-        $keepOld = $input->getOption('keep-old');
         if ($oldFolderPath != $newFolderPath) {
-            $io->text("Copying $oldFolderPath folder to $newFolderPath folder...");
+            $this->io->text("Copying $oldFolderPath folder to $newFolderPath folder...");
             $this->copyFolder($oldFolderPath, $newFolderPath);
             if (!$keepOld) {
-                $io->text("Removing $oldFolderPath folder...");
+                $this->io->text("Removing $oldFolderPath folder...");
                 $this->removeFile($oldFolderPath);
             }
         }
@@ -394,8 +388,8 @@ final class ModuleRename extends Command
             })
             ->in($newFolderPath);
 
-        $io->text("Replacing occurences in $newFolderPath folder...");
-        $io->progressStart($iterator->count());
+        $this->io->text("Replacing occurences in $newFolderPath folder...");
+        $this->io->progressStart($iterator->count());
         foreach ($iterator as $file) {
             if ($file->isFile()) {
                 $fileContent = file_get_contents($file->getPathname());
@@ -405,17 +399,15 @@ final class ModuleRename extends Command
                 $newFolderPath . strtr($file->getRelativePath(), $replacePairs) . '/' . $file->getFilename(),
                 $newFolderPath . strtr($file->getRelativePathname(), $replacePairs)
             );
-            $io->progressAdvance();
+            $this->io->progressAdvance();
         }
     }
 
-    private function installNewModule($input, $output)
+    private function installNewModule()
     {
-        $io = new SymfonyStyle($input, $output);
-
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
         if (file_exists($newFolderPath . 'composer.json')) {
-            $io->text('Installing composer...');
+            $this->io->text('Installing composer...');
             chdir($newFolderPath);
             $this->removeFile('vendor');
             $this->removeFile('composer.lock');
@@ -426,9 +418,9 @@ final class ModuleRename extends Command
         $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
         $newModule = Module::getInstanceByName($newModuleName);
         if ($newModule) {
-            $io->text("Installing $newModuleName module...");
+            $this->io->text("Installing $newModuleName module...");
             if (!$newModule->install()) {
-                $io->error("The fresh module $newModuleName couldn't be installed.");
+                $this->io->error("The new module $newModuleName couldn't be installed.");
             }
         }
     }
@@ -472,8 +464,7 @@ final class ModuleRename extends Command
             'name' => substr($fullName['name'], $splitIndex + 1),
         ];
 
-        $io = new SymfonyStyle($input, $output);
-        $io->newLine();
+        $this->io->newLine();
         $question = new ConfirmationQuestion($potentialFullName['prefix'] . ' has been identified as a potential prefix.'
             . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
 
