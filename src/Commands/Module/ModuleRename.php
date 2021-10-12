@@ -51,7 +51,7 @@ final class ModuleRename extends Command
             ->setAliases(['fop:modules:rename'])
             ->setDescription('Rename module')
 
-            ->addUsage('[--new-author] <AuthorNamePascalCased>')
+            ->addUsage('[--new-author] <AuthorName>, [-a] <AuthorName>')
             ->addUsage('[--extra-replacement] <search,replace>, [-r] <search,replace>')
             ->addUsage('[--cased-extra-replacement] <PascalCasedSearch,PascalCasedReplace>, [-R] <PascalCasedSearch,PascalCasedReplace>')
             ->addUsage('[--keep-old], [-k]')
@@ -191,7 +191,7 @@ final class ModuleRename extends Command
         $this->newModuleInfos['name'] = $newModuleFullName['name'];
     }
 
-    public function setAuthors($input, $output)
+    private function setAuthors($input, $output)
     {
         $io = new SymfonyStyle($input, $output);
 
