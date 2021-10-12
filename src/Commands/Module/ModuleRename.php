@@ -354,7 +354,7 @@ final class ModuleRename extends Command
             }
 
             $io->text("Removing $newFolderPath folder...");
-            $this->removeFolder($newFolderPath);
+            $this->removeFile($newFolderPath);
         }
 
         $keepOld = $input->getOption('keep-old');
@@ -380,7 +380,7 @@ final class ModuleRename extends Command
             $this->copyFolder($oldFolderPath, $newFolderPath);
             if (!$keepOld) {
                 $io->text("Removing $oldFolderPath folder...");
-                $this->removeFolder($oldFolderPath);
+                $this->removeFile($oldFolderPath);
             }
         }
 
@@ -417,7 +417,8 @@ final class ModuleRename extends Command
         if (file_exists($newFolderPath . 'composer.json')) {
             $io->text('Installing composer...');
             chdir($newFolderPath);
-            $this->removeFolder('vendor');
+            $this->removeFile('vendor');
+            $this->removeFile('composer.lock');
             $this->installComposer();
             chdir('../..');
         }
@@ -484,20 +485,20 @@ final class ModuleRename extends Command
         return $fullName;
     }
 
-    private function removeFolder($folderPath)
+    private function removeFile($filePath)
     {
         if ($this->isWindows()) {
-            $folderPath = str_replace('/', '\\', $folderPath);
+            $filePath = str_replace('/', '\\', $filePath);
 
             $output = [];
             $return = 0;
-            $returnLine = exec("rmdir /S /Q $folderPath", $output, $return);
+            $returnLine = exec("rmdir /S /Q $filePath", $output, $return);
 
             if ($return !== 0) {
                 throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
             }
         } else {
-            $process = new Process(['rm', '-rf', $folderPath]);
+            $process = new Process(['rm', '-rf', $filePath]);
             $process->run();
             $this->handleUnsucessfullProcess(__FUNCTION__, $process);
         }
@@ -525,7 +526,7 @@ final class ModuleRename extends Command
 
     private function installComposer()
     {
-        $process = new Process(['composer', 'update']);
+        $process = new Process(['composer', 'install']);
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
 
