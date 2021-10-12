@@ -122,6 +122,7 @@ class EnvironmentSetupDev extends Command
         $this->io->text('<info>Update table ps_configuration</info>');
 
         //URL configuration
+        /** @phpstan-ignore-next-line */
         $res = $res && $this->updateUrlConfiguration($idShop, $host);
 
         //SSL configuration
