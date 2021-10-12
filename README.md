@@ -154,7 +154,7 @@ First [install from sources](/README.md#install-from-sources) and see [Contribut
 | 1.7.5.x | :heavy_check_mark: |
 | 1.7.6.x | :heavy_check_mark: |
 | 1.7.7.x | :heavy_check_mark: |
-| 1.7.8.0 | :heavy_check_mark: |
+| 1.7.8.x | :heavy_check_mark: |
 
 | Php Version | Compatible |
 | ------ | -----------|
