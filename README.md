@@ -63,7 +63,7 @@ php bin/console pr:mo install fop_console
 * `fop:override:make`                  Generate a file to make an override
 * `fop:shop-status`                    Display shops statuses
 * `fop:theme-reset`                    Reset current (or selected) theme
-
+* `fop:about:version`                  Display the Fop Console version (on disk, on database, latest available release)
 
 ## Create your owns Commands
 
