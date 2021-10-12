@@ -350,6 +350,7 @@ final class ModuleRename extends Command
 
             $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
             if ($moduleManager->isInstalled($newModuleName)) {
+                $this->io->newLine();
                 $this->io->text("Uninstalling $newModuleName module...");
                 $newModule = Module::getInstanceByName($newModuleName);
                 if (!($newModule && $newModule->uninstall())) {
@@ -357,6 +358,7 @@ final class ModuleRename extends Command
                 }
             }
 
+            $this->io->newLine();
             $this->io->text("Removing $newFolderPath folder...");
             $this->removeFile($newFolderPath);
         }
@@ -365,6 +367,7 @@ final class ModuleRename extends Command
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
         $oldModule = Module::getInstanceByName($oldModuleName);
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
+            $this->io->newLine();
             $this->io->text("Uninstalling $oldModuleName module...");
             if (!$oldModule->uninstall()) {
                 throw new RuntimeException("The old module $oldModuleName couldn't be uninstalled.");
@@ -377,9 +380,11 @@ final class ModuleRename extends Command
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
         if ($oldFolderPath != $newFolderPath) {
+            $this->io->newLine();
             $this->io->text("Copying $oldFolderPath folder to $newFolderPath folder...");
             $this->copyFolder($oldFolderPath, $newFolderPath);
             if (!$keepOld) {
+                $this->io->newLine();
                 $this->io->text("Removing $oldFolderPath folder...");
                 $this->removeFile($oldFolderPath);
             }
@@ -395,6 +400,7 @@ final class ModuleRename extends Command
             })
             ->in($newFolderPath);
 
+        $this->io->newLine();
         $this->io->text("Replacing occurences in $newFolderPath folder...");
         $this->io->progressStart($iterator->count());
         foreach ($iterator as $file) {
@@ -414,6 +420,7 @@ final class ModuleRename extends Command
     {
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
         if (file_exists($newFolderPath . 'composer.json')) {
+            $this->io->newLine();
             $this->io->text('Installing composer...');
             chdir($newFolderPath);
             $this->removeFile('vendor');
@@ -425,6 +432,7 @@ final class ModuleRename extends Command
         $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
         $newModule = Module::getInstanceByName($newModuleName);
         if ($newModule) {
+            $this->io->newLine();
             $this->io->text("Installing $newModuleName module...");
             if (!$newModule->install()) {
                 $this->io->error("The new module $newModuleName couldn't be installed.");
