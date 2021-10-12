@@ -21,6 +21,7 @@
 namespace FOP\Console\Commands\Module;
 
 use FOP\Console\Command;
+use FOP\Console\Tools\FindAndReplaceTool;
 use Module;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use RuntimeException;
@@ -37,8 +38,6 @@ use Symfony\Component\Process\Process;
 
 final class ModuleRename extends Command
 {
-    private $caseReplaceFormats;
-
     private $oldModuleInfos = [];
     private $newModuleInfos = [];
 
@@ -54,7 +53,7 @@ final class ModuleRename extends Command
 
             ->addUsage('[--new-author] <AuthorNamePascalCased>')
             ->addUsage('[--extra-replacement] <search,replace>, [-r] <search,replace>')
-            ->addUsage('[--cased-extra-replacement] <search,replace>, [-R] <search,replace>')
+            ->addUsage('[--cased-extra-replacement] <PascalCasedSearch,PascalCasedReplace>, [-R] <PascalCasedSearch,PascalCasedReplace>')
             ->addUsage('[--keep-old], [-k]')
 
             ->addArgument(
@@ -102,7 +101,7 @@ final class ModuleRename extends Command
             $this->setOldModuleFullName($input, $output);
             $this->setNewModuleFullName($input, $output);
             $this->setAuthors($input, $output);
-            $replacePairs = $this->getReplacePairs($input, $output);
+            $replacePairs = $this->findReplacePairsInModuleFiles($input, $output);
 
             $io->newLine();
             $io->section('Processing');
@@ -226,100 +225,82 @@ final class ModuleRename extends Command
         $this->newModuleInfos['author'] = $newAuthor;
     }
 
-    private function getReplacePairs($input, $output)
+    private function findReplacePairsInModuleFiles($input, $output)
     {
         $io = new SymfonyStyle($input, $output);
 
-        $this->caseReplaceFormats = [
-            //StringToFormat
-            'pascalCase' => function ($string) {
-                return $string;
-            },
-            //stringToFormat
-            'camelCase' => function ($string) {
-                return lcfirst($string);
-            },
-            //String To Format
-            'pascalCaseSpaced' => function ($string) {
-                return implode(
-                    ' ',
-                    preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                );
-            },
-            //String to format
-            'firstUpperCasedSpaced' => function ($string) {
-                return ucfirst(
-                    strtolower(
-                        implode(
-                            ' ',
-                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                        )
-                    )
-                );
-            },
-            //string-to-format
-            'kebabCase' => function ($string) {
-                return strtolower(
-                    implode(
-                        '-',
-                        str_replace(
-                            '_',
-                            '',
-                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                        )
-                    )
-                );
-            },
-            //STRING_TO_FORMAT
-            'upperCaseSnakeCase' => function ($string) {
-                return strtoupper(
-                    implode(
-                        '_',
-                        str_replace(
-                            '_',
-                            '',
-                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                        )
-                    )
-                );
-            },
-            //string_to_format
-            'snakeCase' => function ($string) {
-                return strtolower(
-                    implode(
-                        '_',
-                        str_replace(
-                            '_',
-                            '',
-                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                        )
-                    )
-                );
-            },
-            //Stringtoformat
-            'firstUpperCased' => function ($string) {
-                return ucfirst(strtolower($string));
-            },
-            //STRINGTOFORMAT
-            'upperCase' => function ($string) {
-                return strtoupper($string);
-            },
-            //stringtoformat
-            'lowerCase' => function ($string) {
-                return strtolower($string);
-            },
-        ];
+        $findAndReplaceTool = new FindAndReplaceTool();
 
-        $replacePairs = $this->getFullNameReplacePairs();
+        $usualCaseFormats = $findAndReplaceTool->getUsualCasesFormats();
+
+        $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
+        $oldModuleFiles = $findAndReplaceTool
+            ->getFilesSortedByDepth($oldFolderPath)
+            ->exclude(['vendor', 'node_modules']);
+
+        $replacePairs = $findAndReplaceTool->findReplacePairsInFiles(
+            $oldModuleFiles,
+            $findAndReplaceTool->getCasedReplacePairs(
+                $usualCaseFormats,
+                $this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name'],
+                $this->newModuleInfos['prefix'] . $this->newModuleInfos['name']
+            )
+        ) + $findAndReplaceTool->findReplacePairsInFiles(
+            $oldModuleFiles,
+            $findAndReplaceTool->getCasedReplacePairs(
+                $usualCaseFormats,
+                $this->oldModuleInfos['name'],
+                $this->newModuleInfos['name']
+            )
+        );
 
         if (isset($this->newModuleInfos['author'])) {
-            $replacePairs += $this->getAuthorReplacePairs();
+            $authorCaseFormats = $findAndReplaceTool->getAestheticCasesFormats();
+
+            $replacePairs +=
+                $findAndReplaceTool->findReplacePairsInFiles(
+                    $oldModuleFiles,
+                    $findAndReplaceTool->getCasedReplacePairs(
+                        $authorCaseFormats,
+                        $this->oldModuleInfos['author'],
+                        $this->newModuleInfos['author']
+                    )
+                );
         }
 
-        $replacePairs += $this->getExtraReplacePairs(
-            $input->getOption('extra-replacement'),
-            $input->getOption('cased-extra-replacement')
-        );
+        $extraReplacements = $input->getOption('extra-replacement');
+        if ($extraReplacements) {
+            foreach ($extraReplacements as $replacement) {
+                $terms = explode(',', $replacement);
+                if (count($terms) != 2) {
+                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
+                }
+
+                $search = $terms[0];
+                $replace = $terms[1];
+                $replacePairs += $findAndReplaceTool->findReplacePairsInFiles(
+                    $oldModuleFiles,
+                    [$search => $replace]
+                );
+            }
+        }
+
+        $casedExtraReplacements = $input->getOption('cased-extra-replacement');
+        if ($casedExtraReplacements) {
+            foreach ($casedExtraReplacements as $replacement) {
+                $terms = explode(',', $replacement);
+                if (count($terms) != 2) {
+                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
+                }
+
+                $search = $terms[0];
+                $replace = $terms[1];
+                $replacePairs += $findAndReplaceTool->findReplacePairsInFiles(
+                    $oldModuleFiles,
+                    $findAndReplaceTool->getCasedReplacePairs($usualCaseFormats, $search, $replace)
+                );
+            }
+        }
 
         $io->newLine();
         $io->text('The following replacements will occur:');
@@ -339,117 +320,6 @@ final class ModuleRename extends Command
         }
 
         return $replacePairs;
-    }
-
-    private function getFullNameReplacePairs()
-    {
-        $fullNameReplaceFormats = [
-            //PrefixModuleName
-            function ($fullName) {
-                return $this->caseReplaceFormats['pascalCase']($fullName['prefix'] . $fullName['name']);
-            },
-            //moduleName
-            function ($fullName) {
-                return $this->caseReplaceFormats['pascalCase']($fullName['name']);
-            },
-            //Module Name
-            function ($fullName) {
-                return $this->caseReplaceFormats['pascalCaseSpaced']($fullName['name']);
-            },
-            //Module name
-            function ($fullName) {
-                return $this->caseReplaceFormats['firstUpperCasedSpaced']($fullName['name']);
-            },
-            //PREFIX_MODULE_NAME
-            function ($fullName) {
-                return strtoupper(str_replace('_', '', $fullName['prefix']))
-                    . (!empty($fullName['prefix']) ? '_' : '')
-                    . $this->caseReplaceFormats['upperCaseSnakeCase']($fullName['name']);
-            },
-            //prefix_module_name
-            function ($fullName) {
-                return strtolower(str_replace('_', '', $fullName['prefix']))
-                    . (!empty($fullName['prefix']) ? '_' : '')
-                    . $this->caseReplaceFormats['snakeCase']($fullName['name']);
-            },
-            //Prefixmodulename
-            function ($fullName) {
-                return str_replace('_', '', $this->caseReplaceFormats['firstUpperCased']($fullName['prefix'] . $fullName['name']));
-            },
-            //prefixmodulename
-            function ($fullName) {
-                return $this->caseReplaceFormats['lowerCase']($fullName['prefix'] . $fullName['name']);
-            },
-        ];
-
-        $fullNameReplacePairs = [];
-
-        foreach ($fullNameReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat(['prefix' => $this->oldModuleInfos['prefix'], 'name' => $this->oldModuleInfos['name']]);
-            $replace = $replaceFormat(['prefix' => $this->newModuleInfos['prefix'], 'name' => $this->newModuleInfos['name']]);
-            $fullNameReplacePairs[$search] = $replace;
-        }
-        foreach ($fullNameReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat(['prefix' => '', 'name' => $this->oldModuleInfos['name']]);
-            $replace = $replaceFormat(['prefix' => '', 'name' => $this->newModuleInfos['name']]);
-            $fullNameReplacePairs[$search] = $replace;
-        }
-
-        return $fullNameReplacePairs;
-    }
-
-    private function getAuthorReplacePairs()
-    {
-        $authorReplacePairs = [];
-
-        $authorReplaceFormats = [
-            //AuthorName
-            function ($authorName) {
-                return $this->caseReplaceFormats['pascalCase']($authorName);
-            },
-            //authorname
-            function ($authorName) {
-                return $this->caseReplaceFormats['lowerCase']($authorName);
-            },
-        ];
-
-        foreach ($authorReplaceFormats as $replaceFormat) {
-            $search = $replaceFormat($this->oldModuleInfos['author']);
-            $replace = $replaceFormat($this->newModuleInfos['author']);
-            $authorReplacePairs[$search] = $replace;
-        }
-
-        return $authorReplacePairs;
-    }
-
-    private function getExtraReplacePairs($extraReplacements, $casedExtraReplacements)
-    {
-        $extraReplacePairs = [];
-
-        if ($extraReplacements) {
-            foreach ($extraReplacements as $replacement) {
-                $terms = explode(',', $replacement);
-                if (count($terms) != 2) {
-                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
-                }
-                $extraReplacePairs[$terms[0]] = $terms[1];
-            }
-        }
-
-        if ($casedExtraReplacements) {
-            foreach ($casedExtraReplacements as $replacement) {
-                $terms = explode(',', $replacement);
-                if (count($terms) != 2) {
-                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
-                }
-
-                foreach ($this->caseReplaceFormats as $case => $replaceFormat) {
-                    $extraReplacePairs[$replaceFormat($terms[0])] = $replaceFormat($terms[1]);
-                }
-            }
-        }
-
-        return $extraReplacePairs;
     }
 
     private function uninstallModules($input, $output)

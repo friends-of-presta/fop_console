@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<module>
+	<name>fopmoduletorename</name>
+	<displayName><![CDATA[Module to rename]]></displayName>
+	<version><![CDATA[1.0.0]]></version>
+	<description><![CDATA[Used as a sample module to test the \"ModuleRename\" command.]]></description>
+	<author><![CDATA[Friends of Presta]]></author>
+	<tab><![CDATA[administration]]></tab>
+	<is_configurable>1</is_configurable>
+	<need_instance>1</need_instance>
+</module>
