@@ -362,10 +362,7 @@ final class ModuleRename extends Command
             if ($moduleManager->isInstalled($newModuleName)) {
                 $this->io->newLine();
                 $this->io->text("Uninstalling $newModuleName module...");
-                $newModule = Module::getInstanceByName($newModuleName);
-                if (!($newModule && $newModule->uninstall())) {
-                    throw new RuntimeException("The module $newModuleName couldn't be uninstalled.");
-                }
+                $this->uninstallModule($newModuleName, $output);
             }
 
             $this->io->newLine();
@@ -379,9 +376,7 @@ final class ModuleRename extends Command
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
             $this->io->newLine();
             $this->io->text("Uninstalling $oldModuleName module...");
-            if (!$oldModule->uninstall()) {
-                throw new RuntimeException("The old module $oldModuleName couldn't be uninstalled.");
-            }
+            $this->uninstallModule($oldModuleName, $output);
         }
     }
 
@@ -588,6 +583,23 @@ final class ModuleRename extends Command
             }
         } catch (Exception $e) {
             throw new RuntimeException("The new module $moduleName couldn't be installed:" . PHP_EOL . $e->getMessage());
+        }
+    }
+
+    private function uninstallModule($moduleName, $output)
+    {
+        $command = $this->getApplication()->find('prestashop:module');
+        $arguments = [
+            'action' => 'uninstall',
+            'module name' => $moduleName,
+        ];
+
+        try {
+            if ($command->run(new ArrayInput($arguments), $output)) {
+                throw new RuntimeException("The module $moduleName couldn't be uninstalled.");
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException("The new module $moduleName couldn't be uninstalled." . PHP_EOL . $e->getMessage());
         }
     }
 
