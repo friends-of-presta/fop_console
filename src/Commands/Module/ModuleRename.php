@@ -20,12 +20,14 @@
 
 namespace FOP\Console\Commands\Module;
 
+use Exception;
 use FOP\Console\Command;
 use FOP\Console\Tools\FindAndReplaceTool;
 use Module;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
 use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -128,7 +130,7 @@ final class ModuleRename extends Command
 
             $this->uninstallModules($input, $output);
             $this->replaceOccurences($replacePairs, $input->getOption('keep-old'));
-            $this->installNewModule();
+            $this->installNewModule($output);
 
             $this->io->success('Success: your new module is ready!');
 
@@ -425,7 +427,7 @@ final class ModuleRename extends Command
         $this->io->newLine();
     }
 
-    private function installNewModule()
+    private function installNewModule($output)
     {
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
 
@@ -450,9 +452,7 @@ final class ModuleRename extends Command
         if ($newModule) {
             $this->io->newLine();
             $this->io->text("Installing $newModuleName module...");
-            if (!$newModule->install()) {
-                $this->io->error("The new module $newModuleName couldn't be installed.");
-            }
+            $this->installModule($newModuleName, $output);
         }
     }
 
@@ -572,6 +572,23 @@ final class ModuleRename extends Command
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
 
         chdir('..');
+    }
+
+    private function installModule($moduleName, $output)
+    {
+        $command = $this->getApplication()->find('prestashop:module');
+        $arguments = [
+            'action' => 'install',
+            'module name' => $moduleName,
+        ];
+
+        try {
+            if ($command->run(new ArrayInput($arguments), $output)) {
+                throw new RuntimeException("The module $moduleName couldn't be installed.");
+            }
+        } catch (Exception $e) {
+            throw new RuntimeException("The new module $moduleName couldn't be installed:" . PHP_EOL . $e->getMessage());
+        }
     }
 
     private function isWindows()
