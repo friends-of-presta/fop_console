@@ -9,18 +9,28 @@ services:
       - '@prestashop.adapter.shop.context'
       - '%kernel.root_dir%'
 
-  fop.console.unhook_module.command:
-    class: FOP\Console\Commands\UnhookModule
+  fop.console.version.command:
+    class: FOP\Console\Commands\About\Version
     tags:
       - { name: console.command }
 
-  fop.console.hook_module.command:
-    class: FOP\Console\Commands\HookModule
+  fop.console.modules.unhook_module.command:
+    class: FOP\Console\Commands\Modules\UnhookModule
     tags:
       - { name: console.command }
 
-  fop.console.list_module_hooks.command:
-    class: FOP\Console\Commands\ModuleHooks
+  fop.console.modules.hook_module.command:
+    class: FOP\Console\Commands\Modules\HookModule
+    tags:
+      - { name: console.command }
+
+  fop.console.modules.list_module_hooks.command:
+    class: FOP\Console\Commands\Modules\ModuleHooks
+    tags:
+      - { name: console.command }
+
+  fop.console.modules.rename_module.command:
+    class: FOP\Console\Commands\Modules\RenameModule
     tags:
       - { name: console.command }
 
@@ -107,6 +117,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.dev_setup_env.command:
+    class: FOP\Console\Commands\DevSetupEnv
+    tags:
+      - { name: console.command }
+      
   fop.console.configuration.export:
     class: FOP\Console\Commands\Configuration\Export
     tags:
@@ -122,5 +137,21 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.modules.command:
+    class: FOP\Console\Commands\Modules\NonEssentialModules
+    tags:
+      - { name: console.command }
+
+  fop.console.category.command:
+    class: FOP\Console\Commands\Categories\CleanCategory
+    tags:
+      - { name: console.command }
+
+  fop.console.employees.list:
+    class: \FOP\Console\Commands\Employees\ListEmployees
+    tags:
+      - { name: console.command }
+
 imports:
   - { resource: overriders.yml }
+

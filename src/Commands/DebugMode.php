@@ -66,7 +66,6 @@ class DebugMode extends Command
                 $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
 
                 return 0;
-                break;
             case 'toggle':
                 $returnCode = $isDebugModEnabled
                     ? $debugMode->disable()

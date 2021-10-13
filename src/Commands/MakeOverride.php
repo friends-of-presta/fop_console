@@ -68,7 +68,7 @@ class MakeOverride extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $path = (string) $input->getArgument('path'); /* @phpstan-ignore-line */
+        $path = (string) $input->getArgument('path'); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
 
         try {
             // gather overriders

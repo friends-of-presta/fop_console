@@ -3,9 +3,12 @@ parameters:
     - ./
   excludes_analyse:
     - vendor/
-  reportUnmatchedIgnoredErrors: false
-  level: 0
+  reportUnmatchedIgnoredErrors: true
+  level: 5
+  stubFiles: 
+      - .devtools/phpstan/stubs/Category.stub
 
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
+  - %currentWorkingDirectory%/.devtools/phpstan_baseline.neon
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon

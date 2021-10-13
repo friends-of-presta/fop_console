@@ -1,3 +1,8 @@
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.2-8892BF.svg?style=flat-square)](https://php.net/)
+[![PHP tests](https://github.com/friends-of-presta/fop_console/actions/workflows/phpstan.yml/badge.svg)](https://github.com/friends-of-presta/fop_console/blob/dev/.github/workflows/phpstan.yml)
+[![GitHub release](https://img.shields.io/github/v/release/friends-of-presta/fop_console)](https://github.com/friends-of-presta/fop_console/releases)
+[![Slack chat](https://img.shields.io/badge/Chat-on%20Slack-red)](https://github.com/friends-of-presta/who-we-are#what-we-do)
+
 # Friends of Presta Console
 
 Fop console is a module which provides a set a commands to extend PrestaShop 1.7 commands.
@@ -7,38 +12,14 @@ Since version 1.7.5.0 [Prestashop provides some terminal commands](https://devdo
 This repository provides a base Command with better support for PrestaShop legacy classes and useful commands to easy the development on Prestashop or manage a shop.
 These commands are mainly for developers, just some basic knowledge of command line processing is needed.
 
-## Fop Console commands
-
-* fop:add-hook                                 Create hook in database
-* fop:check-container                          Health check of the Service Container
-* fop:clear-cache                              Replace the cache directory with an empty one.
-* fop:configuration:export                     Export configuration values (from ps_configuration table).
-* fop:configuration:import                     Import configuration values
-* fop:customer-groups                          Customer groups
-* fop:debug-mode                               Enable or Disable debug mode.
-* fop:export                                   Allows to export data in XML
-* fop:generate:htaccess                        Generate the .htaccess file
-* fop:generate:robots                          Generate the robots.txt file
-* fop:hook-module                              Attach one module on specific hook
-* fop:images:generate:categories               Regenerate categories thumbnails
-* fop:images:generate:manufacturers            Regenerate manufacturers thumbnails
-* fop:images:generate:products                 Regenerate products thumbnails
-* fop:images:generate:stores                   Regenerate stores thumbnails
-* fop:images:generate:suppliers                Regenerate suppliers thumbnails
-* fop:latest-products                          Displays the latest products
-* fop:maintenance                              Configure maintenance mode
-* fop:module:hooks                             Get modules list
-* fop:shop-status                              Display shops statuses
-* fop:theme-reset                              Reset current theme layout
-* fop:unhook-module                            Detach module from hoo
-
 ## Install from release (recommended)
 
-Donwload the zip release and install it like any other module.
+[Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
 
 ## Install from sources
 
-If you want to contribute or use the dev branch, you can install from github
+If you want use the dev branch, you can install from github.
+If you want to contribute, first create a fork and follow the same steps using your forked repository url instead of the original one.
 
 ```
 cd modules 
@@ -54,28 +35,36 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:clear-cache` Clear the cache folder super fast
-* `fop:debug-mode` Enable or Disable debug mode
-* `fop:shop-status` Display shop(s) status(es)
-* `fop:maintenance` get status or change maintenance mode, list or add maintenance ip address
-* `fop:images:generate:categories` Regenerate categories thumbnails
-* `fop:images:generate:manufacturers` Regenerate manufacturers thumbnails
-* `fop:images:generate:products` Regenerate products thumbnails
-* `fop:images:generate:stores` Regenerate stores thumbnails
-* `fop:images:generate:suppliers` Regenerate suppliers thumbnails
-* `fop:generate:htaccess` Generate the .htaccess file
-* `fop:generate:robots`   Generate the robots.txt file
-* `fop:theme-reset` Reset current (or selected) theme
-* `fop:add-hook` : Create a new hook in database
-* `fop:unhook-module` : Ungraft module on specific hook
-* `fop:hook-module` : Graft module on specific hook
-* `fop:latest-products`: Displays the latest products
-* `fop:export`: Exports object models in XML
-* `fop:check-container`   Health check of the Service Container, for now list the services we can't use in Symfony commands
-* `fop:configuration:export` Export configuration values to a json file
-* `fop:configuration:import` Import configuration values from a json file
-* `fop:customer-groups`: Move or add in bulk clients from one group client to another
-* `fop:override:make` Create an override file ready for implementation
+* `fop:about:version`                  Display the Fop Console version (on disk, on database, latest available release)
+* `fop:add-hook`                       Create a new hook in database
+* `fop:category`                       Manage empty categories
+* `fop:check-container`                Health check of the Service Container
+* `fop:clear-cache`                    Replace the cache directory with an empty one.
+* `fop:configuration:export`           Export configuration values (from ps_configuration table)
+* `fop:configuration:import`           Import configuration values
+* `fop:customer-groups`                Customer groups
+* `fop:debug-mode`                     Enable or Disable debug mode.
+* `fop:dev:setup-env`                  Install your project for local developement
+* `fop:employees:list`                 List registered employees  
+* `fop:export`                         Allows to export data in XML
+* `fop:generate:htaccess`              Generate the .htaccess file
+* `fop:generate:robots`                Generate the robots.txt file
+* `fop:modules:hook`                   Attach one module on specific hook
+* `fop:modules:unhook`                 Detach module from hook
+* `fop:modules:hooks`                  Get modules list
+* `fop:modules:non-essential`          Manage non essential modules
+* `fop:modules:rename`                 Rename a module
+* `fop:images:generate:categories`     Regenerate categories thumbnails
+* `fop:images:generate:manufacturers`  Regenerate manufacturers thumbnails
+* `fop:images:generate:products`       Regenerate products thumbnails
+* `fop:images:generate:stores`         Regenerate stores thumbnails
+* `fop:images:generate:suppliers`      Regenerate suppliers thumbnails
+* `fop:latest-products`                Displays the latest products
+* `fop:maintenance`                    Configure maintenance mode
+* `fop:override:make`                  Generate a file to make an override
+* `fop:shop-status`                    Display shops statuses
+* `fop:theme-reset`                    Reset current (or selected) theme
+
 
 ## Create your owns Commands
 
@@ -119,14 +108,16 @@ final class MyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->text('Hello friends of PrestaShop!');
 
-        return 0; // return 0 on success or 1 on failure.        
+        return 0; // return 0 on success or 1 on failure.
     }
 }
+```
 
 ## Getting started
 
 In a shell (call it shell, console or terminal), at the root of a Prestashop installation, type this command to list all available commands.
 You'll see commands provided by Symfony, Prestashop and installed modules.
+
 ```shell
 ./bin/console list
 ```
@@ -151,7 +142,7 @@ You are ready to go !
 ## Contribute
 
 Any contributions are very welcome :)
-See [Contributing](/CONTRIBUTING.md) for details.
+First [install from sources](/README.md#install-from-sources) and see [Contributing](/CONTRIBUTING.md) for details.
 
 [Current contributors](https://github.com/friends-of-presta/fop_console/graphs/contributors) or [contributors](/CONTRIBUTORS.md).
 
@@ -163,13 +154,14 @@ See [Contributing](/CONTRIBUTING.md) for details.
 | 1.7.5.x | :heavy_check_mark: |
 | 1.7.6.x | :heavy_check_mark: |
 | 1.7.7.x | :heavy_check_mark: |
+| 1.7.8.x | :heavy_check_mark: |
 
 | Php Version | Compatible |
 | ------ | -----------|
 | 7.1 and below | :x: |
 | 7.2 | :heavy_check_mark: |
 | 7.3| :heavy_check_mark: |
-| 7.4 | :interrobang: Not yet tested |
+| 7.4 | :heavy_check_mark: |
 | 8.0 | :interrobang: Not yet tested |
 
 ## License
