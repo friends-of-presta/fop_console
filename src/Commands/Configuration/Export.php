@@ -49,7 +49,7 @@ final class Export extends Command
 
         if ($fs->exists($output_file)
             && !$force_mode
-            && !$io->confirm('Overwrite ' . self::PS_CONFIGURATIONS_FILE . ' ?', false)
+            && !$io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
         ) {
             $io->comment($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
 
@@ -91,7 +91,7 @@ final class Export extends Command
     /**
      * @param string $key_like_term
      *
-     * @return array [name => value, ...]
+     * @return array<string, string> [name => value, ...]
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
