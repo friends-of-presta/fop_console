@@ -422,20 +422,28 @@ final class ModuleRename extends Command
             );
             $this->io->progressAdvance();
         }
+        $this->io->newLine();
     }
 
     private function installNewModule()
     {
         $newFolderPath = _PS_MODULE_DIR_ . strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']) . '/';
-        if (file_exists($newFolderPath . 'composer.json')) {
+
+        chdir($newFolderPath);
+
+        if (file_exists('composer.json')) {
             $this->io->newLine();
             $this->io->text('Installing composer...');
-            chdir($newFolderPath);
-            $this->removeFile('vendor');
-            $this->removeFile('composer.lock');
             $this->installComposer();
-            chdir('../..');
         }
+
+        if (file_exists('_dev')) {
+            $this->io->newLine();
+            $this->io->text('Installing node modules...');
+            $this->installNodeModules();
+        }
+
+        chdir('../..');
 
         $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
         $newModule = Module::getInstanceByName($newModuleName);
@@ -540,6 +548,9 @@ final class ModuleRename extends Command
 
     private function installComposer()
     {
+        $this->removeFile('vendor');
+        $this->removeFile('composer.lock');
+
         $process = new Process(['composer', 'install']);
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
@@ -547,6 +558,20 @@ final class ModuleRename extends Command
         $process = new Process(['composer', 'dumpautoload', '-a']);
         $process->run();
         $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+    }
+
+    private function installNodeModules()
+    {
+        chdir('_dev');
+
+        $this->removeFile('_dev/node_modules');
+        $this->removeFile('_dev/package-lock.json');
+
+        $process = new Process(['npm', 'install']);
+        $process->run();
+        $this->handleUnsucessfullProcess(__FUNCTION__, $process);
+
+        chdir('..');
     }
 
     private function isWindows()
