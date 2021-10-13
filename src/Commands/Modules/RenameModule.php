@@ -614,7 +614,7 @@ final class RenameModule extends Command
     private function copyFolder($sourcePath, $destinationPath)
     {
         if ($this->isWindows()) {
-            $sourcePath = str_replace('/', '\\', $destinationPath);
+            $sourcePath = str_replace('/', '\\', $sourcePath);
             $destinationPath = str_replace('/', '\\', $destinationPath);
 
             $output = [];
