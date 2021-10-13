@@ -353,7 +353,7 @@ final class ModuleRename extends Command
 
             $questionHelper = $this->getHelper('question');
             if (!$questionHelper->ask($input, $output, $question)) {
-                return 0;
+                throw new RuntimeException('Execution aborted by user.');
             }
 
             $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
