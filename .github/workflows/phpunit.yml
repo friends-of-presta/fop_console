@@ -15,7 +15,7 @@ jobs:
         with:
           path: vendor
           key: php-${{ hashFiles('composer.lock') }}
-        
+
       - name: Cache composer folder
         uses: actions/cache@v2
         with:
