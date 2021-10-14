@@ -197,8 +197,8 @@ final class ModuleRename extends Command
     private function formatOldModuleFullNameFromClassName($oldModuleFullName, $oldModuleClass, $input, $output)
     {
         $formattedFullName = [
-            "prefix" => "",
-            "name" => ""
+            'prefix' => '',
+            'name' => '',
         ];
 
         if (!empty($oldModuleFullName['prefix'])) {
