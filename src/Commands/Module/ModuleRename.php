@@ -317,8 +317,6 @@ final class ModuleRename extends Command
         );
 
         if (isset($this->newModuleInfos['author'])) {
-            $authorCaseFormats = $findAndReplaceTool->getAestheticCasesFormats();
-
             $replacePairs +=
                 $this->findAndReplaceTool->findReplacePairsInFiles(
                     $oldModuleFiles,

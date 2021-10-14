@@ -51,7 +51,7 @@ class FindAndReplaceTool
              */
             $regExp = '(?<=[A-Z])(?=[A-Z][a-z])' .  // UC before me, UC lc after me
                 '|(?<=[^A-Z])(?=[A-Z])' .           // Not UC before me, UC after me
-                '|(?<=[A-Za-z])(?=[^A-Za-z])';      // Letter before me, non letter after me
+                '|(?<=[^A-Za-z])(?=[A-Za-z])';      // Letter before me, non letter after me
         } else {
             $regExp = '[\\' . implode('\\', $separators) . ']+';
         }
@@ -66,6 +66,18 @@ class FindAndReplaceTool
     }
 
     /**
+     * Remove usual separators from words
+     *
+     * @param string|string[] $words Words to sanitize
+     *
+     * @return string|string[]
+     */
+    public function sanitizeWords($words)
+    {
+        return str_replace(self::USUAL_SEPARATORS, '', $words);
+    }
+
+    /**
      * Return a functions array to format strings in usual case formats.
      * Order is important: if two case formats results are equal, the last will win.
      * When in doubt, put the most common/logic ones last.
@@ -77,7 +89,12 @@ class FindAndReplaceTool
         $caseFormats = [
             //string_to_format
             'snakeCase' => function ($words) {
-                return strtolower(implode('_', $words));
+                return strtolower(
+                    implode(
+                        '_',
+                        $this->sanitizeWords($words)
+                    )
+                );
             },
             //stringtoformat
             'lowerCase' => function ($words) {
@@ -85,7 +102,12 @@ class FindAndReplaceTool
             },
             //string-to-format
             'kebabCase' => function ($words) {
-                return strtolower(implode('-', $words));
+                return strtolower(
+                    implode(
+                        '-',
+                        $this->sanitizeWords($words)
+                    )
+                );
             },
             //STRINGTOFORMAT
             'upperCase' => function ($words) {
@@ -97,11 +119,20 @@ class FindAndReplaceTool
             },
             //String To Format
             'pascalCaseSpaced' => function ($words) {
-                return implode(' ', array_map('ucfirst', $words));
+                return implode(
+                    ' ',
+                    array_map(
+                        'ucfirst',
+                        $this->sanitizeWords($words)
+                    )
+                );
             },
             //String to Format
             'spaced' => function ($words) {
-                return implode(' ', $words);
+                return implode(
+                    ' ',
+                    $this->sanitizeWords($words)
+                );
             },
             //stringToFormat
             'camelCase' => function ($words) {
@@ -119,7 +150,12 @@ class FindAndReplaceTool
             },
             //STRING_TO_FORMAT
             'upperCaseSnakeCase' => function ($words) {
-                return strtoupper(implode('_', $words));
+                return strtoupper(
+                    implode(
+                        '_',
+                        $this->sanitizeWords($words)
+                    )
+                );
             },
         ];
 
@@ -127,76 +163,49 @@ class FindAndReplaceTool
     }
 
     /**
-     * Reorder case formats to focus on aesthetics over code occurences (can introduce errors if used in code files!).
-     *
-     * @return array $aestheticCaseFormats formatting functions array
-     */
-    public function getAestheticCasesFormats()
-    {
-        $usualCaseFormats = $this->getUsualCasesFormats();
-
-        $aestheticCaseFormatsOrder = [
-            'camelCase',
-            'lowerCase',
-            'snakeCase',
-            'upperCase',
-            'firstUpperCased',
-            'pascalCaseSpaced',
-            'spaced',
-            'kebabCase',
-            'pascalCase',
-            'upperCaseSnakeCase',
-        ];
-
-        $aestheticCaseFormats = [];
-        foreach ($aestheticCaseFormatsOrder as $formatName) {
-            $aestheticCaseFormats[$formatName] = $usualCaseFormats[$formatName];
-        }
-
-        return $aestheticCaseFormats;
-    }
-
-    /**
      * Format search and replace with provided case formats
      *
      * @param array $caseFormats
-     * @param string $search
-     * @param string $replace
+     * @param string|array $search search term or words
+     * @param string|array $replace search term or words
      *
      * @return array $replacePairs search => replace
      */
     public function getCasedReplacePairs($caseFormats, $search, $replace)
     {
-        $wordsFunctions = [
-            'singleWord' => function ($subject) {
-                return [$subject];
-            },
-            'pascalCaseWords' => function ($subject) {
-                return $this->getWords($subject);
-            },
-            'usualWords' => function ($subject) {
-                return $this->getWords($subject, self::USUAL_SEPARATORS);
-            },
-        ];
+        if (empty($caseFormats)) {
+            return [$search => $replace];
+        }
 
         $replacePairs = [];
 
-        $hasSeparatorRegExp = '/[\\' . implode('\\', self::USUAL_SEPARATORS) . ']+/';
-        $hasSeparator = preg_match($hasSeparatorRegExp, $search) === 1
-            || preg_match($hasSeparatorRegExp, $replace) === 1;
-
-        if ($hasSeparator) {
-            unset($wordsFunctions['pascalCaseWords']);
-        } else {
-            unset($wordsFunctions['usualWords']);
-        }
-
-        foreach ($wordsFunctions as $wordsFunction) {
-            $searchWords = $wordsFunction($search);
-            $replaceWords = $wordsFunction($replace);
-
+        if (is_array($search)) {
             foreach ($caseFormats as $caseFormat) {
-                $replacePairs[$caseFormat($searchWords)] = $caseFormat($replaceWords);
+                $replacePairs[$caseFormat($search)] = $caseFormat($replace);
+            }
+        } else {
+            $wordsFunctions = [
+                'singleWord' => function ($subject) {
+                    return [$subject];
+                },
+                'usualSeparatedWords' => function ($subject) {
+                    return $this->getWords($subject, self::USUAL_SEPARATORS);
+                },
+                'pascalCaseSanitizedWords' => function ($subject) {
+                    return $this->getWords(str_replace(self::USUAL_SEPARATORS, '', $subject));
+                },
+                'pascalCaseWords' => function ($subject) {
+                    return $this->getWords($subject);
+                },
+            ];
+
+            foreach ($wordsFunctions as $wordsFunction) {
+                $searchWords = $wordsFunction($search);
+                $replaceWords = $wordsFunction($replace);
+
+                foreach ($caseFormats as $caseFormat) {
+                    $replacePairs[$caseFormat($searchWords)] = $caseFormat($replaceWords);
+                }
             }
         }
 

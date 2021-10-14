@@ -22,6 +22,7 @@ namespace FOP\Console\Tests\Unit\Tools;
 use FOP\Console\Tests\Unit\CSVFileIterator;
 use FOP\Console\Tools\FindAndReplaceTool;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Finder\Finder;
 
 class FindAndReplaceToolTest extends TestCase
 {
@@ -36,24 +37,21 @@ class FindAndReplaceToolTest extends TestCase
 
     public function testGetCasedReplacePairs()
     {
-        foreach (iterator_to_array($this->csvProvider('test-get-cased-replace-pairs')) as $searchReplace) {
+        $casedReplacePairsDir = 'cased-replace-pairs/';
+
+        foreach (iterator_to_array($this->csvProvider($casedReplacePairsDir . 'search-replace')) as $searchReplace) {
             $search = $searchReplace[0];
             $replace = $searchReplace[1];
             $formats = $searchReplace[2];
 
-            $csvCasedReplacePairs = iterator_to_array($this->csvProvider('cased-replace-pairs/' . $search . '-to-' . $replace));
+            $csvCasedReplacePairs = iterator_to_array($this->csvProvider($casedReplacePairsDir . $search . '-to-' . $replace));
             $expectedCasedReplacePairs = [];
             foreach ($csvCasedReplacePairs as $replacePair) {
                 $expectedCasedReplacePairs[$replacePair[0]] = $replacePair[1];
             }
 
-            if ($formats === 'aesthetic') {
-                $caseFormats = $this->findAndReplaceTool->getAestheticCasesFormats();
-            } else {
-                $caseFormats = $this->findAndReplaceTool->getUsualCasesFormats();
-            }
+            $actualCasedReplacePairs = $this->getActualReplacePairs($search, $replace, $formats);
 
-            $actualCasedReplacePairs = $this->findAndReplaceTool->getCasedReplacePairs($caseFormats, $search, $replace);
             $this->assertEquals($expectedCasedReplacePairs, $actualCasedReplacePairs);
         }
     }
@@ -63,35 +61,51 @@ class FindAndReplaceToolTest extends TestCase
      */
     public function testFindReplacePairsInFiles()
     {
-        foreach (iterator_to_array($this->csvProvider('test-find-replace-pairs-in-files')) as $searchReplace) {
-            $module = $searchReplace[0];
-            $search = $searchReplace[1];
-            $replace = $searchReplace[2];
-            $formats = $searchReplace[2];
+        $filesReplacePairsDir = 'files-replace-pairs/';
+        $modulesPaths = (new Finder())->in('tests/Resources/csv/' . $filesReplacePairsDir);
 
-            $csvFilesReplacePairs = iterator_to_array($this->csvProvider('files-replace-pairs/' . $module . '/' . $search . '-to-' . $replace));
+        foreach ($modulesPaths as $modulePath) {
+            $module = $modulePath->getRelativePathname();
+            if (!file_exists(_PS_MODULE_DIR_ . $module)) {
+                continue;
+            }
+
+            $csvFilesReplacePairs = iterator_to_array($this->csvProvider($filesReplacePairsDir . $module . '/found'));
             $expectedFilesReplacePairs = [];
             foreach ($csvFilesReplacePairs as $replacePair) {
                 $expectedFilesReplacePairs[$replacePair[0]] = $replacePair[1];
             }
 
+            $actualFilesReplacePairs = [];
             $moduleFiles = $this->findAndReplaceTool
-                ->getFilesSortedByDepth(_PS_MODULE_DIR_ . $module)
-                ->exclude(['vendor', 'node_modules']);
+                    ->getFilesSortedByDepth(_PS_MODULE_DIR_ . $module)
+                    ->exclude(['vendor', 'node_modules']);
+            foreach (iterator_to_array($this->csvProvider($filesReplacePairsDir . $module . '/search-replace')) as $searchReplace) {
+                $search = $searchReplace[0];
+                $replace = $searchReplace[1];
+                $formats = $searchReplace[2];
 
-            if ($formats === 'aesthetic') {
-                $caseFormats = $this->findAndReplaceTool->getAestheticCasesFormats();
-            } else {
-                $caseFormats = $this->findAndReplaceTool->getUsualCasesFormats();
+                $actualReplacePairs = $this->getActualReplacePairs($search, $replace, $formats);
+
+                $actualFilesReplacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
+                    $moduleFiles,
+                    $actualReplacePairs
+                );
             }
-
-            $actualFilesReplacePairs = $this->findAndReplaceTool->findReplacePairsInFiles(
-                $moduleFiles,
-                $this->findAndReplaceTool->getCasedReplacePairs($caseFormats, $search, $replace)
-            );
 
             $this->assertEquals($expectedFilesReplacePairs, $actualFilesReplacePairs);
         }
+    }
+
+    public function getActualReplacePairs($search, $replace, $formats)
+    {
+        if ($formats === 'usual') {
+            $caseFormats = $this->findAndReplaceTool->getUsualCasesFormats();
+        } else {
+            $caseFormats = [];
+        }
+
+        return $this->findAndReplaceTool->getCasedReplacePairs($caseFormats, $search, $replace);
     }
 
     public function csvProvider($relativePath): CSVFileIterator
