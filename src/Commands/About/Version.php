@@ -85,7 +85,7 @@ final class Version extends Command
                 throw new \Exception('Not a 200 Response.');
             }
 
-            return $response->json()['tag_name'];
+            return json_decode($response->getBody()->getContents())->tag_name;
         } catch (\Exception $exception) {
             if ($this->io->isVerbose()) {
                 if (isset($response)) {
