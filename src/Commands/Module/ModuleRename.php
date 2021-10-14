@@ -196,7 +196,10 @@ final class ModuleRename extends Command
      */
     private function formatOldModuleFullNameFromClassName($oldModuleFullName, $oldModuleClass, $input, $output)
     {
-        $formattedFullName = [];
+        $formattedFullName = [
+            "prefix" => "",
+            "name" => ""
+        ];
 
         if (!empty($oldModuleFullName['prefix'])) {
             $formattedFullName['prefix'] = substr(
@@ -222,12 +225,11 @@ final class ModuleRename extends Command
                 $questionHelper = $this->getHelper('question');
                 if ($questionHelper->ask($input, $output, $question)) {
                     $formattedFullName['prefix'] = $potentialPrefix;
+                    $formattedFullName['name'] = str_ireplace(
+                        $formattedFullName['prefix'], '', $formattedFullName['name']
+                    );
                 }
             }
-
-            $formattedFullName['name'] = str_ireplace(
-                $formattedFullName['prefix'], '', $formattedFullName['name']
-            );
         }
 
         return $formattedFullName;
