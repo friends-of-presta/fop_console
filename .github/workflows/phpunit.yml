@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v2
 
       - name: Cache vendor folder
         uses: actions/cache@v1
@@ -25,12 +25,12 @@ jobs:
       - name: "Setup Php 7.2"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: "7.2"
 
       - name: "Install Composer"
         run: composer install
 
       - name: Run PHPUnit
-        run : |
+        run: |
           cd ${{ github.workspace }}
-          ./vendor/bin/phpunit -c tests/Unit/phpunit.xml 
+          ./vendor/bin/phpunit -c tests/Unit/phpunit.xml
