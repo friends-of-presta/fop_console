@@ -35,18 +35,25 @@ php bin/console pr:mo install fop_console
 
 ## Current commands
 
-* `fop:add-hook`                       Create hook in database
+* `fop:about:version`                  Display the Fop Console version (on disk, on database, latest available release)
+* `fop:add-hook`                       Create a new hook in database
 * `fop:category`                       Manage empty categories
 * `fop:check-container`                Health check of the Service Container
 * `fop:clear-cache`                    Replace the cache directory with an empty one.
-* `fop:configuration:export`           Export configuration values (from ps_configuration table).
+* `fop:configuration:export`           Export configuration values (from ps_configuration table)
 * `fop:configuration:import`           Import configuration values
 * `fop:customer-groups`                Customer groups
 * `fop:debug-mode`                     Enable or Disable debug mode.
+* `fop:dev:setup-env`                  Install your project for local developement
+* `fop:employees:list`                 List registered employees  
 * `fop:export`                         Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
 * `fop:generate:robots`                Generate the robots.txt file
-* `fop:hook-module`                    Attach one module on specific hook
+* `fop:modules:hook`                   Attach one module on specific hook
+* `fop:modules:unhook`                 Detach module from hook
+* `fop:modules:hooks`                  Get modules list
+* `fop:modules:non-essential`          Manage non essential modules
+* `fop:modules:rename`                 Rename a module
 * `fop:images:generate:categories`     Regenerate categories thumbnails
 * `fop:images:generate:manufacturers`  Regenerate manufacturers thumbnails
 * `fop:images:generate:products`       Regenerate products thumbnails
@@ -54,11 +61,10 @@ php bin/console pr:mo install fop_console
 * `fop:images:generate:suppliers`      Regenerate suppliers thumbnails
 * `fop:latest-products`                Displays the latest products
 * `fop:maintenance`                    Configure maintenance mode
-* `fop:module:hooks`                   Get modules list
-* `fop:modules:non-essential`          Manage non essential modules
-* `fop:override:make`                  Generate a file to make an override.
+* `fop:override:make`                  Generate a file to make an override
 * `fop:shop-status`                    Display shops statuses
-* `fop:unhook-module`                  Detach module from hook
+* `fop:theme-reset`                    Reset current (or selected) theme
+
 
 ## Create your owns Commands
 
@@ -114,7 +120,7 @@ You'll see commands provided by Symfony, Prestashop and installed modules.
 
 ```shell
 ./bin/console list
-
+```
 
 To list only fop commands :
 ```shell
@@ -148,6 +154,7 @@ First [install from sources](/README.md#install-from-sources) and see [Contribut
 | 1.7.5.x | :heavy_check_mark: |
 | 1.7.6.x | :heavy_check_mark: |
 | 1.7.7.x | :heavy_check_mark: |
+| 1.7.8.x | :heavy_check_mark: |
 
 | Php Version | Compatible |
 | ------ | -----------|
