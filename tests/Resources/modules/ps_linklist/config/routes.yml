@@ -1,0 +1,53 @@
+admin_link_block_list:
+  path: /link-widget/list
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::listAction'
+    _legacy_controller: AdminLinkWidget
+    _legacy_link: AdminLinkWidget
+
+admin_link_block_create:
+  path: /link-widget/create
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::createAction'
+    _legacy_controller: AdminLinkWidget
+
+admin_link_block_create_process:
+  path: /link-widget/create
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::createProcessAction'
+    _legacy_controller: AdminLinkWidget
+
+admin_link_block_edit:
+  path: /link-widget/edit/{linkBlockId}
+  methods: [GET]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::editAction'
+    _legacy_controller: AdminLinkWidget
+
+admin_link_block_edit_process:
+  path: /link-widget/edit/{linkBlockId}
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::editProcessAction'
+    _legacy_controller: AdminLinkWidget
+
+admin_link_block_delete:
+  path: /link-widget/delete/{linkBlockId}
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::deleteAction'
+    _legacy_controller: AdminLinkWidget
+  requirements:
+    linkBlockId: \d+
+
+admin_link_block_update_positions:
+  path: /link-widget/update-positions/{hookId}
+  methods: [POST]
+  defaults:
+    _controller: 'PrestaShop\Module\LinkList\Controller\Admin\Improve\Design\LinkBlockController::updatePositionsAction'
+    _legacy_controller: AdminLinkWidget
+  requirements:
+    hookId: \d+

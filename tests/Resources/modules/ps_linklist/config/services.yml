@@ -1,0 +1,159 @@
+services:
+  _defaults:
+    public: true
+
+  prestashop.module.link_block.cache:
+    class: PrestaShop\Module\LinkList\Cache\LegacyLinkBlockCache
+    arguments:
+      $moduleRepository: '@prestashop.core.admin.module.repository'
+
+  prestashop.module.link_block.repository:
+    class: PrestaShop\Module\LinkList\Repository\LinkBlockRepository
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $languages: '@=service("prestashop.adapter.legacy.context").getLanguages(true, service("prestashop.adapter.shop.context").getContextShopID())'
+      $translator: '@translator'
+      $isMultiStoreUsed: '@=service("prestashop.adapter.feature.multistore").isUsed()'
+      $multiStoreContext: '@prestashop.adapter.shop.context'
+      $objectModelHandler: '@prestashop.module.link_block.adapter.object_model_handler'
+
+  # Grid data query builder
+  prestashop.module.link_block.grid.query_builder:
+    class: PrestaShop\Module\LinkList\Core\Grid\Query\LinkBlockQueryBuilder
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+
+  # Grid Data Factory
+  prestashop.module.link_block.grid.data_factory:
+    class: '%prestashop.core.grid.data.factory.doctrine_grid_data_factory%'
+    arguments:
+      $gridQueryBuilder: '@prestashop.module.link_block.grid.query_builder'
+      $hookDispatcher: '@prestashop.core.hook.dispatcher'
+      $queryParser: '@prestashop.core.grid.query.doctrine_query_parser'
+      $gridId: 'link_block'
+
+  # Link block grid Factory
+  prestashop.module.link_block.grid.factory:
+    class: PrestaShop\Module\LinkList\Core\Grid\LinkBlockGridFactory
+    arguments:
+      $translator: '@translator'
+      $hookDispatcher: '@prestashop.core.hook.dispatcher'
+      $dataFactory: '@prestashop.module.link_block.grid.data_factory'
+      $filterFormFactory: '@prestashop.core.grid.filter.form_factory'
+      $shopContext: '@prestashop.adapter.shop.context'
+
+  # Grid position definition
+  prestashop.module.link_block.grid.position_definition:
+    class: 'PrestaShop\PrestaShop\Core\Grid\Position\PositionDefinition'
+    arguments:
+      $table: 'link_block'
+      $idField: 'id_link_block'
+      $positionField: 'position'
+      $parentIdField: 'id_hook'
+
+  # Link block form data provider
+  prestashop.module.link_block.form_provider:
+    class: PrestaShop\Module\LinkList\Form\LinkBlockFormDataProvider
+    arguments:
+      $repository: '@prestashop.module.link_block.repository'
+      $cache: '@prestashop.module.link_block.cache'
+      $moduleRepository: '@prestashop.core.admin.module.repository'
+      $languages: '@=service("prestashop.adapter.legacy.context").getLanguages(true, service("prestashop.adapter.shop.context").getContextShopID())'
+      $shopContext: '@prestashop.adapter.shop.context'
+      $configuration: '@prestashop.adapter.legacy.configuration'
+
+  # Form choices providers
+  prestashop.module.link_block.choice_provider.hook:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\HookChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+
+  prestashop.module.link_block.choice_provider.cms_category:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\CMSCategoryChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $idLang: '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+      $shopIds: '@=service("prestashop.adapter.shop.context").getContextListShopID()'
+
+  prestashop.module.link_block.choice_provider.category:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\CategoryChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $idLang: '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+      $shopIds: '@=service("prestashop.adapter.shop.context").getContextListShopID()'
+
+  prestashop.module.link_block.choice_provider.cms_page:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\CMSPageChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $categories: '@=service("prestashop.module.link_block.choice_provider.cms_category").getChoices()'
+      $idLang: '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+      $shopIds: '@=service("prestashop.adapter.shop.context").getContextListShopID()'
+
+  prestashop.module.link_block.choice_provider.product_page:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\PageChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $idLang: '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+      $shopIds: '@=service("prestashop.adapter.shop.context").getContextListShopID()'
+      $pageNames:
+        - 'prices-drop'
+        - 'new-products'
+        - 'best-sales'
+
+  prestashop.module.link_block.choice_provider.static_page:
+    class: PrestaShop\Module\LinkList\Form\ChoiceProvider\PageChoiceProvider
+    arguments:
+      $connection: '@doctrine.dbal.default_connection'
+      $dbPrefix: '%database_prefix%'
+      $idLang: '@=service("prestashop.adapter.legacy.context").getLanguage().id'
+      $shopIds: '@=service("prestashop.adapter.shop.context").getContextListShopID()'
+      $pageNames:
+        - 'contact'
+        - 'sitemap'
+        - 'stores'
+        - 'authentication'
+        - 'my-account'
+
+  # Form types
+  prestashop.module.link_block.form_type:
+    class: PrestaShop\Module\LinkList\Form\Type\LinkBlockType
+    parent: 'form.type.translatable.aware'
+    public: true
+    arguments:
+      $hookChoices: '@=service("prestashop.module.link_block.choice_provider.hook").getChoices()'
+      $cmsPageChoices: '@=service("prestashop.module.link_block.choice_provider.cms_page").getChoices()'
+      $productPageChoices: '@=service("prestashop.module.link_block.choice_provider.product_page").getChoices()'
+      $staticPageChoices: '@=service("prestashop.module.link_block.choice_provider.static_page").getChoices()'
+      $categoryChoices: '@=service("prestashop.module.link_block.choice_provider.category").getChoices()'
+      $isMultiStoreUsed: '@=service("prestashop.adapter.feature.multistore").isUsed()'
+    tags:
+      - { name: form.type }
+
+  prestashop.module.link_block.custom_url_type:
+    class: PrestaShop\Module\LinkList\Form\Type\CustomUrlType
+    parent: 'form.type.translatable.aware'
+    public: true
+    tags:
+    - { name: form.type }
+
+  # Link block form handler
+  prestashop.module.link_block.form_handler:
+    class: 'PrestaShop\PrestaShop\Core\Form\FormHandler'
+    arguments:
+      $formBuilder: '@=service("form.factory").createBuilder()'
+      $hookDispatcher: '@prestashop.core.hook.dispatcher'
+      $formDataProvider: '@prestashop.module.link_block.form_provider'
+      $formTypes:
+        'link_block': 'PrestaShop\Module\LinkList\Form\Type\LinkBlockType'
+      $hookName: 'AdminLinkWidget'
+
+  prestashop.module.link_block.adapter.object_model_handler:
+    class: 'PrestaShop\Module\LinkList\Adapter\ObjectModelHandler'

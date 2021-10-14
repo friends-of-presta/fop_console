@@ -1,0 +1,97 @@
+{#**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ *#}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {% for name, choices in form.vars.choices %}
+            {% if choices is iterable  %}
+
+                <label class="choice_category">
+                    <strong>
+                        {{ choice_translation_domain is same as(false) ? name : name|trans({}, choice_translation_domain) }}
+                    </strong>
+                </label>
+                <div>
+                    {% for key,choice in choices %}
+                        {{ form_widget(form[key]) }}
+                        {{ form_label(form[key]) }}
+                    {% endfor %}
+                </div>
+
+            {% else %}
+
+                {{- form_widget(form[name]) -}}
+                {{- form_label(form[name], null, {translation_domain: choice_translation_domain}) -}}
+
+            {% endif %}
+        {% endfor %}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{% block checkbox_widget -%}
+    {% set parent_label_class = parent_label_class|default('') -%}
+    {% set switch = switch|default('') -%}
+    {% set checkbox_input %}
+        <input type="checkbox" class="js-bulk-action-checkbox"
+               {% if switch %}data-toggle="switch"{% endif %} {% if switch %}class="{{ switch }}"{% endif %} {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        <i class="md-checkbox-control"></i>
+    {% endset %}
+
+    {% if 'checkbox-inline' in parent_label_class %}
+        <div class="md-checkbox md-checkbox-inline">
+            {{- form_label(form, null, { widget: checkbox_input }) -}}
+        </div>
+    {% else -%}
+        <div class="md-checkbox my-1">
+            {{- form_label(form, null, { widget: checkbox_input }) -}}
+        </div>
+    {%- endif %}
+{%- endblock checkbox_widget %}
+
+{% block form_row -%}
+    {% spaceless %}
+        <div class="{{ block('form_row_class') }} {% if (not compound or force_error|default(false)) and not valid %} has-error{% endif %}">
+            {% if form.vars.label is not same as(false) %}
+                {{ form_label(form) }}
+                {% set formGroupClasses = block('form_group_class') %}
+            {% else %}
+                {% set formGroupClasses = block('unlabeled_form_group_class') %}
+            {% endif %}
+            <div class="{{ formGroupClasses }}">
+                {{ form_widget(form) }}
+                {{ form_errors(form) }}
+            </div>
+        </div>
+    {% endspaceless %}
+{%- endblock form_row %}
+
+{% block form_row_class -%}
+    form-group row
+{%- endblock form_row_class %}
+
+{% block unlabeled_form_group_class -%}
+    col-sm-12
+{%- endblock unlabeled_form_group_class %}
+
+{%- block custom_url_widget -%}
+    <div class="form-control {{ attr.class }}">
+        {{ form_row(form.title) }}
+        {{ form_row(form.url) }}
+    </div>
+{%- endblock custom_url_widget -%}

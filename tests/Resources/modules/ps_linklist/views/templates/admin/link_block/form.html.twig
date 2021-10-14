@@ -1,0 +1,81 @@
+{#**
+ * Copyright since 2007 PrestaShop SA and Contributors
+ * PrestaShop is an International Registered Trademark & Property of PrestaShop SA
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License version 3.0
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@prestashop.com so we can send you a copy immediately.
+ *
+ * @author    PrestaShop SA and Contributors <contact@prestashop.com>
+ * @copyright Since 2007 PrestaShop SA and Contributors
+ * @license   https://opensource.org/licenses/AFL-3.0 Academic Free License version 3.0
+ *#}
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{% trans_default_domain "Admin.Design.Feature" %}
+{% form_theme linkBlockForm '@Modules/ps_linklist/views/templates/admin/fields.html.twig' %}
+
+{% block content %}
+    {% if linkBlockForm.vars.data.link_block.id_link_block is defined and linkBlockForm.vars.data.link_block.id_link_block is not null %}
+        {% set formAction = url('admin_link_block_edit_process', {'linkBlockId': linkBlockForm.vars.data.link_block.id_link_block}) %}
+    {% else %}
+        {% set formAction = url('admin_link_block_create_process') %}
+    {% endif %}
+    {{ form_start(linkBlockForm, {'action': formAction, 'attr': {'class': 'form', 'id': 'link_block_form'}}) }}
+    <div class="row justify-content-center">
+        {% block link_block_form %}
+            <div class="col-xl-10">
+                <div class="card">
+                    <h3 class="card-header">
+                        <i class="material-icons">mode_edit</i>
+                        {% if linkBlockForm.vars.data.link_block.id_link_block is defined %}
+                            {{ 'Edit the link block.'|trans({}, 'Modules.Linklist.Admin') }}
+                        {% else %}
+                        {{ 'New link block'|trans({}, 'Modules.Linklist.Admin') }}
+                        {% endif %}
+                    </h3>
+                    <div class="card-block row">
+                        <div class="card-text">
+                            {{ form_row(linkBlockForm.link_block.block_name) }}
+                            {{ form_row(linkBlockForm.link_block.id_hook) }}
+                            {{ form_row(linkBlockForm.link_block.cms) }}
+                            {{ form_row(linkBlockForm.link_block.product) }}
+                            {{ form_row(linkBlockForm.link_block.category) }}
+                            {{ form_row(linkBlockForm.link_block.static) }}
+                            {% if linkBlockForm.link_block.shop_association is defined %}
+                                {{ form_row(linkBlockForm.link_block.shop_association) }}
+                            {% endif %}
+                            <div class="form-group">
+                                {{ form_row(linkBlockForm.link_block.custom) }}
+                                <div class="d-flex justify-content-end">
+                                    <button data-collection-id="{{ linkBlockForm.link_block.custom.vars.id }}" class="btn btn-primary add-collection-btn">{{ 'Add'|trans({}, 'Admin.Actions') }}</button>
+                                </div>
+                            </div>
+                            {{ form_rest(linkBlockForm.link_block) }}
+                            {% do linkBlockForm.link_block.setRendered %}
+                            {{ form_rest(linkBlockForm) }}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url('admin_link_block_list') }}" class="btn btn-secondary">{{ 'Cancel'|trans({}, 'Admin.Actions') }}</a>
+                            <button class="btn btn-primary">{{ 'Save'|trans({}, 'Admin.Actions') }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endblock %}
+    </div>
+    {{ form_end(linkBlockForm) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script src="{{ asset('../modules/ps_linklist/views/public/form.bundle.js') }}"></script>
+{% endblock %}
