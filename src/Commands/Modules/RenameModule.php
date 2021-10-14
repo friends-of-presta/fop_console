@@ -621,7 +621,7 @@ final class RenameModule extends Command
             $return = 0;
             $returnLine = exec("robocopy $sourcePath $destinationPath /E", $output, $return);
 
-            if ($return !== 0) {
+            if ($return !== 0 && $return !== 1) {
                 throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
             }
         } else {
