@@ -614,14 +614,14 @@ final class RenameModule extends Command
     private function copyFolder($sourcePath, $destinationPath)
     {
         if ($this->isWindows()) {
-            $sourcePath = str_replace('/', '\\', $destinationPath);
+            $sourcePath = str_replace('/', '\\', $sourcePath);
             $destinationPath = str_replace('/', '\\', $destinationPath);
 
             $output = [];
             $return = 0;
             $returnLine = exec("robocopy $sourcePath $destinationPath /E", $output, $return);
 
-            if ($return !== 0) {
+            if ($return !== 0 && $return !== 1) {
                 throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
             }
         } else {
