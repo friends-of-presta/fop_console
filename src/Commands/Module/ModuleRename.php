@@ -46,6 +46,11 @@ final class ModuleRename extends Command
     private $io;
 
     /**
+     * @var FindAndReplaceTool
+     */
+    private $findAndReplaceTool;
+
+    /**
      * @var array{prefix: string, name: string, author: string}
      */
     private $oldModuleInfos = [
@@ -116,6 +121,7 @@ final class ModuleRename extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
+        $this->findAndReplaceTool = new FindAndReplaceTool();
 
         try {
             $this->io->section('Initialization');
@@ -155,20 +161,13 @@ final class ModuleRename extends Command
         if (!preg_match('/[A-Z]/', $oldModuleFullName['prefix'] . $oldModuleFullName['name'])) {
             if ($oldModule) {
                 $oldModuleClass = get_class($oldModule);
-                if (!empty($oldModuleFullName['prefix'])) {
-                    $oldModuleFullName['prefix'] = substr(
-                        $oldModuleClass,
-                        stripos($oldModuleClass, $oldModuleFullName['prefix']),
-                        strlen($oldModuleFullName['prefix'])
-                    ) ?: $oldModuleFullName['prefix'];
-                }
-                $oldModuleFullName['name'] = substr(
+
+                $oldModuleFullName = $this->formatOldModuleFullNameFromClassName(
+                    $oldModuleFullName,
                     $oldModuleClass,
-                    stripos(
-                        $oldModuleClass,
-                        $oldModuleFullName['name']
-                    )
-                ) ?: $oldModuleFullName['name'];
+                    $input,
+                    $output
+                );
             } else {
                 $this->io->newLine();
                 $question = new ConfirmationQuestion("The old name is not pascal cased, so the pascal cased occurences won't be replaced."
@@ -183,6 +182,55 @@ final class ModuleRename extends Command
 
         $this->oldModuleInfos['prefix'] = $oldModuleFullName['prefix'];
         $this->oldModuleInfos['name'] = $oldModuleFullName['name'];
+    }
+
+    /**
+     * Returns old module full name with corresponding class name case format.
+     *
+     * @param array{prefix: string, name: string} $oldModuleFullName
+     * @param string $oldModuleClass
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return array{prefix: string, name: string} $formattedFullName
+     */
+    private function formatOldModuleFullNameFromClassName($oldModuleFullName, $oldModuleClass, $input, $output)
+    {
+        $formattedFullName = [];
+
+        if (!empty($oldModuleFullName['prefix'])) {
+            $formattedFullName['prefix'] = substr(
+                $oldModuleClass,
+                stripos($oldModuleClass, $oldModuleFullName['prefix']),
+                strlen($oldModuleFullName['prefix'])
+            ) ?: $oldModuleFullName['prefix'];
+        }
+
+        $formattedFullName['name'] = str_ireplace(
+            $oldModuleFullName['prefix'], '', $oldModuleClass
+        ) ?: $oldModuleFullName['name'];
+
+        if (empty($formattedFullName['prefix'])) {
+            $moduleNameWords = $this->findAndReplaceTool->getWords($formattedFullName['name']);
+            if (count($moduleNameWords) > 1) {
+                $potentialPrefix = $moduleNameWords[0];
+
+                $this->io->newLine();
+                $question = new ConfirmationQuestion($potentialPrefix . ' has been identified as a potential prefix.'
+                    . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
+
+                $questionHelper = $this->getHelper('question');
+                if ($questionHelper->ask($input, $output, $question)) {
+                    $formattedFullName['prefix'] = $potentialPrefix;
+                }
+            }
+
+            $formattedFullName['name'] = str_ireplace(
+                $formattedFullName['prefix'], '', $formattedFullName['name']
+            );
+        }
+
+        return $formattedFullName;
     }
 
     private function setNewModuleFullName($input, $output)
@@ -245,25 +293,23 @@ final class ModuleRename extends Command
 
     private function findReplacePairsInModuleFiles($input, $output)
     {
-        $findAndReplaceTool = new FindAndReplaceTool();
-
-        $usualCaseFormats = $findAndReplaceTool->getUsualCasesFormats();
+        $usualCaseFormats = $this->findAndReplaceTool->getUsualCasesFormats();
 
         $oldFolderPath = _PS_MODULE_DIR_ . strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']) . '/';
-        $oldModuleFiles = $findAndReplaceTool
+        $oldModuleFiles = $this->findAndReplaceTool
             ->getFilesSortedByDepth($oldFolderPath)
             ->exclude(['vendor', 'node_modules']);
 
-        $replacePairs = $findAndReplaceTool->findReplacePairsInFiles(
+        $replacePairs = $this->findAndReplaceTool->findReplacePairsInFiles(
             $oldModuleFiles,
-            $findAndReplaceTool->getCasedReplacePairs(
+            $this->findAndReplaceTool->getCasedReplacePairs(
                 $usualCaseFormats,
                 $this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name'],
                 $this->newModuleInfos['prefix'] . $this->newModuleInfos['name']
             )
-        ) + $findAndReplaceTool->findReplacePairsInFiles(
+        ) + $this->findAndReplaceTool->findReplacePairsInFiles(
             $oldModuleFiles,
-            $findAndReplaceTool->getCasedReplacePairs(
+            $this->findAndReplaceTool->getCasedReplacePairs(
                 $usualCaseFormats,
                 $this->oldModuleInfos['name'],
                 $this->newModuleInfos['name']
@@ -274,10 +320,10 @@ final class ModuleRename extends Command
             $authorCaseFormats = $findAndReplaceTool->getAestheticCasesFormats();
 
             $replacePairs +=
-                $findAndReplaceTool->findReplacePairsInFiles(
+                $this->findAndReplaceTool->findReplacePairsInFiles(
                     $oldModuleFiles,
-                    $findAndReplaceTool->getCasedReplacePairs(
-                        $authorCaseFormats,
+                    $this->findAndReplaceTool->getCasedReplacePairs(
+                        $usualCaseFormats,
                         $this->oldModuleInfos['author'],
                         $this->newModuleInfos['author']
                     )
@@ -294,7 +340,7 @@ final class ModuleRename extends Command
 
                 $search = $terms[0];
                 $replace = $terms[1];
-                $replacePairs += $findAndReplaceTool->findReplacePairsInFiles(
+                $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
                     $oldModuleFiles,
                     [$search => $replace]
                 );
@@ -311,9 +357,9 @@ final class ModuleRename extends Command
 
                 $search = $terms[0];
                 $replace = $terms[1];
-                $replacePairs += $findAndReplaceTool->findReplacePairsInFiles(
+                $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
                     $oldModuleFiles,
-                    $findAndReplaceTool->getCasedReplacePairs($usualCaseFormats, $search, $replace)
+                    $this->findAndReplaceTool->getCasedReplacePairs($usualCaseFormats, $search, $replace)
                 );
             }
         }
