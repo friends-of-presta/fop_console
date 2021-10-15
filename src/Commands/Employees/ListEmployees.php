@@ -11,7 +11,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ListEmployees extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:employees:list')
@@ -19,7 +19,7 @@ final class ListEmployees extends Command
             ->setHelp('List employees registered in admin');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 

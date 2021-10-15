@@ -31,7 +31,7 @@ class UnhookModule extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:modules:unhook')
             ->setDescription('Detach module from hook')
@@ -48,7 +48,7 @@ class UnhookModule extends Command
      *
      * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');

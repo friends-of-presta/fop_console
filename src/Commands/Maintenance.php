@@ -39,7 +39,7 @@ final class Maintenance extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:maintenance')
@@ -57,7 +57,7 @@ final class Maintenance extends Command
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');

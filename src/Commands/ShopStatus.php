@@ -34,7 +34,7 @@ final class ShopStatus extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:shop-status')
@@ -46,7 +46,7 @@ final class ShopStatus extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $id_shop = (int) $input->getArgument('id_shop');
@@ -100,7 +100,7 @@ final class ShopStatus extends Command
      *
      * @return array
      */
-    private function formatShopsInformation(array $shops)
+    private function formatShopsInformation(array $shops): array
     {
         $shopsInformation = [];
         /** @var \PrestaShopBundle\Entity\Shop $shop */

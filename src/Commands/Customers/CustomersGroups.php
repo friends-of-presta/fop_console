@@ -52,7 +52,7 @@ final class CustomersGroups extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:customer-groups')
@@ -64,7 +64,7 @@ final class CustomersGroups extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $optionsGroupFrom = $this->getQuestionsOptions('optionsGroupFrom');
         $optionsGroupTo = $this->getQuestionsOptions('optionsGroupTo');
@@ -155,7 +155,7 @@ final class CustomersGroups extends Command
         int $IdGroupTo,
         int $actionAfter,
         OutputInterface $output
-    ) {
+    ): int {
         $groupFrom = new Group($idGroupFrom);
         $GroupTo = new Group($IdGroupTo);
         $hasError = 0;
