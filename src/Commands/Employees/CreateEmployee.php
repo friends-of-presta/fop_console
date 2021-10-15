@@ -20,6 +20,7 @@ namespace FOP\Console\Commands\Employees;
 use Configuration;
 use Employee;
 use FOP\Console\Command;
+use PrestaShopException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -100,12 +101,13 @@ class CreateEmployee extends Command
 
         try {
             $employee = new Employee();
-            $employee->active = 1;
+            $employee->active = true;
             $employee->email = $email;
             $employee->passwd = Tools::hash($password);
             $employee->firstname = $firstname;
             $employee->lastname = $lastname;
             $employee->id_lang = Configuration::get('PS_LANG_DEFAULT');
+            //@phpstan-ignore-next-line
             $employee->id_profile = _PS_ADMIN_PROFILE_;
             $employee->default_tab = 1;
             $employee->bo_theme = 'default';
