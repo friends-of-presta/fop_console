@@ -26,7 +26,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class DebugMode extends Command
+final class DebugMode extends Command
 {
     /**
      * @var array possible allowed dev mode passed in command

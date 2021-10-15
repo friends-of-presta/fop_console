@@ -26,7 +26,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Tools;
 
-class GenerateRobots extends Command
+final class GenerateRobots extends Command
 {
     /**
      * {@inheritdoc}

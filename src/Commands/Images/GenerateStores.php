@@ -19,7 +19,7 @@
 
 namespace FOP\Console\Commands\Images;
 
-class GenerateStores extends GenerateAbstract
+final class GenerateStores extends GenerateAbstract
 {
     /** @var string Image type */
     const IMAGE_TYPE = 'stores';

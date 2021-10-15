@@ -27,7 +27,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ModuleHooks extends Command
+final class ModuleHooks extends Command
 {
     /**
      * {@inheritdoc}

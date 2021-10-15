@@ -19,7 +19,7 @@
 
 namespace FOP\Console\Commands\Images;
 
-class GenerateCategories extends GenerateAbstract
+final class GenerateCategories extends GenerateAbstract
 {
     /** @var string Image type */
     const IMAGE_TYPE = 'categories';
