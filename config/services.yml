@@ -33,6 +33,10 @@ services:
     class: FOP\Console\Commands\Employee\EmployeeList
     tags: [ console.command ]
 
+  fop.console.employee.change_password.command:
+    class: FOP\Console\Commands\Employee\EmployeeChangePassword
+    tags: [ console.command ]
+
   fop.console.environment.debug.command:
     class: FOP\Console\Commands\Environment\EnvironmentDebug
     tags: [ console.command ]
@@ -124,6 +128,7 @@ services:
   fop.console.about.version.command:
     class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
+
 
 imports:
   - { resource: overriders.yml }
