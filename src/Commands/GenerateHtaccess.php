@@ -25,7 +25,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Tools;
 
-class GenerateHtaccess extends Command
+final class GenerateHtaccess extends Command
 {
     /**
      * {@inheritdoc}

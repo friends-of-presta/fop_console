@@ -19,7 +19,7 @@
 
 namespace FOP\Console\Commands\Images;
 
-class GenerateManufacturers extends GenerateAbstract
+final class GenerateManufacturers extends GenerateAbstract
 {
     /** @var string Image type */
     const IMAGE_TYPE = 'manufacturers';

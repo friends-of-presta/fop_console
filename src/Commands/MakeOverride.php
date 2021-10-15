@@ -30,7 +30,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class MakeOverride extends Command
+final class MakeOverride extends Command
 {
     /**
      * {@inheritdoc}
