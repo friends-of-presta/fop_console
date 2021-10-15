@@ -36,7 +36,7 @@ class CreateEmployee extends Command
     protected function configure(): void
     {
         $this
-            ->setName('fop:employee:create')
+            ->setName('fop:employees:create')
             ->setDescription('Create a new employee')
             ->setHelp('Create a new employee ')
             ->addOption('email', 'email', InputOption::VALUE_OPTIONAL, 'Employee email')
