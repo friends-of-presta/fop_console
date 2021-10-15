@@ -152,6 +152,11 @@ services:
     tags:
       - { name: console.command }
 
+  fop.console.employee.create.command:
+   class: FOP\Console\Commands\Employees\CreateEmployee
+   tags:
+    - { name: console.command }
+
 imports:
   - { resource: overriders.yml }
 
