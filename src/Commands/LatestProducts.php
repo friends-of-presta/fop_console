@@ -33,7 +33,7 @@ final class LatestProducts extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:latest-products')
@@ -45,7 +45,7 @@ final class LatestProducts extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $products = Product::getNewProducts(1);
 

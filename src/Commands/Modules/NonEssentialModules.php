@@ -42,7 +42,7 @@ class NonEssentialModules extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:modules:non-essential')

@@ -31,7 +31,7 @@ class GenerateRobots extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:generate:robots')
@@ -47,7 +47,7 @@ class GenerateRobots extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $input->getOption('executeHook') ? $executeHook = true : $executeHook = false;
         $io = new SymfonyStyle($input, $output);

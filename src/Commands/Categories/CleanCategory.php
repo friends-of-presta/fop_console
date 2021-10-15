@@ -39,7 +39,7 @@ final class CleanCategory extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:category')
             ->setDescription('Manage your categories, this command don\'t support multishop')

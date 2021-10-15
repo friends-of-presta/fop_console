@@ -57,7 +57,7 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:images:generate:' . static::IMAGE_TYPE)
@@ -79,7 +79,7 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $formats = $input->getArgument('format');
         $delete = $input->getOption('force');
@@ -118,7 +118,7 @@ abstract class GenerateAbstract extends Command
      *
      * @throws \PrestaShopDatabaseException
      */
-    protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
+    protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all']): bool
     {
         $languages = Language::getLanguages(false);
         $process = [

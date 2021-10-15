@@ -38,7 +38,7 @@ final class CheckServiceContainer extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:check-container')
@@ -50,7 +50,7 @@ final class CheckServiceContainer extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $io->title('Service Container Health Checker');
@@ -92,7 +92,7 @@ final class CheckServiceContainer extends Command
         return 0;
     }
 
-    private function formatException($exception)
+    private function formatException($exception): string
     {
         /* @var Exception $exception */
         return $exception->getMessage() . PHP_EOL . ' at ' . $exception->getFile() . ':' . $exception->getLine();
@@ -105,7 +105,7 @@ final class CheckServiceContainer extends Command
      *
      * @throws \LogicException
      */
-    private function getContainerBuilder()
+    private function getContainerBuilder(): ContainerBuilder
     {
         if (null !== self::$containerBuilder) {
             return self::$containerBuilder;

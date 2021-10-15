@@ -36,7 +36,7 @@ final class ClearCacheFiles extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:clear-cache')
@@ -47,7 +47,7 @@ final class ClearCacheFiles extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 
@@ -153,7 +153,7 @@ final class ClearCacheFiles extends Command
         }
     }
 
-    private function isWindows()
+    private function isWindows(): bool
     {
         return 'WIN' === strtoupper(substr(PHP_OS, 0, 3));
     }

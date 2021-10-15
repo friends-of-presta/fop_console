@@ -53,7 +53,7 @@ class DevSetupEnv extends Command
 
     protected $isMultiShop;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:dev:setup-env')
             ->setDescription('Install your project for local developement')
@@ -85,9 +85,9 @@ class DevSetupEnv extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|void|null
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
         $this->helper = $this->getHelper('question');
