@@ -24,13 +24,17 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Symfony Command class for PrestaShop allowed to rely on legacy classes
+ * Symfony Command with legacy support.
  */
 abstract class Command extends ContainerAwareCommand
 {
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
+    protected $io;
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $container = $this->getContainer();
         $commandDefinition = $this->getDefinition();
@@ -38,6 +42,8 @@ abstract class Command extends ContainerAwareCommand
 
         $container->get('fop.console.console_loader')->loadConsoleContext($input);
 
-        return parent::initialize($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
+
+        parent::initialize($input, $output);
     }
 }
