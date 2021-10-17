@@ -85,7 +85,6 @@ services:
     class: FOP\Console\Commands\Images\GenerateSuppliers
     tags: [ console.command ]
 
-
   fop.console.images_generate_stores.command:
     class: FOP\Console\Commands\Images\GenerateStores
     tags: [ console.command ]
@@ -128,4 +127,3 @@ services:
 
 imports:
   - { resource: overriders.yml }
-

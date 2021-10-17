@@ -15,7 +15,9 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
+
 require_once 'vendor/autoload.php';
 
 class Fop_Console extends Module
