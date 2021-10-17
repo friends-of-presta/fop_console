@@ -48,11 +48,11 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->output = $output;
 
-        return parent::initialize($input, $output);
+        parent::initialize($input, $output);
     }
 
     /**
