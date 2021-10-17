@@ -147,7 +147,7 @@ services:
     tags:
       - { name: console.command }
 
-  fop.console.employees.list:
+  fop.console.employees.list.command:
     class: \FOP\Console\Commands\Employees\ListEmployees
     tags:
       - { name: console.command }
