@@ -25,7 +25,6 @@ use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * This command display and change maintenance status.
@@ -60,7 +59,6 @@ final class Maintenance extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');
         $ipaddress = trim($input->getArgument('ipaddress'));
         $ips = false;
@@ -68,16 +66,16 @@ final class Maintenance extends Command
 
         //check if action is allowed
         if (!in_array($action, self::ALLOWED_COMMAND)) {
-            $io->error('Action not allowed');
+            $this->io->error('Action not allowed');
 
             return 1;
         }
 
         if ($action == 'status') {
             if ($isMaintenanceModeEnabled) {
-                $io->text('Maintenance mode is on');
+                $this->io->text('Maintenance mode is on');
             } else {
-                $io->text('Maintenance mode is off');
+                $this->io->text('Maintenance mode is off');
             }
         }
 
@@ -89,12 +87,12 @@ final class Maintenance extends Command
         //Enable maintenance mode
         if ($action == 'enable') {
             Configuration::updateValue('PS_SHOP_ENABLE', 0);
-            $io->success('Maintenance mode enabled');
+            $this->io->success('Maintenance mode enabled');
         }
         //Disable maintenance mode
         if ($action == 'disable') {
             Configuration::updateValue('PS_SHOP_ENABLE', 1);
-            $io->success('Maintenance mode disabled');
+            $this->io->success('Maintenance mode disabled');
         }
 
         // maintenance ip managment
@@ -105,26 +103,26 @@ final class Maintenance extends Command
         // list ips
         if ($action == 'ips') {
             if (!$ips) {
-                $io->text('No maintenance ip for now.');
+                $this->io->text('No maintenance ip for now.');
             } else {
-                $io->listing($ips);
+                $this->io->listing($ips);
             }
         }
 
         // add ip
         if ($action == 'addip') {
             if (!$ipaddress) {
-                $ipaddress = $io->ask('IP address to add');
+                $ipaddress = $this->io->ask('IP address to add');
             }
             if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
-                $io->error('Incorrect ip address.');
+                $this->io->error('Incorrect ip address.');
             } elseif (in_array($ipaddress, $ips)) {
-                $io->error('Ip address ' . $ipaddress . ' already there');
+                $this->io->error('Ip address ' . $ipaddress . ' already there');
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
                 Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
-                $io->success('Ip address ' . $ipaddress . ' added');
+                $this->io->success('Ip address ' . $ipaddress . ' added');
             }
         }
 
@@ -139,14 +137,14 @@ final class Maintenance extends Command
                 $ipaddress = gethostbyname(gethostname());
             }
             if (!$ipaddress || !filter_var($ipaddress, FILTER_VALIDATE_IP)) {
-                $io->error('Unable to guess your Ip address. Please use addip command.');
+                $this->io->error('Unable to guess your Ip address. Please use addip command.');
             } elseif (in_array($ipaddress, $ips)) {
-                $io->warning('Ip address ' . $ipaddress . ' already there');
+                $this->io->warning('Ip address ' . $ipaddress . ' already there');
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
                 Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
-                $io->success('Ip address ' . $ipaddress . ' added');
+                $this->io->success('Ip address ' . $ipaddress . ' added');
             }
         }
 
