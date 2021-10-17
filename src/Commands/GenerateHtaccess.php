@@ -15,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Commands;
@@ -25,12 +26,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Tools;
 
-class GenerateHtaccess extends Command
+final class GenerateHtaccess extends Command
 {
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:generate:htaccess')
@@ -40,7 +41,7 @@ class GenerateHtaccess extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         if (true === Tools::generateHtaccess()) {

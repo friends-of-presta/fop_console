@@ -15,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Commands;
@@ -39,7 +40,7 @@ final class Maintenance extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:maintenance')
@@ -57,7 +58,7 @@ final class Maintenance extends Command
     /**
      * {@inheritdoc}
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $action = $input->getArgument('action');

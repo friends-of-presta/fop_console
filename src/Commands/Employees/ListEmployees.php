@@ -15,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Commands\Employees;
@@ -28,7 +29,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ListEmployees extends Command
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:employees:list')
@@ -36,7 +37,7 @@ final class ListEmployees extends Command
             ->setHelp('List employees registered in admin');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
 

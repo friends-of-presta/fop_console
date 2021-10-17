@@ -15,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Commands\Images;
@@ -57,7 +58,7 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('fop:images:generate:' . static::IMAGE_TYPE)
@@ -79,7 +80,7 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $formats = $input->getArgument('format');
         $delete = $input->getOption('force');
@@ -118,7 +119,7 @@ abstract class GenerateAbstract extends Command
      *
      * @throws \PrestaShopDatabaseException
      */
-    protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all'])
+    protected function regenerateThumbnails($type = 'all', $deleteOldImages = true, $imagesFormats = ['all']): bool
     {
         $languages = Language::getLanguages(false);
         $process = [

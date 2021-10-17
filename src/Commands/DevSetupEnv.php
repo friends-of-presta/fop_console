@@ -10,11 +10,12 @@
  * https://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
+ * to infos@friendsofpresta.org so we can send you a copy immediately.
  *
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Commands;
@@ -29,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class DevSetupEnv extends Command
+final class DevSetupEnv extends Command
 {
     /**
      * @var SymfonyStyle
@@ -53,7 +54,7 @@ class DevSetupEnv extends Command
 
     protected $isMultiShop;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('fop:dev:setup-env')
             ->setDescription('Install your project for local developement')
@@ -85,9 +86,9 @@ class DevSetupEnv extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return int|void|null
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->io = new SymfonyStyle($input, $output);
         $this->helper = $this->getHelper('question');
