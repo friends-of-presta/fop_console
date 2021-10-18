@@ -10,6 +10,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
+      - name: Add kjmodulebedrock as a test module
+        uses: actions/checkout@v2
+        with:
+          repository: 'Kaudaj/kjmodulebedrock'
+          path: 'tests/Resources/modules/kjmodulebedrock'
+
       - name: Cache vendor folder
         uses: actions/cache@v1
         with:
