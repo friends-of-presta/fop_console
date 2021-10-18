@@ -21,6 +21,6 @@ $fopPsConfig
     ->setUsingCache(true)
     ->getFinder()
     ->in(__DIR__)
-    ->exclude('vendor');
+    ->exclude('vendor', 'tests/Resources');
 
 return $fopPsConfig;
