@@ -127,6 +127,18 @@ class FindAndReplaceTool
                     )
                 );
             },
+            //String to format
+            'firstUpperCasedSpaced' => function ($words) {
+                return ucfirst(
+                    implode(
+                        ' ',
+                        array_map(
+                            'strtolower',
+                            $this->sanitizeWords($words)
+                        )
+                    )
+                );
+            },
             //String to Format
             'spaced' => function ($words) {
                 return implode(
