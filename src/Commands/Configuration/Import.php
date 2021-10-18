@@ -28,7 +28,6 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class Import extends Command
 {
@@ -46,7 +45,6 @@ final class Import extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         try {
             /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
             $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
@@ -61,20 +59,20 @@ final class Import extends Command
             }
 
             if ($output->isVerbose()) {
-                $io->writeln('Configuration imported : ');
+                $this->io->writeln('Configuration imported : ');
                 $rows = [];
                 foreach ($configurations as $k => $v) {
                     $rows[] = [$k, $v];
                 }
-                $io->table(['Configuration name', 'value'], $rows);
+                $this->io->table(['Configuration name', 'value'], $rows);
             }
             $configuration_service->add($configurations);
 
-            $io->success('Configurations imported');
+            $this->io->success('Configurations imported');
 
             return 0;
         } catch (Exception $exception) {
-            $io->error('Command ' . $this->getName() . ' aborted : ' . $exception->getMessage());
+            $this->io->error('Command ' . $this->getName() . ' aborted : ' . $exception->getMessage());
 
             return 1;
         }

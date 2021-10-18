@@ -1,9 +1,7 @@
-
-
 ## Create your owns Commands
 
-The official documentation from PrestaShop and Symfony Core teams are still right, but you needs
-to extends our class.
+The official documentation from PrestaShop and Symfony Core teams are still right, but you need
+to extend our class.
 
 ```php
 <?php
@@ -39,8 +37,7 @@ final class MyCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->text('Hello friends of PrestaShop!');
+        $this->io->text('Hello friends of PrestaShop!');
 
         return 0; // return 0 on success or 1 on failure.        
     }

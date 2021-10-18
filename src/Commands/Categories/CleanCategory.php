@@ -31,7 +31,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class CleanCategory extends Command
 {
@@ -68,17 +67,16 @@ final class CleanCategory extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $force = $input->getOption('force');
 
         if (1 < Shop::getTotalShops(false)) {
             if (!$force) {
-                $io->error('Currently this command don\'t work with MultiShop.'
+                $this->io->error('Currently this command don\'t work with MultiShop.'
                 . PHP_EOL . 'Use force (-f) option to run the command.');
 
                 return 1;
             } else {
-                $io->warning('MultiShop Enable, Force Mode');
+                $this->io->warning('MultiShop Enable, Force Mode');
             }
         }
 
@@ -91,23 +89,23 @@ final class CleanCategory extends Command
                 $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
 
                 if (!$categories['empty'] && !$categories['noempty']) {
-                    $io->title('All categories with active product are enable and all categories without product active are disable.');
+                    $this->io->title('All categories with active product are enable and all categories without product active are disable.');
 
                     return 0;
                 }
 
                 if ($categories['empty']) {
-                    $io->title('The following category(s) are enabled but without active product');
-                    $io->text(implode(' / ', $categories['empty']));
-                    $io->text(' -- You can run `./bin/console fop:category disable-empty` to fix it');
-                    $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
+                    $this->io->title('The following category(s) are enabled but without active product');
+                    $this->io->text(implode(' / ', $categories['empty']));
+                    $this->io->text(' -- You can run `./bin/console fop:category disable-empty` to fix it');
+                    $this->io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
                 if ($categories['noempty']) {
-                    $io->title('The following categorie(s) are disabled but with product active in the category');
-                    $io->text(implode(' / ', $categories['noempty']));
-                    $io->text(' -- You can run `./bin/console fop:category enable-no-empty` to fix it');
-                    $io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
+                    $this->io->title('The following categories are disabled but contain active products.');
+                    $this->io->text(implode(' / ', $categories['noempty']));
+                    $this->io->text(' -- You can run `./bin/console fop:category enable-no-empty` to fix it');
+                    $this->io->text(' -- If you want exclude categories you can add --exclude ID,ID2,ID3');
                 }
 
                 return 0;
@@ -116,18 +114,18 @@ final class CleanCategory extends Command
                 try {
                     $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
                 } catch (\Exception $e) {
-                    $io->getErrorStyle()->error($e->getMessage());
+                    $this->io->getErrorStyle()->error($e->getMessage());
 
                     return 1;
                 }
 
                 if (!$categories['empty']) {
-                    $io->title('All categories without product active are disable.');
+                    $this->io->title('All categories without product active are disable.');
 
                     return 0;
                 } else {
-                    $io->title('The following categories have been disabled');
-                    $io->text(implode(', ', $categories['empty']));
+                    $this->io->title('The following categories have been disabled');
+                    $this->io->text(implode(', ', $categories['empty']));
 
                     return 0;
                 }
@@ -136,18 +134,18 @@ final class CleanCategory extends Command
                 try {
                     $categories = $this->getCategoriesToClean($id_lang, $action, $exclude);
                 } catch (\Exception $e) {
-                    $io->getErrorStyle()->error($e->getMessage());
+                    $this->io->getErrorStyle()->error($e->getMessage());
 
                     return 1;
                 }
 
                 if (!$categories['noempty']) {
-                    $io->title('All categories with active product are enable.');
+                    $this->io->title('All categories with active product are enable.');
 
                     return 0;
                 } else {
-                    $io->title('The following categories have been enabled');
-                    $io->text(implode(', ', $categories['noempty']));
+                    $this->io->title('The following categories have been enabled');
+                    $this->io->text(implode(', ', $categories['noempty']));
 
                     return 0;
                 }
@@ -156,7 +154,7 @@ final class CleanCategory extends Command
                 $helper = $this->getHelper('question');
                 $id_category = $input->getOption('id-category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
                 if (!Category::categoryExists($id_category)) {
-                    $io->error('Hum i don\'t think id_category ' . $id_category . ' exist');
+                    $this->io->error('Hum i don\'t think id_category ' . $id_category . ' exist');
 
                     return 1;
                 }
@@ -165,30 +163,30 @@ final class CleanCategory extends Command
                 if (0 === (int) $category->active) {
                     $category->active = true;
                     if (!$category->update()) {
-                        $io->error('Failed to update Category with ID : ' . $id_category);
+                        $this->io->error('Failed to update Category with ID : ' . $id_category);
 
                         return 1;
                     }
 
-                    $io->success('The category : ' . $category->name . ' is now enabled.');
+                    $this->io->success('The category : ' . $category->name . ' is now enabled.');
 
                     return 0;
                 } else {
                     $category->active = false;
                     if (!$category->update()) {
-                        $io->error('Failed to update Category with ID : ' . $id_category);
+                        $this->io->error('Failed to update Category with ID : ' . $id_category);
 
                         return 1;
                     }
 
-                    $io->success('The category : ' . $category->name . ' is now disabled.');
+                    $this->io->success('The category : ' . $category->name . ' is now disabled.');
 
                     return 0;
                 }
 
                 // no break
             default:
-                $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
+                $this->io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
                 return 1;
         }

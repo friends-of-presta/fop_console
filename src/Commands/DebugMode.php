@@ -25,7 +25,6 @@ use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class DebugMode extends Command
 {
@@ -56,15 +55,13 @@ final class DebugMode extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $returnCode = null;
         $action = $input->getArgument('action');
         $debugMode = new DebugAdapter();
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
         switch ($action) {
             case 'status':
-                $io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
+                $this->io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
 
                 return 0;
             case 'toggle':
@@ -79,18 +76,18 @@ final class DebugMode extends Command
                 $returnCode = $debugMode->disable();
                 break;
             default:
-                $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
+                $this->io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
                 return 1;
         }
 
         if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
+            $this->io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
 
             return 0;
         }
 
-        $io->error('An error occured while updating debug mode. ' . DebugAdapter::class . ' error code ' . $returnCode . ' .');
+        $this->io->error('An error occurred while updating debug mode. ' . DebugAdapter::class . ' error code ' . $returnCode . ' .');
 
         return 1;
     }
