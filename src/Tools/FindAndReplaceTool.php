@@ -179,7 +179,7 @@ class FindAndReplaceTool
 
         $replacePairs = [];
 
-        if (is_array($search)) {
+        if (is_array($search) && is_array($replace)) {
             foreach ($caseFormats as $caseFormat) {
                 $replacePairs[$caseFormat($search)] = $caseFormat($replace);
             }
