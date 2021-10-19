@@ -33,11 +33,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class DevSetupEnv extends Command
 {
     /**
-     * @var SymfonyStyle
-     */
-    protected $io;
-
-    /**
      * @var mixed
      */
     protected $helper;

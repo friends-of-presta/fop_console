@@ -24,7 +24,6 @@ use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Tools;
 
 final class GenerateRobots extends Command
@@ -51,16 +50,15 @@ final class GenerateRobots extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $input->getOption('executeHook') ? $executeHook = true : $executeHook = false;
-        $io = new SymfonyStyle($input, $output);
 
-        if (true === Tools::generateRobotsFile($executeHook)) {
-            $io->success('robots.txt file generated with success');
-
-            return 0;
-        } else {
-            $io->error('An error occurs while generating robots.txt file');
+        if (true !== Tools::generateRobotsFile($executeHook)) {
+            $this->io->error('An error occurs while generating robots.txt file');
 
             return 1;
         }
+
+        $this->io->success('robots.txt file generated with success');
+
+        return 0;
     }
 }
