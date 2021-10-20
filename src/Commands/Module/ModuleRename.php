@@ -219,7 +219,7 @@ final class ModuleRename extends Command
                 $potentialPrefix = $moduleNameWords[0];
 
                 $this->io->newLine();
-                $question = new ConfirmationQuestion($potentialPrefix . ' has been identified as a potential prefix.'
+                $question = new ConfirmationQuestion($potentialPrefix . " has been identified as a potential prefix in $oldModuleClass class name."
                     . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
 
                 $questionHelper = $this->getHelper('question');
@@ -537,7 +537,7 @@ final class ModuleRename extends Command
         ];
 
         $this->io->newLine();
-        $question = new ConfirmationQuestion($potentialFullName['prefix'] . ' has been identified as a potential prefix.'
+        $question = new ConfirmationQuestion($potentialFullName['prefix'] . " has been identified as a potential prefix in $moduleClassName class name."
             . PHP_EOL . 'Do you want to use it as such? (y for yes, n for no)', false);
 
         $questionHelper = $this->getHelper('question');
