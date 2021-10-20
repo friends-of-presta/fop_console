@@ -302,32 +302,33 @@ final class ModuleRename extends Command
             ->getFilesSortedByDepth($oldFolderPath)
             ->exclude(['vendor', 'node_modules']);
 
-        $replacePairs = $this->findAndReplaceTool->findReplacePairsInFiles(
-            $oldModuleFiles,
-            $this->findAndReplaceTool->getCasedReplacePairs(
-                $usualCaseFormats,
-                $this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name'],
-                $this->newModuleInfos['prefix'] . $this->newModuleInfos['name']
-            )
-        ) + $this->findAndReplaceTool->findReplacePairsInFiles(
-            $oldModuleFiles,
-            $this->findAndReplaceTool->getCasedReplacePairs(
-                $usualCaseFormats,
-                $this->oldModuleInfos['name'],
-                $this->newModuleInfos['name']
-            )
-        );
+        $searchAndReplacePairs = [
+            [
+                'search' => [$this->oldModuleInfos['prefix']] + $this->findAndReplaceTool->getWords($this->oldModuleInfos['name']),
+                'replace' => [$this->newModuleInfos['prefix']] + $this->findAndReplaceTool->getWords($this->newModuleInfos['name']),
+                'caseFormats' => $usualCaseFormats,
+            ],
+            [
+                'search' => $this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name'],
+                'replace' => $this->newModuleInfos['prefix'] . $this->newModuleInfos['name'],
+                'caseFormats' => $usualCaseFormats,
+            ],
+            [
+                'search' => $this->oldModuleInfos['name'],
+                'replace' => $this->newModuleInfos['name'],
+                'caseFormats' => $usualCaseFormats,
+            ],
+        ];
 
         if (isset($this->newModuleInfos['author'])) {
-            $replacePairs +=
-                $this->findAndReplaceTool->findReplacePairsInFiles(
-                    $oldModuleFiles,
-                    $this->findAndReplaceTool->getCasedReplacePairs(
-                        $usualCaseFormats,
-                        $this->oldModuleInfos['author'],
-                        $this->newModuleInfos['author']
-                    )
-                );
+            array_push(
+                $searchAndReplacePairs,
+                [
+                    'search' => $this->oldModuleInfos['author'],
+                    'replace' => $this->newModuleInfos['author'],
+                    'caseFormats' => $usualCaseFormats,
+                ]
+            );
         }
 
         $extraReplacements = $input->getOption('extra-replacement');
@@ -338,11 +339,12 @@ final class ModuleRename extends Command
                     throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
 
-                $search = $terms[0];
-                $replace = $terms[1];
-                $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
-                    $oldModuleFiles,
-                    [$search => $replace]
+                array_push(
+                    $searchAndReplacePairs,
+                    [
+                        'search' => $terms[0],
+                        'replace' => $terms[1],
+                    ]
                 );
             }
         }
@@ -355,13 +357,40 @@ final class ModuleRename extends Command
                     throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
 
-                $search = $terms[0];
-                $replace = $terms[1];
-                $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
-                    $oldModuleFiles,
-                    $this->findAndReplaceTool->getCasedReplacePairs($usualCaseFormats, $search, $replace)
+                array_push(
+                    $searchAndReplacePairs,
+                    [
+                        'search' => $terms[0],
+                        'replace' => $terms[1],
+                        'caseFormats' => $usualCaseFormats,
+                    ]
                 );
             }
+        }
+
+        $replacePairs = [];
+
+        foreach ($searchAndReplacePairs as $searchAndReplacePair) {
+            if (!isset($searchAndReplacePair['search'])
+                || empty($searchAndReplacePair['search'])) {
+                continue;
+            }
+            $search = $searchAndReplacePair['search'];
+
+            $replace = isset($searchAndReplacePair['replace'])
+                ? $searchAndReplacePair['replace']
+                : '';
+
+            $caseFormats = isset($searchAndReplacePair['caseFormats'])
+                ? $searchAndReplacePair['caseFormats']
+                : [];
+
+            $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
+                $oldModuleFiles,
+                $this->findAndReplaceTool->getCasedReplacePairs(
+                    $search, $replace, $caseFormats
+                )
+            );
         }
 
         $this->io->newLine();

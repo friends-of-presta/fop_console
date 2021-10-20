@@ -69,9 +69,9 @@ class FindAndReplaceTool
     /**
      * Remove usual separators from words
      *
-     * @param string|string[] $words Words to sanitize
+     * @param string[] $words Words to sanitize
      *
-     * @return string|string[]
+     * @return string[]
      */
     public function sanitizeWords($words)
     {
@@ -178,24 +178,34 @@ class FindAndReplaceTool
     /**
      * Format search and replace with provided case formats
      *
+     * @param string|array $search Search term or words
+     * @param string|array $replace Search term or words
      * @param array $caseFormats
-     * @param string|array $search search term or words
-     * @param string|array $replace search term or words
      *
      * @return array $replacePairs search => replace
      */
-    public function getCasedReplacePairs($caseFormats, $search, $replace)
+    public function getCasedReplacePairs($search, $replace, $caseFormats = [])
     {
+        if (empty($search)) {
+            return [];
+        }
+
         if (empty($caseFormats)) {
             return [$search => $replace];
         }
 
         $replacePairs = [];
 
-        if (is_array($search) && is_array($replace)) {
+        if (is_array($search)) {
+            if (!is_array($replace)) {
+                return [];
+            }
+
             foreach ($caseFormats as $caseFormat) {
                 $replacePairs[$caseFormat($search)] = $caseFormat($replace);
             }
+        } elseif (is_array($replace)) {
+            return [];
         } else {
             $wordsFunctions = [
                 'singleWord' => function ($subject) {

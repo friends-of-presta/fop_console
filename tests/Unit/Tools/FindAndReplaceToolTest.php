@@ -106,7 +106,7 @@ class FindAndReplaceToolTest extends TestCase
             $caseFormats = [];
         }
 
-        return $this->findAndReplaceTool->getCasedReplacePairs($caseFormats, $search, $replace);
+        return $this->findAndReplaceTool->getCasedReplacePairs($search, $replace, $caseFormats);
     }
 
     public function csvProvider($relativePath): CSVFileIterator
