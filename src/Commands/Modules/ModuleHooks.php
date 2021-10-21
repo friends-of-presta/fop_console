@@ -26,13 +26,9 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ModuleHooks extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -45,13 +41,9 @@ final class ModuleHooks extends Command
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $moduleName = (string) $input->getArgument('name');  /** @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
-        $io = new SymfonyStyle($input, $output);
+        $moduleName = (string) $input->getArgument('name');  /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
 
         if ($module = Module::getInstanceByName($moduleName)) {/** @-phpstan-ignore-line - annotation disabled - not an error at level 5 - not checked */
             $possibleHooksList = $module->getPossibleHooksList();
@@ -68,7 +60,7 @@ final class ModuleHooks extends Command
             }
 
             if (count($moduleHooks)) {
-                $io->title('The module ' . $moduleName . ' is linked on the following hooks :');
+                $this->io->title('The module ' . $moduleName . ' is linked on the following hooks :');
                 $table = new Table($output);
                 $table->setHeaders(['Hook Name', 'Position']);
                 foreach ($moduleHooks as $moduleHook) {
@@ -76,12 +68,12 @@ final class ModuleHooks extends Command
                 }
                 $table->render();
             } else {
-                $io->title('The module is not hooked to any hook');
+                $this->io->title('The module is not hooked to any hook');
             }
 
             return 0;
         } else {
-            $io->error('Error the module ' . $moduleName . ' doesn\'t exists');
+            $this->io->error('Error the module ' . $moduleName . ' doesn\'t exists');
 
             return 1;
         }

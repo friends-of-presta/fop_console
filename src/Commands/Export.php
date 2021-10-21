@@ -28,7 +28,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * This command is an exporter.
@@ -54,7 +53,6 @@ final class Export extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $objectModel = $input->getArgument('model');
         $limit = (int) $input->getOption('limit');
 
@@ -77,7 +75,7 @@ final class Export extends Command
 
         $serializer = $this->getContainer()->get('serializer');
 
-        $io->text($serializer->serialize([strtolower($objectModel) => $objects], 'xml', ['xml_format_output' => true]));
+        $this->io->text($serializer->serialize([strtolower($objectModel) => $objects], 'xml', ['xml_format_output' => true]));
 
         return 0;
     }

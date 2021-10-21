@@ -28,7 +28,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class NonEssentialModules extends Command
 {
@@ -74,7 +73,6 @@ final class NonEssentialModules extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $moduleManager = $this->getContainer()->get('prestashop.module.manager');
         $action = $input->getArgument('action');
         $update = false;
@@ -82,14 +80,14 @@ final class NonEssentialModules extends Command
 
         switch ($action) {
             case 'status':
-                $io->text('<info>Non-essential Modules Informations</info>');
+                $this->io->text('<info>Non-essential Modules Informations</info>');
 
                 foreach (self::NON_ESSENTIAL_MODULES as $key => $uselessModule) {
                     $modulesInfos[] = ['id' => $key, 'name' => $uselessModule, 'present' => $this->moduleExists($uselessModule) ? 'yes' : 'no', 'installed' => $moduleManager->isInstalled($uselessModule) ? 'yes' : 'no'];
                 }
 
-                $io->table(['ID', 'Name', 'Present?', 'Installed?'], $modulesInfos);
-                $io->text('You can'
+                $this->io->table(['ID', 'Name', 'Present?', 'Installed?'], $modulesInfos);
+                $this->io->text('You can'
                     . PHP_EOL . '    - uninstall all modules by running  : `./bin/console fop:modules:non-essential uninstall`'
                     . PHP_EOL . '    - uninstall modules by running       : `./bin/console fop:modules:non-essential uninstall --idsmodule x,y,z`'
                     . PHP_EOL . '    - uninstall one module by running    : `./bin/console fop:modules:non-essential uninstall --modulename ModuleName`'
@@ -110,7 +108,7 @@ final class NonEssentialModules extends Command
                             $returnCode = $command->run($this->createArguments('uninstall', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                             $update = true;
                         } else {
-                            $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
+                            $this->io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
 
                             return 1;
                         }
@@ -121,7 +119,7 @@ final class NonEssentialModules extends Command
                         $returnCode = $command->run($this->createArguments('uninstall', $moduleToUninstall), $output);
                         $update = true;
                     } else {
-                        $io->error('Module ' . $moduleToUninstall . ' is not installed');
+                        $this->io->error('Module ' . $moduleToUninstall . ' is not installed');
 
                         return 1;
                     }
@@ -136,7 +134,7 @@ final class NonEssentialModules extends Command
                 }
 
                 if ($update == false) {
-                    $io->text('<info>No module to uninstall</info>');
+                    $this->io->text('<info>No module to uninstall</info>');
                 }
 
                 return 0;
@@ -153,7 +151,7 @@ final class NonEssentialModules extends Command
                             $returnCode = $command->run($this->createArguments('install', self::NON_ESSENTIAL_MODULES[$idModule]), $output);
                             $update = true;
                         } else {
-                            $io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
+                            $this->io->error('Module ' . self::NON_ESSENTIAL_MODULES[$idModule] . ' is not installed');
 
                             return 1;
                         }
@@ -164,7 +162,7 @@ final class NonEssentialModules extends Command
                         $returnCode = $command->run($this->createArguments('install', $moduleToInstall), $output);
                         $update = true;
                     } else {
-                        $io->error('Module ' . $moduleToInstall . ' is not installed');
+                        $this->io->error('Module ' . $moduleToInstall . ' is not installed');
 
                         return 1;
                     }
@@ -179,13 +177,13 @@ final class NonEssentialModules extends Command
                 }
 
                 if ($update == false) {
-                    $io->text('<info>No module to install</info>');
+                    $this->io->text('<info>No module to install</info>');
                 }
 
                 return 0;
 
             default:
-                $io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
+                $this->io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
                 return 1;
         }

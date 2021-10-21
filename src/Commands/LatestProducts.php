@@ -24,16 +24,12 @@ use FOP\Console\Command;
 use Product;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * This command display common information the latest products.
+ * This command displays common information about the latest products.
  */
 final class LatestProducts extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -43,17 +39,13 @@ final class LatestProducts extends Command
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $products = Product::getNewProducts(1);
 
-        $io = new SymfonyStyle($input, $output);
-        $io->title('Legacy Latest Products listing');
+        $this->io->title('Legacy Latest Products listing');
 
-        $io->table(
+        $this->io->table(
             ['ID', 'Name', 'Quantity', 'Price', 'Activated?'],
             $this->formatProductInformation($products)
         );
@@ -64,9 +56,9 @@ final class LatestProducts extends Command
     /**
      * @param array $products the list of the products
      *
-     * @return array
+     * @return array<int, array<int, string>>
      */
-    private function formatProductInformation(array $products)
+    private function formatProductInformation(array $products): array
     {
         $productsInformation = [];
         /** @var Product $product */

@@ -30,13 +30,9 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class MakeOverride extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -64,20 +60,16 @@ final class MakeOverride extends Command
             ->addOption('force', null, InputOption::VALUE_NONE, 'overwrite files without confirmation');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $path = (string) $input->getArgument('path'); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
 
         try {
             // gather overriders
             $overriders = $this->getOverriders($path);
             if (empty($overriders)) {
-                $io->comment("No Overrider for path '$path' fails");
-                $io->comment("Looking for a demo ? try with 'classes/README.md' ...");
+                $this->io->comment("No Overrider for path '$path' fails");
+                $this->io->comment("Looking for a demo ? try with 'classes/README.md' ...");
 
                 return 0;
             }
@@ -88,7 +80,7 @@ final class MakeOverride extends Command
                 $dangerous_consequences = $overrider->getDangerousConsequences();
                 $run_overrider = is_null($dangerous_consequences)
                     || $input->getOption('force')
-                    || $io->confirm($overrider->getDangerousConsequences() . ' Process anyway ? ', false);
+                    || $this->io->confirm($overrider->getDangerousConsequences() . ' Process anyway ? ', false);
 
                 if (!$run_overrider) {
                     $messages = ['Run aborted. Confirm actions or use --force to bypass.'];
@@ -102,12 +94,12 @@ final class MakeOverride extends Command
             }
 
             // display results
-            empty($success_messages) ?: $io->success($success_messages);
-            empty($error_messages) ?: $io->warning($error_messages);
+            empty($success_messages) ?: $this->io->success($success_messages);
+            empty($error_messages) ?: $this->io->warning($error_messages);
 
             return 0;
         } catch (Exception $exception) {
-            $io->error(["Override for '$path' failed", $exception->getMessage()]);
+            $this->io->error(["Override for '$path' failed", $exception->getMessage()]);
             // Caught Exception get rethrown at high verbosity (-vvv)
             if (OutputInterface::VERBOSITY_DEBUG === $output->getVerbosity()) {
                 // unhandled Exception, that's intended, for debugging.
