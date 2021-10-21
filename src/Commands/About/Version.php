@@ -29,7 +29,6 @@ use PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class Version extends Command
 {
@@ -37,9 +36,6 @@ final class Version extends Command
 
     /** @var \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository */
     private $moduleRepository;
-
-    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
-    private $io;
 
     protected function configure(): void
     {
@@ -51,7 +47,6 @@ final class Version extends Command
     {
         try {
             parent::initialize($input, $output);
-            $this->io = new SymfonyStyle($input, $output);
 
             // get module's information from the Core, not the Adapter, not the legacy, this is the correct way.
             $this->moduleRepository = $this->getContainer()->get('prestashop.core.admin.module.repository');

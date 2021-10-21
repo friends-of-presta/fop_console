@@ -25,7 +25,6 @@ use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Process\Process;
 
@@ -50,8 +49,6 @@ final class ClearCacheFiles extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
         try {
             // first : disable event dispatcher otherwise errors will happen
             $this->getApplication()->setDispatcher(new EventDispatcher());
@@ -59,13 +56,13 @@ final class ClearCacheFiles extends Command
             $this->deleteOldCacheDirectory(); // may exist if this command failed before
             $this->renameCurrentCacheDirectory();
             $this->createNewCacheDirectory(); // probably not needed
-            $io->success('Cache cleared.');
+            $this->io->success('Cache cleared.');
 
             $this->deleteOldCacheDirectory();
 
             return 0;
         } catch (RuntimeException $exception) {
-            $io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
+            $this->io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
 
             return 1;
         }

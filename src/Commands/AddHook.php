@@ -25,7 +25,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Validate;
 
 final class AddHook extends Command
@@ -67,7 +66,6 @@ final class AddHook extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
 
         $name = $input->getOption('name') ?? $helper->ask($input, $output, $this->getHookNameQuestion());
@@ -88,7 +86,7 @@ final class AddHook extends Command
                 throw new \Exception('Failed to save Hook : ' . $hook->validateFields(false, true));
             }
         } catch (\Exception $e) {
-            $io->getErrorStyle()->error($e->getMessage());
+            $this->io->getErrorStyle()->error($e->getMessage());
 
             return 1;
         }

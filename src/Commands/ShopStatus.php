@@ -25,16 +25,12 @@ use Shop;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * This command display Shop status.
  */
 final class ShopStatus extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -44,19 +40,15 @@ final class ShopStatus extends Command
             ->addArgument('action', InputArgument::OPTIONAL, 'enable or disable');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $id_shop = (int) $input->getArgument('id_shop');
         $action = $input->getArgument('action');
 
         if (!$id_shop) {
-            $io->title('Shops statuses report');
+            $this->io->title('Shops statuses report');
             $shops = $this->getContainer()->get('prestashop.core.admin.shop.repository')->findAll();
-            $io->table(
+            $this->io->table(
                 ['ID', 'Name', 'Theme', 'Activated?', 'Deleted?'],
                 $this->formatShopsInformation($shops)
             );
@@ -68,19 +60,19 @@ final class ShopStatus extends Command
                 if ($action == 'enable') {
                     $shop->active = true;
                     $shop->save();
-                    $io->text('Shop ' . $shop->id . ' enabled');
+                    $this->io->text('Shop ' . $shop->id . ' enabled');
 
                     return 0;
                 } elseif ($action == 'disable') {
                     $shop->active = false;
                     $shop->save();
-                    $io->text('Shop ' . $shop->id . ' disabled');
+                    $this->io->text('Shop ' . $shop->id . ' disabled');
 
                     return 0;
                 } else {
-                    $io->title(sprintf('Information for shop "%s"', $shop->name));
+                    $this->io->title(sprintf('Information for shop "%s"', $shop->name));
 
-                    $io->table(
+                    $this->io->table(
                         ['ID', 'Name', 'Theme', 'Activated?', 'Deleted?'],
                         [
                             [$shop->id, $shop->name, $shop->theme_name, $shop->active ? '✔' : '✘', $shop->deleted ? '✔' : '✘'],
@@ -90,7 +82,7 @@ final class ShopStatus extends Command
                     return 0;
                 }
             }
-            $io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
+            $this->io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
 
             return 0;
         }

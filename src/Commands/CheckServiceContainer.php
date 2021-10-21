@@ -25,12 +25,11 @@ use FOP\Console\Command;
 use PrestaShopBundle\Exception\NotImplementedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Throwable;
 
 /**
- * This command is an health check of our Service Container.
+ * Check health of our Service Container.
  */
 final class CheckServiceContainer extends Command
 {
@@ -53,8 +52,7 @@ final class CheckServiceContainer extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->title('Service Container Health Checker');
+        $this->io->title('Service Container Health Checker');
         $services = [];
         $errors = 0;
 
@@ -80,7 +78,7 @@ final class CheckServiceContainer extends Command
         }
 
         if ($errors > 0) {
-            $io->table(
+            $this->io->table(
                 ['ID', 'Error message'],
                 $services
             );
@@ -88,7 +86,7 @@ final class CheckServiceContainer extends Command
             return 255;
         }
 
-        $io->success('The Service Container is valid.');
+        $this->io->success('The Service Container is valid.');
 
         return 0;
     }

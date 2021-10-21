@@ -26,16 +26,12 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class ThemeResetLayout extends Command
 {
     const ID_SHOP_ARGUMENT = 'id_shop';
     const COMMAND_FAILURE = 1;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this
@@ -46,12 +42,8 @@ final class ThemeResetLayout extends Command
             ->addOption(self::ID_SHOP_ARGUMENT, null, InputOption::VALUE_OPTIONAL, 'Shop on which the action will be executed');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $theme = $input->getArgument('theme');
         $container = $this->getContainer();
         $shopService = $container->get('prestashop.adapter.shop.context');
@@ -59,7 +51,7 @@ final class ThemeResetLayout extends Command
 
         // Have more than 1 shop without previously selected an id_shop in input option
         if (count($shops) > 1 && $input->getOption(self::ID_SHOP_ARGUMENT) === null) {
-            $io->error('Your Prestashop installation seems to be a multistore, please define the --' . self::ID_SHOP_ARGUMENT . ' argument');
+            $this->io->error('Your Prestashop installation seems to be a multistore, please define the --' . self::ID_SHOP_ARGUMENT . ' argument');
 
             $table = new Table($output);
             $table
@@ -72,7 +64,7 @@ final class ThemeResetLayout extends Command
             return self::COMMAND_FAILURE;
         } elseif (count($shops) > 1 && $shopId = $input->getOption(self::ID_SHOP_ARGUMENT)) {
             if ($shop = $this->findShopById($shopService->getContextShopId()) === false) {
-                $io->error('An error occurred while selecting shop');
+                $this->io->error('An error occurred while selecting shop');
 
                 return self::COMMAND_FAILURE;
             }
@@ -91,12 +83,12 @@ final class ThemeResetLayout extends Command
             $themeManager->enable($theme, 1);
             $themeManager->disable($theme);
         } catch (\Exception $e) {
-            $io->error(sprintf('The selected theme "%s" is invalid', $theme));
+            $this->io->error(sprintf('The selected theme "%s" is invalid', $theme));
 
             return self::COMMAND_FAILURE;
         }
 
-        $io->success(sprintf('Theme "%s" has been successfully reset.', $theme));
+        $this->io->success(sprintf('Theme "%s" has been successfully reset.', $theme));
 
         return 0;
     }

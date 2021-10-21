@@ -23,7 +23,6 @@ namespace FOP\Console\Commands;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Tools;
 
 final class GenerateHtaccess extends Command
@@ -43,13 +42,12 @@ final class GenerateHtaccess extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         if (true === Tools::generateHtaccess()) {
-            $io->success('htaccess file generated with success');
+            $this->io->success('htaccess file generated with success');
 
             return 0;
         } else {
-            $io->error('An error occurs while generating .htaccess file');
+            $this->io->error('An error occurs while generating .htaccess file');
 
             return 1;
         }

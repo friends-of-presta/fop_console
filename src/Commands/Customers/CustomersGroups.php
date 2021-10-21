@@ -28,7 +28,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Validate;
 
 /**
@@ -124,12 +123,8 @@ final class CustomersGroups extends Command
         $this->groupCustomersTransfer($groupFromId, $groupToId, $selectedActionId, $output);
 
         if ($this->displaySummaryTab) {
-            // Summary  Tab :
-
-            $io = new SymfonyStyle($input, $output);
-            $io->title('Customers groups');
-
-            $io->table(
+            $this->io->title('Customers groups');
+            $this->io->table(
                 ['ID', 'Category name', 'Members Nb', 'Reduction (%)'],
                 $this->formatGroupsInformations(
                     Group::getGroups($this->getDefautlLang(), false), // refresh groups to avoid old datas.

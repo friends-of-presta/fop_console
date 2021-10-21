@@ -25,13 +25,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class UnhookModule extends Command
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function configure(): void
     {
         $this->setName('fop:modules:unhook')
@@ -51,13 +47,12 @@ final class UnhookModule extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $helper = $this->getHelper('question');
 
         $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want ungraft ?(name)</question>'));
         $moduleInst = \Module::getInstanceByName($moduleName);
         if (!($moduleInst instanceof \Module)) {
-            $io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
+            $this->io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
 
             return 1;
         }
@@ -67,11 +62,11 @@ final class UnhookModule extends Command
 
         if (is_int($hookId) && $hookId > 0) {
             $moduleInst->unregisterHook($hookName);
-            $io->getErrorStyle()->success('Your module ' . $moduleName . ' has been ungraft on hook ' . $hookName);
+            $this->io->getErrorStyle()->success('Your module ' . $moduleName . ' has been ungraft on hook ' . $hookName);
 
             return 0;
         } else {
-            $io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
+            $this->io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
 
             return 1;
         }

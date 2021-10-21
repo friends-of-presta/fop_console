@@ -29,7 +29,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Filesystem\Filesystem;
 
 final class Export extends Command
@@ -59,7 +58,6 @@ final class Export extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
         $configuration_keys = (array) $input->getArgument('keys');
         $output_file = $input->getOption('file');
         $force_mode = $input->getOption('force');
@@ -67,9 +65,9 @@ final class Export extends Command
 
         if ($fs->exists($output_file)
             && !$force_mode
-            && !$io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
+            && !$this->io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
         ) {
-            $io->comment($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
+            $this->io->comment($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
 
             return 0;
         }
@@ -86,7 +84,7 @@ final class Export extends Command
             }
 
             if (!$configuration_service->has($key)) {
-                $io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
+                $this->io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
                 continue;
             }
 
@@ -101,7 +99,7 @@ final class Export extends Command
         $fs = new Filesystem();
         $fs->dumpFile($output_file, $json_export);
 
-        $io->success("configuration(s) dumped to file '{$output_file}'");
+        $this->io->success("configuration(s) dumped to file '{$output_file}'");
 
         return 1;
     }

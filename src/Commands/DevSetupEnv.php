@@ -28,15 +28,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 final class DevSetupEnv extends Command
 {
-    /**
-     * @var SymfonyStyle
-     */
-    protected $io;
-
     /**
      * @var mixed
      */
@@ -90,7 +84,6 @@ final class DevSetupEnv extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->io = new SymfonyStyle($input, $output);
         $this->helper = $this->getHelper('question');
         $this->dbi = \Db::getInstance();
         $this->crypto = new Hashing();

@@ -32,7 +32,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class GenerateAbstract extends Command
 {
@@ -48,11 +47,11 @@ abstract class GenerateAbstract extends Command
     /**
      * {@inheritdoc}
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->output = $output;
 
-        return parent::initialize($input, $output);
+        parent::initialize($input, $output);
     }
 
     /**
@@ -84,10 +83,9 @@ abstract class GenerateAbstract extends Command
     {
         $formats = $input->getArgument('format');
         $delete = $input->getOption('force');
-        $io = new SymfonyStyle($input, $output);
 
         if (false == $delete) {
-            $io->note('Only new images will be generated, to delete existing images please use the --force option');
+            $this->io->note('Only new images will be generated, to delete existing images please use the --force option');
         }
 
         $success = $this->regenerateThumbnails(static::IMAGE_TYPE, $delete, $formats);
@@ -97,12 +95,12 @@ abstract class GenerateAbstract extends Command
             if (count($this->errors)) {
                 $warningMessages = array_merge($warningMessages, $this->errors);
             }
-            $io->error($warningMessages);
+            $this->io->error($warningMessages);
 
             return 1;
         }
 
-        $io->success('Thumbnails generated with success for ' . static::IMAGE_TYPE);
+        $this->io->success('Thumbnails generated with success for ' . static::IMAGE_TYPE);
 
         return 0;
     }
