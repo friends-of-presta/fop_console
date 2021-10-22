@@ -2,7 +2,7 @@
 
 namespace FOP\Console\Tests\Unit;
 
-use FOP\Console\Validators\FOPCommandFormatsValidator;
+use FOP\Console\Tests\Validator\FOPCommandFormatsValidator;
 use PHPUnit\Framework\TestCase;
 
 class FOPCommandFormatsValidatorTest extends TestCase
