@@ -26,7 +26,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-final class UnhookModule extends Command {
+final class ModuleUnhook extends Command
+{
     protected function configure(): void
     {
         $this->setName('fop:module:unhook')

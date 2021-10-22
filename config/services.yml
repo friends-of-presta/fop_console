@@ -82,7 +82,7 @@ services:
     tags: [ console.command ]
 
   fop.console.module.unhook.command:
-    class: FOP\Console\Commands\Module\ModuleUnHook
+    class: FOP\Console\Commands\Module\ModuleUnhook
     tags: [ console.command ]
 
   fop.console.module.hook.command:
