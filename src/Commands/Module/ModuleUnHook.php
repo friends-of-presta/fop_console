@@ -26,13 +26,13 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class ModuleHook extends Command
+class ModuleUnHook extends Command
 {
     protected function configure(): void
     {
-        $this->setName('fop:module:hook')
-            ->setDescription('Attach one module on specific hook')
-            ->setHelp('This command allows you to attach a module on one hook');
+        $this->setName('fop:module:unhook')
+            ->setDescription('Detach module from hook')
+            ->setHelp('This command allows you to detach a module from one hook');
         $this->addUsage('--module=[modulename]');
         $this->addUsage('--hook=[hookname]');
         $this->addOption('module', null, InputOption::VALUE_OPTIONAL);
@@ -49,8 +49,7 @@ class ModuleHook extends Command
     {
         $helper = $this->getHelper('question');
 
-        $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want graft ?(name)</question>'));
-
+        $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want ungraft ?(name)</question>'));
         $moduleInst = \Module::getInstanceByName($moduleName);
         if (!($moduleInst instanceof \Module)) {
             $this->io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
@@ -58,12 +57,12 @@ class ModuleHook extends Command
             return 1;
         }
 
-        $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want graft ' . $moduleName . ' ?(name)</question>'));
+        $hookName = $input->getOption('hook') ?? $helper->ask($input, $output, new Question('<question>On wich hook you want ungraft ' . $moduleName . ' ?(name)</question>'));
         $hookId = (int) \Hook::getIdByName($hookName);
 
         if (is_int($hookId) && $hookId > 0) {
-            $moduleInst->registerHook($hookName);
-            $this->io->getErrorStyle()->success('Your module ' . $moduleName . ' has been graft on hook ' . $hookName);
+            $moduleInst->unregisterHook($hookName);
+            $this->io->getErrorStyle()->success('Your module ' . $moduleName . ' has been ungraft on hook ' . $hookName);
 
             return 0;
         } else {

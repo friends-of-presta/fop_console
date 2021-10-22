@@ -20,11 +20,7 @@
 
 namespace FOP\Console\Commands\Image;
 
-<<<<<<< HEAD:src/Commands/Images/GenerateProducts.php
-final class GenerateProducts extends GenerateAbstract
-=======
 class ImageGenerateProducts extends ImageGenerateAbstract
->>>>>>> 55a1e0b... Rearrange src/commands directory following the new conventions:src/Commands/Image/ImageGenerateProducts.php
 {
     /** @var string Image type */
     const IMAGE_TYPE = 'products';

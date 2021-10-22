@@ -20,11 +20,7 @@
 
 namespace FOP\Console\Commands\Image;
 
-<<<<<<< HEAD:src/Commands/Images/GenerateCategories.php
-final class GenerateCategories extends GenerateAbstract
-=======
 class ImageGenerateCategories extends ImageGenerateAbstract
->>>>>>> 55a1e0b... Rearrange src/commands directory following the new conventions:src/Commands/Image/ImageGenerateCategories.php
 {
     /** @var string Image type */
     const IMAGE_TYPE = 'categories';

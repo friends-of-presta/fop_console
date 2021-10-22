@@ -31,11 +31,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-<<<<<<< HEAD:src/Commands/MakeOverride.php
-final class MakeOverride extends Command
-=======
 class OverrideMake extends Command
->>>>>>> 55a1e0b... Rearrange src/commands directory following the new conventions:src/Commands/Override/OverrideMake.php
 {
     protected function configure(): void
     {

@@ -29,11 +29,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-<<<<<<< HEAD:src/Commands/Modules/NonEssentialModules.php
-final class NonEssentialModules extends Command
-=======
 class ModuleNonEssential extends Command
->>>>>>> 55a1e0b... Rearrange src/commands directory following the new conventions:src/Commands/Module/ModuleNonEssential.php
 {
     /**
      * @var array possible allowed command
