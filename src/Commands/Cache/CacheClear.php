@@ -40,6 +40,7 @@ final class CacheClear extends Command
     {
         $this
             ->setName('fop:cache:clear')
+            ->setAliases(['fop:clear-cache'])
             ->setDescription('Replace the cache directory with an empty one.')
             ->setHelp('This command allows you to quickly remove the cache files.');
     }

@@ -31,6 +31,7 @@ class ModuleHook extends Command
     protected function configure(): void
     {
         $this->setName('fop:module:hook')
+            ->setAliases(['fop:modules:hook'])
             ->setDescription('Attach one module on specific hook')
             ->setHelp('This command allows you to attach a module on one hook');
         $this->addUsage('--module=[modulename]');

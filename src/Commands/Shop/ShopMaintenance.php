@@ -43,6 +43,7 @@ final class ShopMaintenance extends Command
     {
         $this
             ->setName('fop:shop:maintenance')
+            ->setAliases(['fop:maintenance'])
             ->setDescription('Configure maintenance mode')
             ->setHelp('This command allows you to get status or change maintenance mode')
             ->addArgument(

@@ -61,6 +61,7 @@ abstract class ImageGenerateAbstract extends Command
     {
         $this
             ->setName('fop:image:generate:' . static::IMAGE_TYPE)
+            ->setAliases(['fop:images:generate:' . static::IMAGE_TYPE])
             ->setDescription('Regenerate ' . static::IMAGE_TYPE . ' thumbnails')
             ->addArgument(
                 'format',

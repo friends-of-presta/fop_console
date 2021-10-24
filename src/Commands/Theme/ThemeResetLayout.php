@@ -36,6 +36,7 @@ final class ThemeResetLayout extends Command
     {
         $this
             ->setName('fop:theme:reset-layout')
+            ->setAliases(['fop:theme-reset'])
             ->setDescription('Reset current theme layout')
             ->setHelp('Disable & re-enable theme configuration')
             ->addArgument('theme', InputArgument::OPTIONAL, 'Theme on which the action will be executed')

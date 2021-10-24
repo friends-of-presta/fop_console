@@ -56,6 +56,7 @@ final class GroupTransferCustomers extends Command
     {
         $this
             ->setName('fop:group:transfer-customers')
+            ->setAliases(['fop:customer-groups'])
             ->setDescription('Transfer or add customers from one group to an other.')
             ->setHelp('Transfer or add customers from one group to an other.')
         ;

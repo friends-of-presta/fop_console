@@ -49,6 +49,7 @@ final class ModuleRename extends Command
     {
         $this
             ->setName('fop:module:rename')
+            ->setAliases(['fop:modules:rename'])
             ->setDescription('Rename module')
 
             ->addUsage('[--new-author] <AuthorNamePascalCased>')

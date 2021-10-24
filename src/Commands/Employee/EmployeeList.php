@@ -32,6 +32,7 @@ final class EmployeeList extends Command
     {
         $this
             ->setName('fop:employee:list')
+            ->setAliases(['fop:employees:list'])
             ->setDescription('List employees')
             ->setHelp('List employees registered in admin');
     }

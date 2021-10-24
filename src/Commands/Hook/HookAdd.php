@@ -35,6 +35,7 @@ final class HookAdd extends Command
     protected function configure(): void
     {
         $this->setName('fop:hook:add')
+            ->setAliases(['fop:add-hook'])
             ->setDescription('Create hook in database')
             ->setHelp('This command allows you create a new hook in database,
             you dont need to graft a module on it!');

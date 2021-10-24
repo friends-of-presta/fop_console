@@ -46,6 +46,7 @@ class ModuleNonEssential extends Command
     {
         $this
             ->setName('fop:module:non-essential')
+            ->setAliases(['fop:modules:non-essential'])
             ->setDescription('Manage non-essential modules.')
             ->setHelp('This command Uninstall or Install non-essential modules.')
             ->addArgument(

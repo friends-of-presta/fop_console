@@ -51,6 +51,7 @@ class EnvironmentSetupDev extends Command
     protected function configure(): void
     {
         $this->setName('fop:environment:setup-dev')
+            ->setAliases(['fop:dev:setup-env'])
             ->setDescription('Install your project for local developement')
             ->setHelp('<info>This command update database configuration with dev parameters (url, ssl, passwords). </info>' . PHP_EOL .
                         '<info>How to use : </info>' . PHP_EOL .

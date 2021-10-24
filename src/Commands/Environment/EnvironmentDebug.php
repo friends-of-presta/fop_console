@@ -40,6 +40,7 @@ class EnvironmentDebug extends Command
     {
         $this
             ->setName('fop:environment:debug')
+            ->setAliases(['fop:debug-mode'])
             ->setDescription('Enable or disable debug mode.')
             ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
             ->addArgument(

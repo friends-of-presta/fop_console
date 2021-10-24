@@ -35,6 +35,7 @@ final class ShopStatus extends Command
     {
         $this
             ->setName('fop:shop:status')
+            ->setAliases(['fop:shop-status'])
             ->setDescription('Display shops statuses')
             ->addArgument('id_shop', InputArgument::OPTIONAL, 'Specify an id_shop')
             ->addArgument('action', InputArgument::OPTIONAL, 'enable or disable');

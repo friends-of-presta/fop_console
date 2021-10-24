@@ -41,6 +41,7 @@ final class ExportData extends Command
     {
         $this
             ->setName('fop:export:data')
+            ->setAliases(['fop:export'])
             ->setDescription('Allows to export data in XML')
             ->setHelp('This command allows you to export most of your data in XML')
             ->addArgument('model', InputArgument::OPTIONAL, 'The Object Model to export', 'Product')

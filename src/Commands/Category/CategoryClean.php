@@ -45,6 +45,7 @@ final class CategoryClean extends Command
     protected function configure(): void
     {
         $this->setName('fop:category:clean')
+            ->setAliases(['fop:category'])
             ->setDescription('Manage your categories, this command don\'t support multishop')
             ->setHelp('This command :'
                 . PHP_EOL . '   - Enable or disable a category.'

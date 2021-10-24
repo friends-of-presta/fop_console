@@ -42,6 +42,7 @@ final class ContainerCheck extends Command
     {
         $this
             ->setName('fop:container:check')
+            ->setAliases(['fop:check-container'])
             ->setDescription('Health check of the Service Container')
             ->setHelp('This command instantiate every service of Symfony in Console Context: will it works as expected ?')
         ;

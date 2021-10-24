@@ -34,6 +34,7 @@ final class ProductLatest extends Command
     {
         $this
             ->setName('fop:product:latest')
+            ->setAliases(['fop:latest-products'])
             ->setDescription('Displays the latest products')
             ->setHelp('This command allows you to display the latest products')
         ;

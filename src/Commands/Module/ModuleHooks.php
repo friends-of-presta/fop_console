@@ -33,6 +33,7 @@ final class ModuleHooks extends Command
     {
         $this
             ->setName('fop:module:hooks')
+            ->setAliases(['fop:modules:hooks'])
             ->setDescription('Get module hooks list')
             ->addArgument(
                 'name',

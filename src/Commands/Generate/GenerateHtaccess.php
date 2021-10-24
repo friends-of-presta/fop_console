@@ -34,6 +34,7 @@ final class GenerateHtaccess extends Command
     {
         $this
             ->setName('fop:generate:htaccess')
+            ->setAliases(['fop:debug-mode'])
             ->setDescription('Generate the .htaccess file');
     }
 
