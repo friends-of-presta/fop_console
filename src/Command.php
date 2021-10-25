@@ -47,7 +47,7 @@ abstract class Command extends ContainerAwareCommand
         if (isset($_SERVER['argv']) && count($_SERVER['argv']) > 1
             && in_array($_SERVER['argv'][1], $this->getAliases())
         ) {
-            $this->io->warning("This command has a new name : {$this->getName()}. The alias you entered is deprecated and will be deleted soon.");
+            $this->io->warning("This command has a new name : {$this->getName()}. The alias you entered is deprecated and will be deleted in version 2.");
         }
 
         parent::initialize($input, $output);
