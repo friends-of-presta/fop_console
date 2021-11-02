@@ -3,10 +3,10 @@ parameters:
 		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Console\\\\Application\\:\\:getKernel\\(\\)\\.$#"
 			count: 1
-			path: ../src/Commands/CheckServiceContainer.php
+			path: ../src/Commands/Container/ContainerCheck.php
 
 # That's fine, dump() can handle multiple values - This is not an error. https://github.com/symfony/var-dumper/blob/3.4/Resources/functions/dump.php
 		-
 			message: "#^Function dump invoked with 2 parameters, 1 required\\.$#"
 			count: 1
-			path: ../src/Commands/Configuration/Export.php
+			path: ../src/Commands/Configuration/ConfigurationExport.php

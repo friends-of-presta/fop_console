@@ -13,6 +13,11 @@
       "FOP\\Console\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "FOP\\Console\\Tests\\": "tests/"
+    }
+  },
   "require": {
     "php": "^7.1",
     "laminas/laminas-code": "3.4.1",
@@ -26,7 +31,8 @@
   "require-dev": {
     "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
-    "phpstan/phpstan": "^0.12.58"
+    "phpstan/phpstan": "^0.12.58",
+    "phpunit/phpunit": "^7.0"
   },
   "scripts": {
     "fop_check": [

@@ -1,0 +1,10 @@
+Module,ModuleRename,fop:module:rename,fop.console.module.rename.command,true
+Group,TransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
+,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
+Group,Group,fop:group,fop.console.group.command,false
+group,groupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
+group,groupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
+Group,GroupTransferCustomers,fop:group:transfercustomers,fop.console.group.transfer_customers.command,false
+Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfercustomers.command,false
+Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
+Group,GroupTransferCustomers,fop:group:transfer:customers,fop.console.group.transfer.customers.command,true
