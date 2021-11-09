@@ -33,7 +33,7 @@ class PhpStanCustomRule implements Rule
     private $setName_line;
 
     /** @var PhpParser\Node\Stmt\ClassMethod */
-    private $method;
+    private $node;
 
     /** @var \PHPStan\Analyser\Scope */
     private $scope;
@@ -68,7 +68,7 @@ class PhpStanCustomRule implements Rule
     {
         // filtering processed earlier @see self::getNodeType()
         // $node is a Stmt\ClassMethod
-        $this->method = $node;
+        $this->node = $node;
         $this->scope = $scope;
 
         /** @var Stmt\ClassMethod $node */
@@ -81,11 +81,18 @@ class PhpStanCustomRule implements Rule
         $commandDomain = $commandClassName = $commandServiceName = 'not set';
         $commandName = $this->getCommandName();
 
-        dump($commandName);
-
+//        dump($commandName);
+        if (!$commandName) {
+            dump('nom de commande non trouvé pour '.$this->scope->getFile() );
+            dump($this->scope->getFile());
+            dump($commandName);
+        }
+//        else {
+//            dump('ok');
+//        }
         $validationResult = $this->formatsValidator->validate($commandDomain, $commandClassName, $commandName, $commandServiceName);
-        dump($validationResult);
-        echo ' wip Ready to check ... '.PHP_EOL;
+//        dump($validationResult);
+//        echo ' wip Ready to check ... '.PHP_EOL;
         return [];
 
         $class_name = (string) str_replace('FOP\Console\Commands\\', '', $scope->getClassReflection()->getName()); // with namespace amputé de \FOP\Console
@@ -115,30 +122,24 @@ class PhpStanCustomRule implements Rule
     }
 
     /**
-     * Get the analysed console command name.
+     * Get the console command name.
      *
-     * e.g `fop:module:hooks`
-     * @todo Is it a good idea to instanciate the command to find it's name ?
-     *       Or should the analyse remain only static ?
-     * Probably should only be static analyse.
+     * e.g. fop:domain:action
+     * To find it, we search for the `setName` function call into the `configure` method.
+     *
+     * Possible future problem : a methode setName() is used in the configure method but not on 'this' ...
      * @return string
      */
     private function getCommandName() : string
     {
-        $className = $this->scope->getClassReflection()->getName();
-        $FopConsoleCommand = new $className;
-        /** @var \FOP\Console\Command $FopConsoleCommand */
-        return $FopConsoleCommand->getName();
+        $nodeFinder = new PhpParser\NodeFinder();
 
-        // methode du POC - on va chercher l'appel à setName()
-        $finder = new PhpParser\NodeFinder();
-        // obtenir l'appel de la methode setName
-        $cb = function (Node $node) {
-            /** @var Expr\MethodCall $node */
+        $searchSetNameMethodCallFilter = function (Node $node) {
             if ($node->getType() !== 'Expr_MethodCall') {
                 return false;
             }
 
+            /** @var Expr\MethodCall $node */
             if ($node->name->toString() !== 'setName') {
                 return false;
             }
@@ -146,23 +147,27 @@ class PhpStanCustomRule implements Rule
             return true;
         };
         /** @var Expr\MethodCall $setNameNode */
-        $setNameNode = $finder->findFirst($node->getStmts(), $cb);
+
+        $setNameNode = $nodeFinder->findFirst($this->node->getStmts(), $searchSetNameMethodCallFilter);
 
         if (is_null($setNameNode)) {
-            return null;
+            return '';
         }
 
         $this->setName_line = $setNameNode->getLine();
 
+        // we might filter false positive by checking argument type.
         if ('Scalar_String' !== $setNameNode->args[0]->value->getType()) {
-            return null;
+            $this->debug('setName() found but argument is not a string.');
+            $this->debugNode($setNameNode);
+            return '';
         }
 
 //        $d = new NodeDumper(); // pour debug
 //        echo dump();
 //        throw new \Exception('ok si scalar_string mais sinon ?? cf Image\Abstract : proceder par reflexion ?');
 
-        return $setNameNode->args[0]->value->value ?? null;
+        return $setNameNode->args[0]->value->value ?? '';
     }
 
     /**
@@ -240,25 +245,29 @@ class PhpStanCustomRule implements Rule
     private function nodeIsConfigureMethod() : bool
     {
 //        $this->debug(__FUNCTION__.' : '.$this->method->name->toString());
-        return 'configure' === $this->method->name->toString();
+        return 'configure' === $this->node->name->toString();
     }
 
     private function nodeIsInClassFopCommand() : bool
     {
         $class = $this->scope->getClassReflection();
-        $this->debug($class->getName());
         if(is_null($class)) {
             throw new \LogicException('This rule is supposed to be executed on a class\' method but no reflected class found.');
         }
 
         /** @var $class \PHPStan\Reflection\ClassReflection */
-        $this->debug($class->getParentClassesNames());
         return in_array(self::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
     }
 
     private function debug($output): void {
         $this->verbose && var_export($output);
         $this->verbose && var_export(PHP_EOL);
+    }
+
+    private function debugNode($node)
+    {
+        $nd = new NodeDumper();
+        dump($nd->dump($node));
     }
 
 }
