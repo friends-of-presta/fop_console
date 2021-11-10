@@ -1,13 +1,29 @@
 <?php
 /**
- * @todo header fop
+ * Copyright (c) Since 2020 Friends of Presta
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file docs/licenses/LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to infos@friendsofpresta.org so we can send you a copy immediately.
+ *
+ * @author    Friends of Presta <infos@friendsofpresta.org>
+ * @copyright since 2020 Friends of Presta
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
+
 declare(strict_types=1);
 
 namespace FOP\Console\DevTools;
 
 use Doctrine\Common\Inflector\Inflector;
-use FOP\Console\Tests\Validator\FOPCommandFormatsValidator;
+use FOP\Console\Tests\Validator\PhpStanNamesConsistencyService;
 use PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -41,11 +57,12 @@ class PhpStanCustomRule implements Rule
     /** @var bool For dev/debug purpose only */
     private $verbose = true;
 
-    /** @var \FOP\Console\Tests\Validator\FOPCommandFormatsValidator */
-    private $formatsValidator;
+    /** @var \FOP\Console\Tests\Validator\PhpStanNamesConsistencyService */
+    private $validatorService;
 
-    public function __construct(FOPCommandFormatsValidator $formatsValidator) {
-        $this->formatsValidator = $formatsValidator;
+    public function __construct(PhpStanNamesConsistencyService $validatorService)
+    {
+        $this->validatorService = $validatorService;
     }
 
     /**
@@ -71,54 +88,46 @@ class PhpStanCustomRule implements Rule
         $this->node = $node;
         $this->scope = $scope;
 
-        /** @var Stmt\ClassMethod $node */
-        if( !$this->nodeIsConfigureMethod()
-            || !$this->nodeIsInClassFopCommand() )
-        {
+        /* @var Stmt\ClassMethod $node */
+        if (!$this->nodeIsConfigureMethod()
+            || !$this->nodeIsInClassFopCommand()) {
             return [];
         }
 
-        $commandDomain = $commandClassName = $commandServiceName = 'not set';
+        $commandServiceName = 'not set';
         $commandName = $this->getCommandName();
 
-//        dump($commandName);
         if (!$commandName) {
-            dump('nom de commande non trouvé pour '.$this->scope->getFile() );
-            dump($this->scope->getFile());
-            dump($commandName);
+            if ($this->verbose) {
+                dump($this->scope->getFile());
+                dump($commandName);
+            }
+
+            return [RuleErrorBuilder::message('Console command name can not be extracted. Therefore consistency with classname can\'t be checked.')
+                ->tip('Maybe you could use $this->setName() with a plain string to fix this error.')
+                ->build(),
+            ];
         }
-//        else {
-//            dump('ok');
-//        }
-        $validationResult = $this->formatsValidator->validate($commandDomain, $commandClassName, $commandName, $commandServiceName);
+
+        $commandDomain = '?'; // where should it be found ?
+        $commandClassName = $scope->getClassReflection()->getName();
+        $commandServiceName = $this->getServiceNameForClass($commandClassName);
+
+        $this->validatorService->ditBonjour();
+//        $validationResult = $this->validatorService->validate($commandDomain, $commandClassName, $commandName, $commandServiceName);
+
 //        dump($validationResult);
 //        echo ' wip Ready to check ... '.PHP_EOL;
         return [];
 
         $class_name = (string) str_replace('FOP\Console\Commands\\', '', $scope->getClassReflection()->getName()); // with namespace amputé de \FOP\Console
-        $relative_file_path = (string) substr($scope->getFile(), strrpos($scope->getFile(), '/src/Commands/') + strlen('/src/Commands/'));
-
-        if (!$command_name) {
-            return [RuleErrorBuilder::message('Impossible de determiner le nom de la commande')
-                ->tip('Utiliser directement une chaine de caractères ou demander de l\'aide sur github')
-                ->line($this->setName_line)
-                ->build()->getMessage(), ];
-        }
-
-        // test du format du nom de commande
-        // @todo peut être amélioré en utilisant un regexp, cf checkConsistency()
-        if (strpos($command_name, 'fop:') !== 0) {
-            $node->setAttribute('startLine', $this->setName_line);
-
-            return [RuleErrorBuilder::message('Le nom de fonction doit commencer par "fop:" | Trouvé : ' . $command_name)->build()->getMessage()];
-        }
-
-        $errors = $this->checkConsistency($relative_file_path, $class_name, $command_name) ?? [];
-        array_walk($errors, function (string &$error) {
-            $error = RuleErrorBuilder::message($error)->nonIgnorable()->build();
-        });
 
         return $errors;
+    }
+
+    private function getServiceNameForClass(string $className): string
+    {
+        return 'nop'; // @todo implement me
     }
 
     /**
@@ -128,9 +137,10 @@ class PhpStanCustomRule implements Rule
      * To find it, we search for the `setName` function call into the `configure` method.
      *
      * Possible future problem : a methode setName() is used in the configure method but not on 'this' ...
+     *
      * @return string
      */
-    private function getCommandName() : string
+    private function getCommandName(): string
     {
         $nodeFinder = new PhpParser\NodeFinder();
 
@@ -147,7 +157,6 @@ class PhpStanCustomRule implements Rule
             return true;
         };
         /** @var Expr\MethodCall $setNameNode */
-
         $setNameNode = $nodeFinder->findFirst($this->node->getStmts(), $searchSetNameMethodCallFilter);
 
         if (is_null($setNameNode)) {
@@ -160,6 +169,7 @@ class PhpStanCustomRule implements Rule
         if ('Scalar_String' !== $setNameNode->args[0]->value->getType()) {
             $this->debug('setName() found but argument is not a string.');
             $this->debugNode($setNameNode);
+
             return '';
         }
 
@@ -197,7 +207,7 @@ class PhpStanCustomRule implements Rule
             // check that values are correctly extracted
             $rebuild_command = sprintf('fop:%s:%s', $command_domain, $command_command);
             if ($rebuild_command !== $command_name) {
-                dump($command_name, $command_command, $command_domain); /** @phpstan-ignore-error */
+                dump($command_name, $command_command, $command_domain); /* @phpstan-ignore-error */
                 throw new \Exception('Failed to extract command parts');
             }
             unset($rebuild_command);
@@ -242,24 +252,25 @@ class PhpStanCustomRule implements Rule
         return str_replace('_', '-', $inflector->tableize(basename($relative_file_path, '.php'))); // CommandName
     }
 
-    private function nodeIsConfigureMethod() : bool
+    private function nodeIsConfigureMethod(): bool
     {
 //        $this->debug(__FUNCTION__.' : '.$this->method->name->toString());
         return 'configure' === $this->node->name->toString();
     }
 
-    private function nodeIsInClassFopCommand() : bool
+    private function nodeIsInClassFopCommand(): bool
     {
         $class = $this->scope->getClassReflection();
-        if(is_null($class)) {
+        if (is_null($class)) {
             throw new \LogicException('This rule is supposed to be executed on a class\' method but no reflected class found.');
         }
 
-        /** @var $class \PHPStan\Reflection\ClassReflection */
+        /* @var $class \PHPStan\Reflection\ClassReflection */
         return in_array(self::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
     }
 
-    private function debug($output): void {
+    private function debug($output): void
+    {
         $this->verbose && var_export($output);
         $this->verbose && var_export(PHP_EOL);
     }
@@ -269,7 +280,6 @@ class PhpStanCustomRule implements Rule
         $nd = new NodeDumper();
         dump($nd->dump($node));
     }
-
 }
 
 class CommandName
