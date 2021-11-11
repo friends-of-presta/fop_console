@@ -69,11 +69,10 @@ class PhpStanCustomRule implements Rule
     }
 
     /**
-     * @param Stmt\ClassMethod $node
-     * @param Scope $scope
+     * @param \PhpParser\Node $node
+     * @param \PHPStan\Analyser\Scope $scope
      *
-     * @return array<string>
-     *
+     * @return array<int, \PHPStan\Rules\RuleError>
      * @throws \PHPStan\ShouldNotHappenException
      */
     public function processNode(Node $node, Scope $scope): array
@@ -89,7 +88,6 @@ class PhpStanCustomRule implements Rule
             return [];
         }
 
-        $commandServiceName = 'not set';
         $commandName = $this->getCommandName();
 
         if (!$commandName) {
@@ -104,9 +102,14 @@ class PhpStanCustomRule implements Rule
             ];
         }
 
-        $commandDomain = '?'; // where should it be found ?
         $commandClassName = $scope->getClassReflection()->getName();
         $this->validatorService->validateNames($commandClassName, $commandName);
+        $errors = $this->validatorService->errors();
+
+//        dump($commandClassName); // FOP\Console\Commands\Product\ProductLatest
+
+        // @todo lancer une vingtaine de fois par fichier, pas normal.
+        dump($errors);
 
         return [];
     }
@@ -173,8 +176,8 @@ class PhpStanCustomRule implements Rule
 
     private function debug($output): void
     {
-        $this->verbose && var_export($output);
-        $this->verbose && var_export(PHP_EOL);
+        $this->verbose && var_export($output); /* @phpstan-ignore-line */
+        $this->verbose && var_export(PHP_EOL); /* @phpstan-ignore-line */
     }
 
     private function debugNode($node)

@@ -24,6 +24,13 @@ namespace FOP\Console\Tests\Validator;
 
 class PhpStanNamesConsistencyService
 {
+    /**
+     * @var string Regular expression for command's fully qualified class name
+     *
+     * @todo this should be in module's main file, fop_console.php
+     */
+    private const fqcnRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
+
     /** @var string */
     private $yamlServicesFilePath;
 
@@ -36,8 +43,54 @@ class PhpStanNamesConsistencyService
         $this->validator = $validator;
     }
 
-    public function ditBonjour()
+    public function validateNames(string $fullyQualifiedClassName, string $command): bool
     {
-        dump('Bonjour, le fichier yaml c ' . $this->yamlServicesFilePath);
+        return $this->validator->validate(
+            $this->extractDomainFromFQCN($fullyQualifiedClassName),
+            $this->extractActionFromFQCN($fullyQualifiedClassName),
+            $command,
+            $this->getServiceNameForFQCN($fullyQualifiedClassName));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function errors(): array
+    {
+        return $this->validator->getValidationMessages();
+    }
+
+    private function getServiceNameForFQCN(string $fullyQualifiedClassName): string
+    {
+        return 'implement me';
+    }
+
+    /**
+     * @todo this should be in FOP\Console\Tests\Validator\FOPCommandFormatsValidator
+     */
+    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'];
+    }
+
+    /**
+     * @todo this should be in FOP\Console\Tests\Validator\FOPCommandFormatsValidator
+     */
+    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'];
+    }
+
+    /**
+     * @param string $fullyQualifiedClassName
+     *
+     * @return array{domain: string, action: string}
+     */
+    private function getFQCNRegexpMatches(string $fullyQualifiedClassName): array
+    {
+        preg_match(self::fqcnRegexp, $fullyQualifiedClassName, $matches);
+        $dummyCapture = 'not extracted from regexp.';
+
+        return array_merge(['domain' => $dummyCapture, 'action' => $dummyCapture], $matches ?? []);
     }
 }
