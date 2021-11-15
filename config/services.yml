@@ -30,7 +30,7 @@ services:
     tags: [ console.command ]
 
   fop.console.employee.list.command:
-    class: \FOP\Console\Commands\Employee\EmployeeList
+    class: FOP\Console\Commands\Employee\EmployeeList
     tags: [ console.command ]
 
   fop.console.environment.debug.command:
@@ -40,7 +40,7 @@ services:
   fop.console.environment.setup_dev.command:
     class: FOP\Console\Commands\Environment\EnvironmentSetupDev
     tags: [ console.command ]
-      
+
   fop.console.export.data.command:
     class: FOP\Console\Commands\Export\ExportData
     tags: [ console.command ]
