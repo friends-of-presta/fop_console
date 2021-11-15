@@ -49,9 +49,6 @@ class PhpStanCustomRule implements Rule
     /** @var \PHPStan\Analyser\Scope */
     private $scope;
 
-    /** @var bool For dev/debug purpose only */
-    private $verbose = true;
-
     /** @var \FOP\Console\Tests\Validator\PhpStanNamesConsistencyService */
     private $validatorService;
 
@@ -91,11 +88,6 @@ class PhpStanCustomRule implements Rule
         $commandName = $this->getCommandName();
 
         if (!$commandName) {
-            if ($this->verbose) {
-                dump($this->scope->getFile());
-                dump($commandName);
-            }
-
             return [RuleErrorBuilder::message('Console command name can not be extracted. Therefore consistency with classname can\'t be checked.')
                 ->tip('Maybe you could use $this->setName() with a plain string to fix this error.')
                 ->build(),
@@ -103,13 +95,10 @@ class PhpStanCustomRule implements Rule
         }
 
         $commandClassName = $scope->getClassReflection()->getName();
-        $this->validatorService->validateNames($commandClassName, $commandName);
-        $errors = $this->validatorService->errors();
-
-//        dump($commandClassName); // FOP\Console\Commands\Product\ProductLatest
-
-        // @todo lancer une vingtaine de fois par fichier, pas normal.
-        dump($errors);
+        $consistencyValidation = $this->validatorService->validateNames($commandClassName, $commandName);
+        if(!$consistencyValidation) {
+            return array_map(static function (string $message) { return RuleErrorBuilder::message($message)->build();}, $this->validatorService->errors());
+        }
 
         return [];
     }
@@ -149,8 +138,8 @@ class PhpStanCustomRule implements Rule
 
         // we might filter false positive by checking argument type.
         if ('Scalar_String' !== $setNameNode->args[0]->value->getType()) {
-            $this->debug('setName() found but argument is not a string.');
-            $this->debugNode($setNameNode);
+//            $this->debug('setName() found but argument is not a string.');
+//            $this->debugNode($setNameNode);
 
             return '';
         }

@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
+use Symfony\Component\Yaml\Yaml;
+
 class PhpStanNamesConsistencyService
 {
     /**
@@ -89,7 +91,7 @@ class PhpStanNamesConsistencyService
     private function getFQCNRegexpMatches(string $fullyQualifiedClassName): array
     {
         preg_match(self::fqcnRegexp, $fullyQualifiedClassName, $matches);
-        $dummyCapture = 'not extracted from regexp.';
+        $dummyCapture = 'not extracted from regexp.'; // @todo throw Exception instead ? Better fail silently in phpstan rule ?
 
         return array_merge(['domain' => $dummyCapture, 'action' => $dummyCapture], $matches ?? []);
     }
