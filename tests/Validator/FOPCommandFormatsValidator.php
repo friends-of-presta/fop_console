@@ -43,6 +43,7 @@ class FOPCommandFormatsValidator
         string $commandName,
         string $commandServiceName
     ): bool {
+        $this->validationMessages = [];
         if (empty($commandDomain)) {
             $this->addValidationMessage(
                 $commandClassName,
