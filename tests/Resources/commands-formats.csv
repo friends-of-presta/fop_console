@@ -9,3 +9,5 @@ Group,GroupTransferCustomers,fop:group:transfercustomers,fop.console.group.trans
 Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfercustomers.command,false
 Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
 Group,GroupTransferCustomers,fop:group:transfer:customers,fop.console.group.transfer.customers.command,true
+About,Version,fop:about:version,fop.console.version.command,false
+About,AboutVersion,fop:about:version,fop.console.about.version.command,true
