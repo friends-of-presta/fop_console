@@ -1,3 +1,4 @@
+Domain,DomainCommand,fop:domain:command,fop.console.domain.command.command,true
 Module,ModuleRename,fop:module:rename,fop.console.module.rename.command,true
 Group,TransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
 ,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
