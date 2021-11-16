@@ -44,13 +44,14 @@ class FOPCommandFormatsValidator
         string $commandServiceName
     ): bool {
         $this->validationMessages = [];
+        $success = true;
         if (empty($commandDomain)) {
             $this->addValidationMessage(
                 $commandClassName,
                 "Domain can't be empty."
             );
 
-            return false;
+            $success = false;
         }
 
         if (strpos($commandClassName, $commandDomain) !== 0) {
@@ -59,7 +60,7 @@ class FOPCommandFormatsValidator
                 "Domain '$commandDomain' must be included in command class name."
             );
 
-            return false;
+            $success = false;
         }
 
         $commandAction = str_replace($commandDomain, '', $commandClassName);
@@ -70,21 +71,21 @@ class FOPCommandFormatsValidator
                 "Action can't be empty."
             );
 
-            return false;
+            $success = false;
         }
 
         $commandDomain = ucfirst($commandDomain);
         $commandAction = ucfirst($commandAction);
 
         if (!$this->isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction)) {
-            return false;
+            $success = false;
         }
 
         if (!$this->isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction)) {
-            return false;
+            $success = false;
         }
 
-        return true;
+        return $success;
     }
 
     private function isCommandNameValid(string $commandClassName, string $commandName, string $commandDomain, string $commandAction): bool
