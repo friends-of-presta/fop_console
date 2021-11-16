@@ -25,7 +25,7 @@ namespace FOP\Console\Tests\Validator;
 class FOPCommandFormatsValidator
 {
     /**
-     * @var array Validation messages
+     * @var array<int, string> Validation messages
      */
     private $validationMessages = [];
 
@@ -56,7 +56,7 @@ class FOPCommandFormatsValidator
         if (strpos($commandClassName, $commandDomain) !== 0) {
             $this->addValidationMessage(
                 $commandClassName,
-                "Domain $commandDomain must be included in command class name."
+                "Domain '$commandDomain' must be included in command class name."
             );
 
             return false;
@@ -87,7 +87,7 @@ class FOPCommandFormatsValidator
         return true;
     }
 
-    private function isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction)
+    private function isCommandNameValid(string $commandClassName, string $commandName, string $commandDomain, string $commandAction): bool
     {
         // Command name pattern = fop:command-domain:command[:-]action
         $expectedCommandNamePattern = strtolower(
@@ -111,7 +111,7 @@ class FOPCommandFormatsValidator
         return true;
     }
 
-    private function isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction)
+    private function isCommandServiceNameValid(string $commandClassName, string $commandServiceName, string $commandDomain, string $commandAction): bool
     {
         // Command service name pattern = fop.console.command_domain.command[\._]action.command
         $expectedCommandServiceNamePattern = strtolower(
@@ -136,17 +136,25 @@ class FOPCommandFormatsValidator
         return true;
     }
 
-    private function getWords($subject)
+    /**
+     * @param string $subject
+     *
+     * @return array<string>|false
+     */
+    private function getWords(string $subject)
     {
         return preg_split('/(?=[A-Z])/', $subject, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    private function addValidationMessage(string $command, string $message)
+    private function addValidationMessage(string $command, string $message): void
     {
         $this->validationMessages[] = "[$command] => " . $message;
     }
 
-    public function getValidationMessages()
+    /**
+     * @return array<string>
+     */
+    public function getValidationMessages(): array
     {
         return $this->validationMessages;
     }
