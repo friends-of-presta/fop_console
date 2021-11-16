@@ -140,11 +140,11 @@ class FOPCommandFormatsValidator
     /**
      * @param string $subject
      *
-     * @return array<string>|false
+     * @return array<string>
      */
-    private function getWords(string $subject)
+    private function getWords(string $subject): array
     {
-        return preg_split('/(?=[A-Z])/', $subject, -1, PREG_SPLIT_NO_EMPTY);
+        return preg_split('/(?=[A-Z])/', $subject, -1, PREG_SPLIT_NO_EMPTY) ?: [''];
     }
 
     private function addValidationMessage(string $command, string $message): void
