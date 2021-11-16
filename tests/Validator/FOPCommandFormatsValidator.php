@@ -54,7 +54,7 @@ class FOPCommandFormatsValidator
             $success = false;
         }
 
-        if (strpos($commandClassName, $commandDomain) !== 0) {
+        if (empty($commandDomain) || strpos($commandClassName, $commandDomain) !== 0) {
             $this->addValidationMessage(
                 $commandClassName,
                 "Domain '$commandDomain' must be included in command class name."
