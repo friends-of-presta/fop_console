@@ -34,17 +34,11 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 
 final class ModuleRename extends Command
 {
-    /**
-     * @var SymfonyStyle
-     */
-    private $io;
-
     /**
      * @var FindAndReplaceTool
      */
@@ -120,11 +114,18 @@ final class ModuleRename extends Command
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        $this->io = new SymfonyStyle($input, $output);
         $this->findAndReplaceTool = new FindAndReplaceTool();
 
+        parent::initialize($input, $output);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
         try {
             $this->io->section('Initialization');
 
