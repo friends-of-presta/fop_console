@@ -82,6 +82,7 @@ final class ModuleRename extends Command
             ->addUsage('[--extra-replacement] <search,replace>, [-r] <search,replace>')
             ->addUsage('[--cased-extra-replacement] <PascalCasedSearch,PascalCasedReplace>, [-R] <PascalCasedSearch,PascalCasedReplace>')
             ->addUsage('[--keep-old], [-k]')
+            ->addUsage('[--install-new-module], [-i]')
 
             ->addArgument(
                 'old-name',
@@ -108,6 +109,7 @@ final class ModuleRename extends Command
                 'Extra search/replace pairs formatted with all usual case formats'
             )
             ->addOption('keep-old', 'k', InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name')
+            ->addOption('install-new-module', 'i', InputOption::VALUE_NONE, 'Install new module + composer and node_modules if configured')
 
             ->setHelp('This command allows you to replace the name of a module in the files and in the database.'
                 . PHP_EOL . 'Here are some concrete usage examples:'
@@ -136,7 +138,10 @@ final class ModuleRename extends Command
 
             $this->uninstallModules($input, $output);
             $this->replaceOccurences($replacePairs, $input->getOption('keep-old'));
-            $this->installNewModule($output);
+
+            if ($input->getOption('install-new-module')) {
+                $this->installNewModule($output);
+            }
 
             $this->io->success('Success: your new module is ready!');
 
