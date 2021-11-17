@@ -36,13 +36,12 @@ class FOPCommandFormatsValidatorTest extends TestCase
     /**
      * @dataProvider commandsFormatsProvider
      */
-    public function testValidate($commandDomain, $commandClassName, $commandName, $commandService, $expected)
+    public function testValidate($commandFQCN, $commandName, $commandService, $expected)
     {
         $this->assertSame(
             filter_var($expected, FILTER_VALIDATE_BOOLEAN),
             $this->validator->validate(
-                $commandDomain,
-                $commandClassName,
+                $commandFQCN,
                 $commandName,
                 $commandService
             ),

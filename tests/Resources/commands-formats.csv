@@ -1,13 +1,10 @@
-Domain,DomainCommand,fop:domain:command,fop.console.domain.command.command,true
-Module,ModuleRename,fop:module:rename,fop.console.module.rename.command,true
-Group,TransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
-,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false
-Group,Group,fop:group,fop.console.group.command,false
-group,groupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
-group,groupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
-Group,GroupTransferCustomers,fop:group:transfercustomers,fop.console.group.transfer_customers.command,false
-Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfercustomers.command,false
-Group,GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
-Group,GroupTransferCustomers,fop:group:transfer:customers,fop.console.group.transfer.customers.command,true
-About,Version,fop:about:version,fop.console.version.command,false
-About,AboutVersion,fop:about:version,fop.console.about.version.command,true
+FOP\Console\Commands\Domain\DomainCommand,fop:domain:command,fop.console.domain.command.command,true,ok
+FOP\Console\Commands\Module\ModuleRename,fop:module:rename,fop.console.module.rename.command,true,ok
+FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true,ok
+FOP\Console\Commands\Group\TransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false,Domain missing in class name
+FOP\Console\Commands\GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false,No domain or no action in FQCN
+FOP\Console\Commands\Group,fop:group,fop.console.group.command,false,No domain or no action in FQCN
+FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfercustomers,fop.console.group.transfer_customers.command,false,"missing ""-"" in command name"
+FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfercustomers.command,false,"missing ""_"" in service name"
+FOP\Console\Commands\About\Version,fop:about:version,fop.console.version.command,false,was written like that
+FOP\Console\Commands\About\AboutVersion,fop:about:version,fop.console.about.version.command,true,fixed

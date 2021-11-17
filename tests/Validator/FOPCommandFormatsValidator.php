@@ -25,49 +25,57 @@ namespace FOP\Console\Tests\Validator;
 class FOPCommandFormatsValidator
 {
     /**
+     * @var string Regular expression for command's fully qualified class name
+     */
+    private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
+    // @todo other formats should be here.
+
+    /**
      * @var array<int, string> Validation messages
      */
     private $validationMessages = [];
 
     /**
-     * @param string $commandDomain domain, e.g. Module
-     * @param string $commandClassName php class name, e.g. ModuleHooks
+     * @param string $commandFQCN php class name, e.g. ModuleHooks
      * @param string $commandName symfony command name, e.g. fop:modules:hooks
      * @param string $commandServiceName service name defined in config/services.yml. e.g. fop.console.modules.module_hooks.command
      *
      * @return bool
      */
     public function validate(
-        string $commandDomain,
-        string $commandClassName,
+        string $commandFQCN,
         string $commandName,
         string $commandServiceName
     ): bool {
         $this->validationMessages = [];
         $success = true;
+
+        $commandAction = $this->extractActionFromFQCN($commandFQCN);
+        $commandDomain = $this->extractDomainFromFQCN($commandFQCN);
+
         if (empty($commandDomain)) {
             $this->addValidationMessage(
-                $commandClassName,
+                $commandAction,
                 "Domain can't be empty."
             );
 
             $success = false;
         }
 
-        if (empty($commandDomain) || strpos($commandClassName, $commandDomain) !== 0) {
+        if (empty($commandDomain) || strpos($commandAction, $commandDomain) !== 0) {
             $this->addValidationMessage(
-                $commandClassName,
+                $commandAction,
                 "Domain '$commandDomain' must be included in command class name."
             );
 
             $success = false;
         }
 
-        $commandAction = str_replace($commandDomain, '', $commandClassName);
+        $commandAction = str_replace($commandDomain, '', $commandAction);
 
         if (empty($commandAction)) {
             $this->addValidationMessage(
-                $commandClassName,
+                $commandAction,
                 "Action can't be empty."
             );
 
@@ -77,11 +85,11 @@ class FOPCommandFormatsValidator
         $commandDomain = ucfirst($commandDomain);
         $commandAction = ucfirst($commandAction);
 
-        if (!$this->isCommandNameValid($commandClassName, $commandName, $commandDomain, $commandAction)) {
+        if (!$this->isCommandNameValid($commandAction, $commandName, $commandDomain, $commandAction)) {
             $success = false;
         }
 
-        if (!$this->isCommandServiceNameValid($commandClassName, $commandServiceName, $commandDomain, $commandAction)) {
+        if (!$this->isCommandServiceNameValid($commandAction, $commandServiceName, $commandDomain, $commandAction)) {
             $success = false;
         }
 
@@ -158,5 +166,27 @@ class FOPCommandFormatsValidator
     public function getValidationMessages(): array
     {
         return $this->validationMessages;
+    }
+
+    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'] ?? '';
+    }
+
+    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'] ?? '';
+    }
+
+    /**
+     * @param string $fullyQualifiedClassName
+     *
+     * @return array{domain?: string, action?: string}
+     */
+    private function getFQCNRegexpMatches(string $fullyQualifiedClassName): array
+    {
+        preg_match(self::FQCNRegexp, $fullyQualifiedClassName, $matches);
+
+        return $matches ?? [];
     }
 }
