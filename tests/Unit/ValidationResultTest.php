@@ -25,13 +25,13 @@ use PHPUnit\Framework\TestCase;
 
 class ValidationResultTest extends TestCase
 {
-    public function test_its_constructed_with_3_parameters()
+    public function testItsConstructedWith3Parameters()
     {
         $result = new ValidationResult(false, 'something went wrong.', 'do this to fix it.');
         $this->assertTrue(is_object($result));
     }
 
-    public function test_to_be_written()
+    public function testToBeWritten()
     {
         $this->markTestIncomplete();
     }

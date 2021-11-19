@@ -35,30 +35,39 @@ class ValidationResultsTest extends TestCase
         $this->validationResults = new ValidationResults();
     }
 
-    public function test_is_validation_successful_throw_exception_on_empty_validation_results()
+    public function testIsValidationSuccessfulThrowExceptionOnEmptyValidationResults()
     {
         $this->assertTrue(class_exists(CantValidateEmptyValidationResults::class), 'Exception not implemented.');
         $this->expectException(CantValidateEmptyValidationResults::class);
+
         $this->validationResults->isValidationSuccessful();
     }
 
-    public function test_collects_validation_result()
+    public function testCollectsValidationsResult()
     {
         $this->validationResults->addResult(new ValidationResult(false, 'This is a failure message'));
-        $this->assertCount(1, $this->validationResults);
+        $this->validationResults->addResult(new ValidationResult(false, 'This is another failure message'));
+
+        $this->assertCount(2, $this->validationResults);
     }
 
-    public function test_has_validation_result()
+    public function testValidationResultsCanBeRetrieved()
+    {
+        $this->validationResults->addResult(new ValidationResult(false, 'This is a failure message'));
+        $this->validationResults->addResult(new ValidationResult(false, 'This is another failure message'));
+
+        // results can be accessed using a foreach or iterator_to_array()
+        array_map(function (ValidationResult $result) {
+            $this->assertInstanceOf(ValidationResult::class, $result);
+        }, iterator_to_array($this->validationResults));
+    }
+
+    public function testIsValidationSuccessfulReturnsTrueIfContainsOnlyPositiveResults()
     {
         $this->markTestIncomplete();
     }
 
-    public function test_is_validation_successful_returns_true_if_contains_only_positive_results()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function test_is_validation_successful_returns_false_if_contains_one_or_more_negative_results()
+    public function testIsValidationSuccessfulReturnsFalseIfContainsOneOrMoreNegativeResults()
     {
         $this->markTestIncomplete();
     }
