@@ -39,4 +39,9 @@ class ValidationResult
         $this->message = $message;
         $this->tip = $tip;
     }
+
+    public function isSuccessful(): bool
+    {
+        return $this->successful;
+    }
 }

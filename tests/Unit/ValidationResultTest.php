@@ -31,8 +31,15 @@ class ValidationResultTest extends TestCase
         $this->assertTrue(is_object($result));
     }
 
-    public function testToBeWritten()
+    public function testIsSuccessfulTrue()
     {
-        $this->markTestIncomplete();
+        $result = new ValidationResult(true, 'something went wrong.', 'do this to fix it.');
+        $this->assertTrue($result->isSuccessful());
+    }
+
+    public function testIsSuccessfulFalse()
+    {
+        $result = new ValidationResult(false, 'something went wrong.', 'do this to fix it.');
+        $this->assertFalse($result->isSuccessful());
     }
 }
