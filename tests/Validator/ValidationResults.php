@@ -60,6 +60,8 @@ class ValidationResults implements IteratorAggregate
      */
     public function getFailures(): array
     {
-        return [];
+        return array_filter(
+            iterator_to_array($this),
+            function (ValidationResult $result) { return !$result->isSuccessful(); });
     }
 }
