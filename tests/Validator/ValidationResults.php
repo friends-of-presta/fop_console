@@ -40,7 +40,9 @@ class ValidationResults implements IteratorAggregate
             throw new CantValidateEmptyValidationResults();
         }
 
-        return false;
+        return array_reduce($this->results, function (bool $successful, ValidationResult $result) {
+            return $successful && $result->isSuccessful();
+        }, true);
     }
 
     public function getIterator(): Iterator
