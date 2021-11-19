@@ -64,10 +64,22 @@ class ValidationResultsTest extends TestCase
 
     public function testIsValidationSuccessfulReturnsTrueIfContainsOnlyPositiveResults()
     {
-        $this->markTestIncomplete();
+        $this->validationResults->addResult(new ValidationResult(true, 'This is positive message'));
+        $this->validationResults->addResult(new ValidationResult(true, 'This is positive message'));
+
+        $this->assertTrue($this->validationResults->isValidationSuccessful());
     }
 
     public function testIsValidationSuccessfulReturnsFalseIfContainsOneOrMoreNegativeResults()
+    {
+        $this->validationResults->addResult(new ValidationResult(true, 'This is positive message'));
+        $this->validationResults->addResult(new ValidationResult(false, 'Boo'));
+        $this->validationResults->addResult(new ValidationResult(true, 'This is positive message'));
+
+        $this->assertFalse($this->validationResults->isValidationSuccessful());
+    }
+
+    public function testGetFailuresReturnsNegativeResults()
     {
         $this->markTestIncomplete();
     }
