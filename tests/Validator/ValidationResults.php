@@ -27,6 +27,11 @@ use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
 use Iterator;
 use IteratorAggregate;
 
+/**
+ * Class ValidationResults
+ *
+ * @implements IteratorAggregate<ValidationResult>
+ */
 class ValidationResults implements IteratorAggregate
 {
     /**
@@ -45,12 +50,15 @@ class ValidationResults implements IteratorAggregate
         }, true);
     }
 
+    /**
+     * @return \Iterator<ValidationResult>
+     */
     public function getIterator(): Iterator
     {
         return new ArrayIterator($this->results);
     }
 
-    public function addResult(ValidationResult $result)
+    public function addResult(ValidationResult $result): void
     {
         $this->results[] = $result;
     }
