@@ -20,6 +20,8 @@
 
 namespace FOP\Console\Tests\Unit;
 
+use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
+use FOP\Console\Tests\Validator\ValidationResults;
 use PHPUnit\Framework\TestCase;
 
 class ValidationResultsTest extends TestCase
@@ -29,13 +31,13 @@ class ValidationResultsTest extends TestCase
 
     protected function setUp()
     {
-        $this->validationResults = new \FOP\Console\Tests\Validator\ValidationResults();
+        $this->validationResults = new ValidationResults();
     }
 
     public function testIsValidationSuccessfulThrowExceptionOnEmptyValidationResults()
     {
-        $this->assertTrue(class_exists(\FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults::class), 'Exception not implemented.');
-        $this->expectException(\FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults);
+        $this->assertTrue(class_exists(CantValidateEmptyValidationResults::class), 'Exception not implemented.');
+        $this->expectException(CantValidateEmptyValidationResults::class);
         $this->validationResults->isValidationSuccessful();
     }
 
