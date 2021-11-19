@@ -57,9 +57,7 @@ class ValidationResultsTest extends TestCase
         $this->validationResults->addResult(new ValidationResult(false, 'This is another failure message'));
 
         // results can be accessed using a foreach or iterator_to_array()
-        array_map(function (ValidationResult $result) {
-            $this->assertInstanceOf(ValidationResult::class, $result);
-        }, iterator_to_array($this->validationResults));
+        $this->assertContainsOnly(ValidationResult::class, iterator_to_array($this->validationResults));
     }
 
     public function testIsValidationSuccessfulReturnsTrueIfContainsOnlyPositiveResults()
@@ -81,6 +79,17 @@ class ValidationResultsTest extends TestCase
 
     public function testGetFailuresReturnsNegativeResults()
     {
-        $this->markTestIncomplete();
+        $negativeResult1 = new ValidationResult(false, 'Boo 2');
+        $negativeResult2 = new ValidationResult(false, 'Boo');
+        $positiveResult = new ValidationResult(true, 'This is positive message');
+
+        $this->validationResults->addResult($positiveResult);
+        $this->validationResults->addResult($negativeResult1);
+        $this->validationResults->addResult($negativeResult2);
+        $this->validationResults->addResult($positiveResult);
+
+        $this->assertContains($negativeResult1, $this->validationResults->getFailures());
+        $this->assertContains($negativeResult2, $this->validationResults->getFailures());
+        $this->assertNotContains($positiveResult, $this->validationResults->getFailures());
     }
 }

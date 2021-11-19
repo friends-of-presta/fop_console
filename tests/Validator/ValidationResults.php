@@ -54,4 +54,12 @@ class ValidationResults implements IteratorAggregate
     {
         $this->results[] = $result;
     }
+
+    /**
+     * @return array<int, \FOP\Console\Tests\Validator\ValidationResult>
+     */
+    public function getFailures(): array
+    {
+        return [];
+    }
 }
