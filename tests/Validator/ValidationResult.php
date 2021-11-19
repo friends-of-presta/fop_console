@@ -22,34 +22,21 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
-use ArrayIterator;
-use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
-use Iterator;
-use IteratorAggregate;
-
-class ValidationResults implements IteratorAggregate
+class ValidationResult
 {
-    /**
-     * @var array<int, ValidationResult>
-     */
-    private $results;
+    /** @var bool */
+    private $successful;
 
-    public function isValidationSuccessful(): bool
+    /** @var string */
+    private $message;
+
+    /** @var string|null */
+    private $tip;
+
+    public function __construct(bool $successful, string $message, ?string $tip = null)
     {
-        if (empty($this->results)) {
-            throw new CantValidateEmptyValidationResults();
-        }
-
-        return false;
-    }
-
-    public function getIterator(): Iterator
-    {
-        return new ArrayIterator($this->results);
-    }
-
-    public function addResult(ValidationResult $result)
-    {
-        $this->results[] = $result;
+        $this->successful = $successful;
+        $this->message = $message;
+        $this->tip = $tip;
     }
 }

@@ -21,6 +21,7 @@
 namespace FOP\Console\Tests\Unit;
 
 use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
+use FOP\Console\Tests\Validator\ValidationResult;
 use FOP\Console\Tests\Validator\ValidationResults;
 use PHPUnit\Framework\TestCase;
 
@@ -34,29 +35,30 @@ class ValidationResultsTest extends TestCase
         $this->validationResults = new ValidationResults();
     }
 
-    public function testIsValidationSuccessfulThrowExceptionOnEmptyValidationResults()
+    public function test_is_validation_successful_throw_exception_on_empty_validation_results()
     {
         $this->assertTrue(class_exists(CantValidateEmptyValidationResults::class), 'Exception not implemented.');
         $this->expectException(CantValidateEmptyValidationResults::class);
         $this->validationResults->isValidationSuccessful();
     }
 
-    public function testCollectsValidationResult()
+    public function test_collects_validation_result()
+    {
+        $this->validationResults->addResult(new ValidationResult(false, 'This is a failure message'));
+        $this->assertCount(1, $this->validationResults);
+    }
+
+    public function test_has_validation_result()
     {
         $this->markTestIncomplete();
     }
 
-    public function testHasValidationResult()
+    public function test_is_validation_successful_returns_true_if_contains_only_positive_results()
     {
         $this->markTestIncomplete();
     }
 
-    public function testIsValidationSuccessfulReturnsTrueIfContainsOnlyPositiveResults()
-    {
-        $this->markTestIncomplete();
-    }
-
-    public function testIsValidationSuccessfulReturnsFalseIfContainsOneOrMoreNegativeResults()
+    public function test_is_validation_successful_returns_false_if_contains_one_or_more_negative_results()
     {
         $this->markTestIncomplete();
     }

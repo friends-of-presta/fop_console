@@ -18,38 +18,21 @@
  *
  */
 
-declare(strict_types=1);
+namespace FOP\Console\Tests\Unit;
 
-namespace FOP\Console\Tests\Validator;
+use FOP\Console\Tests\Validator\ValidationResult;
+use PHPUnit\Framework\TestCase;
 
-use ArrayIterator;
-use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
-use Iterator;
-use IteratorAggregate;
-
-class ValidationResults implements IteratorAggregate
+class ValidationResultTest extends TestCase
 {
-    /**
-     * @var array<int, ValidationResult>
-     */
-    private $results;
-
-    public function isValidationSuccessful(): bool
+    public function test_its_constructed_with_3_parameters()
     {
-        if (empty($this->results)) {
-            throw new CantValidateEmptyValidationResults();
-        }
-
-        return false;
+        $result = new ValidationResult(false, 'something went wrong.', 'do this to fix it.');
+        $this->assertTrue(is_object($result));
     }
 
-    public function getIterator(): Iterator
+    public function test_to_be_written()
     {
-        return new ArrayIterator($this->results);
-    }
-
-    public function addResult(ValidationResult $result)
-    {
-        $this->results[] = $result;
+        $this->markTestIncomplete();
     }
 }
