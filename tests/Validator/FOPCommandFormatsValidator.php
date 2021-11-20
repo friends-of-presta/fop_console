@@ -22,12 +22,20 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
+/**
+ * Class FOPCommandFormatsValidator
+ *
+ * Rules :
+ * - FQCN must follow pattern : FOP\Console\Commands\<Domain>\<Domain><Action>
+ *   - <Domain> is not empty
+ *   - <Action> is not empty
+ * - command name (symfony command name) is consistent with <Domain> and <Action>
+ * - service name (symfony service declaration) is consistent with <Domain> and <Action>
+ */
 class FOPCommandFormatsValidator
 {
     /**
      * @var string Regular expression for command's fully qualified class name
-     *             <action> starts with the <domain>.
-     *             For example if <domain> is 'Customer' then <action> could be 'CustomerAnonymise'
      */
     private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
 
@@ -53,8 +61,8 @@ class FOPCommandFormatsValidator
         $this->results = new ValidationResults();
 
         $this->checkDomainIsNotEmptyInClassName($fullyQualifiedClassName);
-        $this->checkDomainIsRepeatedInActionInClassName($fullyQualifiedClassName);
         $this->checkActionIsNotEmptyInClassName($fullyQualifiedClassName);
+        $this->checkDomainIsRepeatedInActionInClassName($fullyQualifiedClassName);
         $this->checkCommandNameIsConsistentWithClassName($commandName, $fullyQualifiedClassName);
         $this->checkServiceNameIsConsistentWithClassName($service, $fullyQualifiedClassName);
 
@@ -65,52 +73,20 @@ class FOPCommandFormatsValidator
         return $this->results;
     }
 
-    private function checkCommandNameIsConsistentWithClassName(
-        string $commandName, string $fullyQualifiedClassName): void
-    {
-        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
-        $commandDomain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
-
-        // Command name pattern = fop:command-domain:command[:-]action
-        $expectedCommandNamePattern = strtolower(
-            'fop:'
-            . implode('-', $this->getWords($commandDomain))
-            . ':'
-            . implode('[:-]', $this->getWords($actionWithoutDomain))
-        );
-
-        if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
-            $this->results->addResult(new ValidationResult(false, 'Wrong format for command class name.' . PHP_EOL
-                . "Expected = $expectedCommandNamePattern" . PHP_EOL
-                . "Actual = $commandName"));
-        }
-    }
-
-    private function checkServiceNameIsConsistentWithClassName(
-        string $service, string $fullyQualifiedClassName): void
-    {
-        $action = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
-        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
-
-        // Command service name pattern = fop.console.command_domain.command[\._]action.command
-        $expectedCommandServiceNamePattern = strtolower(
-            'fop.console.'
-            . implode('_', $this->getWords($domain))
-            . '.'
-            . implode('[\._]', $this->getWords($action))
-            . '.command'
-        );
-
-        if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $service)) {
-            $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
-        }
-    }
-
     private function checkDomainIsNotEmptyInClassName(string $fullyQualifiedClassName): void
     {
         $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         if (empty($domain)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
+        }
+    }
+
+    private function checkActionIsNotEmptyInClassName(string $fullyQualifiedClassName): void
+    {
+        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
+
+        if (empty($action)) {
+            $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
         }
     }
 
@@ -125,12 +101,44 @@ class FOPCommandFormatsValidator
         }
     }
 
-    private function checkActionIsNotEmptyInClassName(string $fullyQualifiedClassName): void
+    private function checkCommandNameIsConsistentWithClassName(
+        string $commandName, string $fullyQualifiedClassName): void
     {
-        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
-        if (empty($action)) {
-            $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
+        // Command name pattern = fop:command-domain:command[:-]action
+        $expectedCommandNamePattern = strtolower(
+            'fop:'
+            . implode('-', $this->getWords($domain))
+            . ':'
+            . implode('[:-]', $this->getWords($actionWithoutDomain))
+        );
+
+        if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
+            $this->results->addResult(new ValidationResult(false, 'Wrong format for command class name.' . PHP_EOL
+                . "Expected = $expectedCommandNamePattern" . PHP_EOL
+                . "Actual = $commandName"));
+        }
+    }
+
+    private function checkServiceNameIsConsistentWithClassName(
+        string $service, string $fullyQualifiedClassName): void
+    {
+        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+
+        // Command service name pattern = fop.console.command_domain.command[\._]actionWithoutDomain.command
+        $expectedCommandServiceNamePattern = strtolower(
+            'fop.console.'
+            . implode('_', $this->getWords($domain))
+            . '.'
+            . implode('[\._]', $this->getWords($actionWithoutDomain))
+            . '.command'
+        );
+
+        if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $service)) {
+            $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
         }
     }
 
