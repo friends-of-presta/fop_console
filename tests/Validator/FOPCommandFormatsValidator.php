@@ -36,26 +36,26 @@ class FOPCommandFormatsValidator
     private $results;
 
     /**
-     * @param string $commandFQCN php class name, e.g. ModuleHooks
+     * @param string $fullyQualifiedClassName php class name, e.g. ModuleHooks
      * @param string $commandName symfony command name, e.g. fop:modules:hooks
-     * @param string $commandServiceName service name defined in config/services.yml. e.g. fop.console.modules.module_hooks.command
+     * @param string $service service name defined in config/services.yml. e.g. fop.console.modules.module_hooks.command
      *
      * @return ValidationResults
      */
     public function validate(
-        string $commandFQCN,
+        string $fullyQualifiedClassName,
         string $commandName,
-        string $commandServiceName
+        string $service
     ): ValidationResults {
         $this->results = new ValidationResults();
-        $commandAction = $this->extractActionFromFQCN($commandFQCN);
-        $commandDomain = $this->extractDomainFromFQCN($commandFQCN);
+        $classnameAction = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $classnameDomain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
-        $this->checkDomainIsNotEmptyInClassName($commandDomain);
-        $this->checkDomainIsRepeatedInActionInClassName($commandDomain, $commandAction);
-        $this->checkActionIsNotEmptyInClassName($commandDomain, $commandAction);
-        $this->checkCommandNameIsConsistentWithClassName($commandName, $commandDomain, $commandAction);
-        $this->checkServiceNameIsConsistentWithClassName($commandServiceName, $commandDomain, $commandAction);
+        $this->checkDomainIsNotEmptyInClassName($classnameDomain);
+        $this->checkDomainIsRepeatedInActionInClassName($classnameDomain, $classnameAction);
+        $this->checkActionIsNotEmptyInClassName($classnameDomain, $classnameAction);
+        $this->checkCommandNameIsConsistentWithClassName($commandName, $classnameDomain, $classnameAction);
+        $this->checkServiceNameIsConsistentWithClassName($service, $classnameDomain, $classnameAction);
 
         if (empty(iterator_to_array($this->results))) {
             $this->results->addResult(new ValidationResult(true, 'Everything checked successfully.'));
@@ -87,44 +87,44 @@ class FOPCommandFormatsValidator
     }
 
     private function checkServiceNameIsConsistentWithClassName(
-        string $commandServiceName, string $commandDomain, string $commandAction): void
+        string $service, string $domain, string $action): void
     {
-        $commandAction = str_replace($commandDomain, '', $commandAction);
-        $commandDomain = ucfirst($commandDomain);
-        $commandAction = ucfirst($commandAction);
+        $action = str_replace($domain, '', $action);
+        $domain = ucfirst($domain);
+        $action = ucfirst($action);
 
         // Command service name pattern = fop.console.command_domain.command[\._]action.command
         $expectedCommandServiceNamePattern = strtolower(
             'fop.console.'
-            . implode('_', $this->getWords($commandDomain))
+            . implode('_', $this->getWords($domain))
             . '.'
-            . implode('[\._]', $this->getWords($commandAction))
+            . implode('[\._]', $this->getWords($action))
             . '.command'
         );
 
-        if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $commandServiceName)) {
+        if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $service)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
         }
     }
 
-    private function checkDomainIsNotEmptyInClassName(string $commandDomain): void
+    private function checkDomainIsNotEmptyInClassName(string $domain): void
     {
-        if (empty($commandDomain)) {
+        if (empty($domain)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
         }
     }
 
-    private function checkDomainIsRepeatedInActionInClassName(string $commandDomain, string $commandAction): void
+    private function checkDomainIsRepeatedInActionInClassName(string $domain, string $action): void
     {
-        if (empty($commandDomain) || strpos($commandAction, $commandDomain) !== 0) {
-            $this->results->addResult(new ValidationResult(false, "Domain '$commandDomain' must be included in command class name."));
+        if (empty($domain) || strpos($action, $domain) !== 0) {
+            $this->results->addResult(new ValidationResult(false, "Domain '$domain' must be included in command class name."));
         }
     }
 
-    private function checkActionIsNotEmptyInClassName(string $commandDomain, string $commandAction): void
+    private function checkActionIsNotEmptyInClassName(string $domain, string $action): void
     {
-        $commandAction = str_replace($commandDomain, '', $commandAction);
-        if (empty($commandAction)) {
+        $action = str_replace($domain, '', $action);
+        if (empty($action)) {
             $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
         }
     }
