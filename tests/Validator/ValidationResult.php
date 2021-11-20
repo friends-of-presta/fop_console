@@ -30,22 +30,6 @@ class ValidationResult
     /** @var string */
     private $message;
 
-    /**
-     * @return string
-     */
-    public function getMessage(): string
-    {
-        return $this->message;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getTip(): ?string
-    {
-        return $this->tip;
-    }
-
     /** @var string|null */
     private $tip;
 
@@ -59,5 +43,15 @@ class ValidationResult
     public function isSuccessful(): bool
     {
         return $this->successful;
+    }
+
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
+
+    public function getTip(): ?string
+    {
+        return $this->tip;
     }
 }
