@@ -26,8 +26,11 @@ class FOPCommandFormatsValidator
 {
     /**
      * @var string Regular expression for command's fully qualified class name
+     *             <action> starts with the <domain>.
+     *             For example if <domain> is 'Customer' then <action> could be 'CustomerAnonymise'
      */
     private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
+
     // @todo other formats should be here.
 
     /**
@@ -65,18 +68,15 @@ class FOPCommandFormatsValidator
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName, string $fullyQualifiedClassName): void
     {
-        $commandAction = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
         $commandDomain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
-        $commandAction = str_replace($commandDomain, '', $commandAction);
-        $commandDomain = ucfirst($commandDomain);
-        $commandAction = ucfirst($commandAction);
 
         // Command name pattern = fop:command-domain:command[:-]action
         $expectedCommandNamePattern = strtolower(
             'fop:'
             . implode('-', $this->getWords($commandDomain))
             . ':'
-            . implode('[:-]', $this->getWords($commandAction))
+            . implode('[:-]', $this->getWords($actionWithoutDomain))
         );
 
         if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
@@ -89,11 +89,8 @@ class FOPCommandFormatsValidator
     private function checkServiceNameIsConsistentWithClassName(
         string $service, string $fullyQualifiedClassName): void
     {
-        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $action = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
         $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
-        $action = str_replace($domain, '', $action);
-        $domain = ucfirst($domain);
-        $action = ucfirst($action);
 
         // Command service name pattern = fop.console.command_domain.command[\._]action.command
         $expectedCommandServiceNamePattern = strtolower(
@@ -130,9 +127,7 @@ class FOPCommandFormatsValidator
 
     private function checkActionIsNotEmptyInClassName(string $fullyQualifiedClassName): void
     {
-        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
-        $action = str_replace($domain, '', $action);
 
         if (empty($action)) {
             $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
@@ -140,23 +135,17 @@ class FOPCommandFormatsValidator
     }
 
     /**
+     * Split string on each Capitalized letter.
+     *
+     * e.g. HelloWorld => ['Hello', 'World']
+     *
      * @param string $subject
      *
      * @return array<string>
      */
     private function getWords(string $subject): array
     {
-        return preg_split('/(?=[A-Z])/', $subject, -1, PREG_SPLIT_NO_EMPTY) ?: [''];
-    }
-
-    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'] ?? '';
-    }
-
-    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'] ?? '';
+        return preg_split('/(?=[A-Z])/', ucfirst($subject), -1, PREG_SPLIT_NO_EMPTY) ?: [''];
     }
 
     /**
@@ -169,5 +158,24 @@ class FOPCommandFormatsValidator
         preg_match(self::FQCNRegexp, $fullyQualifiedClassName, $matches);
 
         return $matches ?? [];
+    }
+
+    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'] ?? '';
+    }
+
+    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'] ?? '';
+    }
+
+    private function extractActionWithoutDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return str_replace(
+            $this->extractDomainFromFQCN($fullyQualifiedClassName),
+            '',
+            $this->extractActionFromFQCN($fullyQualifiedClassName)
+        );
     }
 }
