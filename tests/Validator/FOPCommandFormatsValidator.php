@@ -112,8 +112,19 @@ class FOPCommandFormatsValidator
             'fop:'
             . implode('-', $this->getWords($domain))
             . ':'
-            . implode('[:-]', $this->getWords($actionWithoutDomain))
+            . implode('[:-]', $this->getWords($actionWithoutDomain)) // @todo fix that hack. see below.
         );
+        // about the above hack.
+        // this regexexp with [:-] does 2 differents things
+        // - it allows to have subdomains images:generate:categories for example which is ImageGenerateCategories        - in ns FOP\Console\Commands\Image
+        // - it allows <action> to have dash fop:modules:non-essential for example which classname is ModuleNonEssential - in ns FOP\Console\Commands\Module
+        // From 1 classname with many words in <action> we can have many command name. So no simple
+        // That's why we need a regexp. (it's fine, it does the job.)
+        // This is not really a problem, real problem is that it's hard to read and not explained anywhere !
+        // validation logic, business rule is hidden in that regexp.
+        // This needs to be fixed by
+        // - writing a clear expression and add it on top of the file with const FQCNRegexp
+        // - document it at the top of the file
 
         if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
             $this->results->addResult(new ValidationResult(false, 'Wrong format for command class name.' . PHP_EOL
