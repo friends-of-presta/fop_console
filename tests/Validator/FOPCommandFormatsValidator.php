@@ -48,14 +48,12 @@ class FOPCommandFormatsValidator
         string $service
     ): ValidationResults {
         $this->results = new ValidationResults();
-        $classnameAction = $this->extractActionFromFQCN($fullyQualifiedClassName);
-        $classnameDomain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
-        $this->checkDomainIsNotEmptyInClassName($classnameDomain);
-        $this->checkDomainIsRepeatedInActionInClassName($classnameDomain, $classnameAction);
-        $this->checkActionIsNotEmptyInClassName($classnameDomain, $classnameAction);
-        $this->checkCommandNameIsConsistentWithClassName($commandName, $classnameDomain, $classnameAction);
-        $this->checkServiceNameIsConsistentWithClassName($service, $classnameDomain, $classnameAction);
+        $this->checkDomainIsNotEmptyInClassName($fullyQualifiedClassName);
+        $this->checkDomainIsRepeatedInActionInClassName($fullyQualifiedClassName);
+        $this->checkActionIsNotEmptyInClassName($fullyQualifiedClassName);
+        $this->checkCommandNameIsConsistentWithClassName($commandName, $fullyQualifiedClassName);
+        $this->checkServiceNameIsConsistentWithClassName($service, $fullyQualifiedClassName);
 
         if (empty(iterator_to_array($this->results))) {
             $this->results->addResult(new ValidationResult(true, 'Everything checked successfully.'));
@@ -65,8 +63,10 @@ class FOPCommandFormatsValidator
     }
 
     private function checkCommandNameIsConsistentWithClassName(
-        string $commandName, string $commandDomain, string $commandAction): void
+        string $commandName, string $fullyQualifiedClassName): void
     {
+        $commandAction = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $commandDomain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         $commandAction = str_replace($commandDomain, '', $commandAction);
         $commandDomain = ucfirst($commandDomain);
         $commandAction = ucfirst($commandAction);
@@ -87,8 +87,10 @@ class FOPCommandFormatsValidator
     }
 
     private function checkServiceNameIsConsistentWithClassName(
-        string $service, string $domain, string $action): void
+        string $service, string $fullyQualifiedClassName): void
     {
+        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         $action = str_replace($domain, '', $action);
         $domain = ucfirst($domain);
         $action = ucfirst($action);
@@ -107,23 +109,31 @@ class FOPCommandFormatsValidator
         }
     }
 
-    private function checkDomainIsNotEmptyInClassName(string $domain): void
+    private function checkDomainIsNotEmptyInClassName(string $fullyQualifiedClassName): void
     {
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         if (empty($domain)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
         }
     }
 
-    private function checkDomainIsRepeatedInActionInClassName(string $domain, string $action): void
+    private function checkDomainIsRepeatedInActionInClassName(string $fullyQualifiedClassName): void
     {
+        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+
+        // emptiness must be checked before processing strpos(), strpos() doesn't support empty needle
         if (empty($domain) || strpos($action, $domain) !== 0) {
             $this->results->addResult(new ValidationResult(false, "Domain '$domain' must be included in command class name."));
         }
     }
 
-    private function checkActionIsNotEmptyInClassName(string $domain, string $action): void
+    private function checkActionIsNotEmptyInClassName(string $fullyQualifiedClassName): void
     {
+        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+        $action = $this->extractActionFromFQCN($fullyQualifiedClassName);
         $action = str_replace($domain, '', $action);
+
         if (empty($action)) {
             $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
         }
