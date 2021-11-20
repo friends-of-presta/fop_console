@@ -42,4 +42,18 @@ class ValidationResultTest extends TestCase
         $result = new ValidationResult(false, 'something went wrong.', 'do this to fix it.');
         $this->assertFalse($result->isSuccessful());
     }
+
+    public function testHasMessageGetter()
+    {
+        $message = 'something went wrong.';
+        $result = new ValidationResult(false, $message, 'do this to fix it.');
+        $this->assertEquals($message, $result->getMessage());
+    }
+
+    public function testHasTipGetter()
+    {
+        $tip = 'this is a tip.';
+        $result = new ValidationResult(false, 'a message', $tip);
+        $this->assertEquals($tip, $result->getTip());
+    }
 }
