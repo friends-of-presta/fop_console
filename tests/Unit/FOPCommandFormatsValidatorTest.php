@@ -21,6 +21,8 @@
 namespace FOP\Console\Tests\Unit;
 
 use FOP\Console\Tests\Validator\FOPCommandFormatsValidator;
+use FOP\Console\Tests\Validator\ValidationResult;
+use FOP\Console\Tests\Validator\ValidationResults;
 use PHPUnit\Framework\TestCase;
 
 class FOPCommandFormatsValidatorTest extends TestCase
@@ -33,19 +35,34 @@ class FOPCommandFormatsValidatorTest extends TestCase
         $this->validator = new FOPCommandFormatsValidator();
     }
 
+    public function testValidateReturnsInstanceOfValidationResults()
+    {
+        $this->assertInstanceOf(
+            ValidationResults::class,
+            $this->validator->validate('fqcn', 'command:name', 'fop.service')
+        );
+    }
+
     /**
      * @dataProvider commandsFormatsProvider
      */
     public function testValidate($commandFQCN, $commandName, $commandService, $expected)
     {
+        $results = $this->validator->validate(
+            $commandFQCN,
+            $commandName,
+            $commandService
+        );
+
+        $successful = $results->isValidationSuccessful();
+        $messages = array_reduce(iterator_to_array($results), function ($messages, ValidationResult $result) {
+            return $messages . $result->getMessage();
+        }, '');
+
         $this->assertSame(
             filter_var($expected, FILTER_VALIDATE_BOOLEAN),
-            $this->validator->validate(
-                $commandFQCN,
-                $commandName,
-                $commandService
-            ),
-            implode(PHP_EOL, $this->validator->getValidationMessages())
+            $successful,
+            $messages
         );
     }
 

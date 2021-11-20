@@ -31,69 +31,52 @@ class FOPCommandFormatsValidator
     // @todo other formats should be here.
 
     /**
-     * @var array<int, string> Validation messages
+     * @var ValidationResults
      */
-    private $validationMessages = [];
+    private $results;
 
     /**
      * @param string $commandFQCN php class name, e.g. ModuleHooks
      * @param string $commandName symfony command name, e.g. fop:modules:hooks
      * @param string $commandServiceName service name defined in config/services.yml. e.g. fop.console.modules.module_hooks.command
      *
-     * @return bool
+     * @return ValidationResults
      */
     public function validate(
         string $commandFQCN,
         string $commandName,
         string $commandServiceName
-    ): bool {
-        $this->validationMessages = [];
-        $success = true;
-
+    ): ValidationResults {
+        $this->results = new ValidationResults();
         $commandAction = $this->extractActionFromFQCN($commandFQCN);
         $commandDomain = $this->extractDomainFromFQCN($commandFQCN);
 
         if (empty($commandDomain)) {
-            $this->addValidationMessage(
-                $commandAction,
-                "Domain can't be empty."
-            );
-
-            $success = false;
+            $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
         }
 
         if (empty($commandDomain) || strpos($commandAction, $commandDomain) !== 0) {
-            $this->addValidationMessage(
-                $commandAction,
-                "Domain '$commandDomain' must be included in command class name."
-            );
-
-            $success = false;
+            $this->results->addResult(new ValidationResult(false, "Domain '$commandDomain' must be included in command class name."));
         }
 
         $commandAction = str_replace($commandDomain, '', $commandAction);
 
         if (empty($commandAction)) {
-            $this->addValidationMessage(
-                $commandAction,
-                "Action can't be empty."
-            );
-
-            $success = false;
+            $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
         }
 
         $commandDomain = ucfirst($commandDomain);
         $commandAction = ucfirst($commandAction);
 
-        if (!$this->isCommandNameValid($commandAction, $commandName, $commandDomain, $commandAction)) {
-            $success = false;
+        $this->isCommandNameValid($commandAction, $commandName, $commandDomain, $commandAction);
+
+        $this->isCommandServiceNameValid($commandAction, $commandServiceName, $commandDomain, $commandAction);
+
+        if (empty(iterator_to_array($this->results))) {
+            $this->results->addResult(new ValidationResult(true, 'Everything checked successfuly'));
         }
 
-        if (!$this->isCommandServiceNameValid($commandAction, $commandServiceName, $commandDomain, $commandAction)) {
-            $success = false;
-        }
-
-        return $success;
+        return $this->results;
     }
 
     private function isCommandNameValid(string $commandClassName, string $commandName, string $commandDomain, string $commandAction): bool
@@ -107,12 +90,9 @@ class FOPCommandFormatsValidator
         );
 
         if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
-            $this->addValidationMessage(
-                $commandClassName,
-                'Wrong format for command class name.' . PHP_EOL
-                    . "Expected = $expectedCommandNamePattern" . PHP_EOL
-                    . "Actual = $commandName"
-            );
+            $this->results->addResult(new ValidationResult(false, 'Wrong format for command class name.' . PHP_EOL
+                . "Expected = $expectedCommandNamePattern" . PHP_EOL
+                . "Actual = $commandName"));
 
             return false;
         }
@@ -132,12 +112,7 @@ class FOPCommandFormatsValidator
         );
 
         if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $commandServiceName)) {
-            $this->addValidationMessage(
-                $commandClassName,
-                'Wrong format for command service name.' . PHP_EOL
-                    . "Expected = $expectedCommandServiceNamePattern" . PHP_EOL
-                    . "Actual = $commandServiceName"
-            );
+            $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
 
             return false;
         }
@@ -153,19 +128,6 @@ class FOPCommandFormatsValidator
     private function getWords(string $subject): array
     {
         return preg_split('/(?=[A-Z])/', $subject, -1, PREG_SPLIT_NO_EMPTY) ?: [''];
-    }
-
-    private function addValidationMessage(string $command, string $message): void
-    {
-        $this->validationMessages[] = "[$command] => " . $message;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getValidationMessages(): array
-    {
-        return $this->validationMessages;
     }
 
     private function extractDomainFromFQCN(string $fullyQualifiedClassName): string

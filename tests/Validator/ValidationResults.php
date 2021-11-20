@@ -37,7 +37,7 @@ class ValidationResults implements IteratorAggregate
     /**
      * @var array<int, ValidationResult>
      */
-    private $results;
+    private $results = [];
 
     public function isValidationSuccessful(): bool
     {
