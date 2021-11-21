@@ -36,8 +36,16 @@ class FOPCommandFormatsValidator
 {
     /**
      * @var string Regular expression for command's fully qualified class name
+     *             `FOP\Console\Commands\Domain\DomainAction`
      */
-    private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
+    private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>[[:alpha:]]+)\\\(?<action>[[:alpha:]]+)$#X';
+
+    /**
+     * @var string regular expression for command's name
+     *             `fop:domain:action`
+     *             action can also have ':' and '-' in it
+     */
+    private const CommandRegexp = '#^fop:(?<domain>[[:alpha:]]+):(?<action>[[:alpha:]:-]+)$#X';
 
     // @todo other formats should be here.
 
@@ -101,35 +109,35 @@ class FOPCommandFormatsValidator
         }
     }
 
+    /**
+     * @todo extract building logic in a standalone builder
+     *
+     * @param string $commandName
+     * @param string $fullyQualifiedClassName
+     *
+     * @return void
+     */
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName, string $fullyQualifiedClassName): void
     {
-        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
-        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+        preg_match(self::CommandRegexp, $commandName, $matches);
+        $domain = ucfirst($matches['domain'] ?? '');
+        // action words : action part words split by `-` or `:`  and CamelCased (one word,  ucfirst() is ok)
+        $actionWords = array_map('ucfirst', preg_split('/[:-]/', $matches['action'] ?? ''));
 
-        // Command name pattern = fop:command-domain:command[:-]action
-        $expectedCommandNamePattern = strtolower(
-            'fop:'
-            . implode('-', $this->getWords($domain))
-            . ':'
-            . implode('[:-]', $this->getWords($actionWithoutDomain)) // @todo fix that hack. see below.
-        );
-        // about the above hack.
-        // this regexexp with [:-] does 2 differents things
-        // - it allows to have subdomains images:generate:categories for example which is ImageGenerateCategories        - in ns FOP\Console\Commands\Image
-        // - it allows <action> to have dash fop:modules:non-essential for example which classname is ModuleNonEssential - in ns FOP\Console\Commands\Module
-        // From 1 classname with many words in <action> we can have many command name. So no simple
-        // That's why we need a regexp. (it's fine, it does the job.)
-        // This is not really a problem, real problem is that it's hard to read and not explained anywhere !
-        // validation logic, business rule is hidden in that regexp.
-        // This needs to be fixed by
-        // - writing a clear expression and add it on top of the file with const FQCNRegexp
-        // - document it at the top of the file
+        $actionWordsFromFQCN = $this->getWords($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
+        $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
-        if (!preg_match('/^' . $expectedCommandNamePattern . '$/', $commandName)) {
-            $this->results->addResult(new ValidationResult(false, 'Wrong format for command class name.' . PHP_EOL
-                . "Expected = $expectedCommandNamePattern" . PHP_EOL
-                . "Actual = $commandName"));
+        if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
+            $rebuiltCommandName = $domain . ':' . join(':', $actionWords);
+
+            $this->results->addResult(
+                new ValidationResult(
+                    false,
+                    'Wrong command name.' . PHP_EOL . ' FQCN generated from command name : '
+                . "Expected = '$rebuiltCommandName' " . PHP_EOL
+                . "Actual = '$commandName' "));
+            // @todo add a tip
         }
     }
 
@@ -168,6 +176,34 @@ class FOPCommandFormatsValidator
     }
 
     /**
+     * @return string domain in CamelCase format `Domain`
+     */
+    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'] ?? '';
+    }
+
+    /**
+     * @return string domaine+action in CamelCase format `DomainAction`
+     */
+    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'] ?? '';
+    }
+
+    /**
+     * @return string action in CamelCase format `Action`
+     */
+    private function extractActionWithoutDomainFromFQCN(string $fullyQualifiedClassName): string
+    {
+        return str_replace(
+            $this->extractDomainFromFQCN($fullyQualifiedClassName),
+            '',
+            $this->extractActionFromFQCN($fullyQualifiedClassName)
+        );
+    }
+
+    /**
      * @param string $fullyQualifiedClassName
      *
      * @return array{domain?: string, action?: string}
@@ -177,24 +213,5 @@ class FOPCommandFormatsValidator
         preg_match(self::FQCNRegexp, $fullyQualifiedClassName, $matches);
 
         return $matches ?? [];
-    }
-
-    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'] ?? '';
-    }
-
-    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'] ?? '';
-    }
-
-    private function extractActionWithoutDomainFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return str_replace(
-            $this->extractDomainFromFQCN($fullyQualifiedClassName),
-            '',
-            $this->extractActionFromFQCN($fullyQualifiedClassName)
-        );
     }
 }
