@@ -49,8 +49,8 @@ class FOPCommandFormatsValidator
 
     /**
      * @var string regular expression for service's name
-     * `fop.console.domain.action`
-     * action can contain '.' or '_'
+     *             `fop.console.domain.action`
+     *             action can contain '.' or '_'
      */
     private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
 
@@ -115,7 +115,7 @@ class FOPCommandFormatsValidator
     }
 
     /**
-     * @todo extract building logic in a standalone builder
+     * Logic : extract domain and action from fqcn and compare with domain and action extracted from command name
      *
      * @param string $commandName
      * @param string $fullyQualifiedClassName
@@ -134,36 +134,42 @@ class FOPCommandFormatsValidator
         $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
         if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
-            $rebuiltCommandName = $domain . ':' . join(':', $actionWords);
-
             $this->results->addResult(
                 new ValidationResult(
                     false,
                     "Wrong command name '$commandName'")
             );
-            // @todo add a tip
         }
     }
 
+    /**
+     * Check Service Name Is Consistent With Class Name
+     *
+     * Logic : rebuild the fcqn from the service name then compare.
+     *
+     * @param string $service
+     * @param string $fullyQualifiedClassName
+     *
+     * @return void
+     */
     private function checkServiceNameIsConsistentWithClassName(
         string $service, string $fullyQualifiedClassName): void
     {
-        $actionWithoutDomain = $this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName);
-        $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+        preg_match(self::SERVICE_REGEXP, $service, $matches);
+        $domain = ucfirst($matches['domain'] ?? '');
+        // action words : action part words split by `-` or `:`  and CamelCased (one word,  ucfirst() is ok)
+        $actionWords = array_map('ucfirst', preg_split('/[._]/', $matches['action'] ?? ''));
 
-        // Command service name pattern = fop.console.command_domain.command[\._]actionWithoutDomain.command
-        $expectedCommandServiceNamePattern = strtolower(
-            'fop.console.'
-            . implode('_', $this->getWords($domain))
-            . '.'
-            . implode('[\._]', $this->getWords($actionWithoutDomain))
-            . '.command'
-        );
+        $actionWordsFromFQCN = $this->getWords($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
+        $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
-
-
-        if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $service)) {
-            $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
+        if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
+            $this->results->addResult(
+                new ValidationResult(
+                    false,
+                    "Wrong service name '$service'")
+            );
+            // @todo add a tip
         }
     }
 
