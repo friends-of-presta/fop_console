@@ -77,10 +77,6 @@ class FOPCommandFormatsValidator
         $this->checkCommandNameIsConsistentWithClassName($commandName, $fullyQualifiedClassName);
         $this->checkServiceNameIsConsistentWithClassName($service, $fullyQualifiedClassName);
 
-        if (empty(iterator_to_array($this->results))) {
-            $this->results->addResult(new ValidationResult(true, 'Everything checked successfully.'));
-        }
-
         return $this->results;
     }
 
@@ -89,7 +85,10 @@ class FOPCommandFormatsValidator
         $domain = $this->extractDomainFromFQCN($fullyQualifiedClassName);
         if (empty($domain)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
+
+            return;
         }
+        $this->results->addResult(new ValidationResult(true, 'Domain found in FQCN.'));
     }
 
     private function checkActionIsNotEmptyInClassName(string $fullyQualifiedClassName): void
@@ -98,7 +97,10 @@ class FOPCommandFormatsValidator
 
         if (empty($action)) {
             $this->results->addResult(new ValidationResult(false, "Action can't be empty."));
+
+            return;
         }
+        $this->results->addResult(new ValidationResult(true, 'Action found in FQCN.'));
     }
 
     private function checkDomainIsRepeatedInActionInClassName(string $fullyQualifiedClassName): void
@@ -109,7 +111,10 @@ class FOPCommandFormatsValidator
         // emptiness must be checked before processing strpos(), strpos() doesn't support empty needle
         if (empty($domain) || strpos($action, $domain) !== 0) {
             $this->results->addResult(new ValidationResult(false, "Domain '$domain' must be included in command class name."));
+
+            return;
         }
+        $this->results->addResult(new ValidationResult(true, 'Domain is repeated in Action part of FQCN.'));
     }
 
     /**
@@ -133,18 +138,22 @@ class FOPCommandFormatsValidator
                     false,
                     "Wrong command name '$commandName'")
             );
+
+            return;
         }
+        $this->results->addResult(new ValidationResult(true, 'Symfony command name is consistent with FQCN.'));
     }
 
     /**
      * Check Service Name Is Consistent With Class Name
-     *
      * Logic : rebuild the fcqn from the service name then compare.
      *
      * @param string $service
      * @param string $fullyQualifiedClassName
      *
      * @return void
+     *
+     * @throws \Exception
      */
     private function checkServiceNameIsConsistentWithClassName(
         string $service, string $fullyQualifiedClassName): void
@@ -159,7 +168,10 @@ class FOPCommandFormatsValidator
                     false,
                     "Wrong service name '$service'")
             );
+
+            return;
         }
+        $this->results->addResult(new ValidationResult(true, 'Service name is consistent with FQCN.'));
     }
 
     /**
