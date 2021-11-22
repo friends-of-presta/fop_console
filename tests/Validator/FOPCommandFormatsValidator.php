@@ -54,9 +54,7 @@ class FOPCommandFormatsValidator
      */
     private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
 
-    /**
-     * @var ValidationResults
-     */
+    /** @var ValidationResults */
     private $results;
 
     /**
@@ -125,12 +123,8 @@ class FOPCommandFormatsValidator
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName, string $fullyQualifiedClassName): void
     {
-        preg_match(self::COMMAND_REGEXP, $commandName, $matches);
-        $domain = ucfirst($matches['domain'] ?? '');
-        // action words : action part words split by `-` or `:`  and CamelCased (one word,  ucfirst() is ok)
-        $actionWords = array_map('ucfirst', preg_split('/[:-]/', $matches['action'] ?? ''));
-
-        $actionWordsFromFQCN = $this->getWords($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
+        list($domain, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::COMMAND_REGEXP, '/[:-]/', $commandName);
+        $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
         $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
         if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
@@ -155,12 +149,8 @@ class FOPCommandFormatsValidator
     private function checkServiceNameIsConsistentWithClassName(
         string $service, string $fullyQualifiedClassName): void
     {
-        preg_match(self::SERVICE_REGEXP, $service, $matches);
-        $domain = ucfirst($matches['domain'] ?? '');
-        // action words : action part words split by `-` or `:`  and CamelCased (one word,  ucfirst() is ok)
-        $actionWords = array_map('ucfirst', preg_split('/[._]/', $matches['action'] ?? ''));
-
-        $actionWordsFromFQCN = $this->getWords($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
+        list($domain, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::SERVICE_REGEXP, '/[._]/', $service);
+        $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
         $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
 
         if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
@@ -169,20 +159,20 @@ class FOPCommandFormatsValidator
                     false,
                     "Wrong service name '$service'")
             );
-            // @todo add a tip
         }
     }
 
     /**
      * Split string on each Capitalized letter.
      *
-     * e.g. HelloWorld => ['Hello', 'World']
+     * No need to capitalize the first letter.
+     * HelloWorld => ['Hello', 'World']
      *
      * @param string $subject
      *
      * @return array<string>
      */
-    private function getWords(string $subject): array
+    private function getWordsFromCamelCasedString(string $subject): array
     {
         return preg_split('/(?=[A-Z])/', ucfirst($subject), -1, PREG_SPLIT_NO_EMPTY) ?: [''];
     }
@@ -225,5 +215,25 @@ class FOPCommandFormatsValidator
         preg_match(self::FQCN_REGEXP, $fullyQualifiedClassName, $matches);
 
         return $matches ?? [];
+    }
+
+    /**
+     * @param string $regexp
+     * @param string $subject
+     *
+     * @return array{string, array<int, string>}
+     */
+    private function extractDomainAndActionsFromRegexp(string $regexp, string $splitWordsRegexp, string $subject): array
+    {
+        preg_match($regexp, $subject, $matches);
+        $domain = ucfirst($matches['domain'] ?? '');
+        // action words : string split in words using `-` or `:` as separator then CamelCased
+        $actionWords = preg_split($splitWordsRegexp, $matches['action'] ?? '');
+        if (false === $actionWords) {
+            throw new \Exception("failed to extract action words from '$subject'.");
+        }
+        $actionWords = array_map('ucfirst', $actionWords);
+
+        return [$domain, $actionWords];
     }
 }
