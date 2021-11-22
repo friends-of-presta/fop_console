@@ -38,16 +38,21 @@ class FOPCommandFormatsValidator
      * @var string Regular expression for command's fully qualified class name
      *             `FOP\Console\Commands\Domain\DomainAction`
      */
-    private const FQCNRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>[[:alpha:]]+)\\\(?<action>[[:alpha:]]+)$#X';
+    private const FQCN_REGEXP = '#^FOP\\\Console\\\Commands\\\(?<domain>[[:alpha:]]+)\\\(?<action>[[:alpha:]]+)$#X';
 
     /**
      * @var string regular expression for command's name
      *             `fop:domain:action`
      *             action can also have ':' and '-' in it
      */
-    private const CommandRegexp = '#^fop:(?<domain>[[:alpha:]]+):(?<action>[[:alpha:]:-]+)$#X';
+    private const COMMAND_REGEXP = '#^fop:(?<domain>[[:alpha:]]+):(?<action>[[:alpha:]:-]+)$#X';
 
-    // @todo other formats should be here.
+    /**
+     * @var string regular expression for service's name
+     * `fop.console.domain.action`
+     * action can contain '.' or '_'
+     */
+    private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
 
     /**
      * @var ValidationResults
@@ -120,7 +125,7 @@ class FOPCommandFormatsValidator
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName, string $fullyQualifiedClassName): void
     {
-        preg_match(self::CommandRegexp, $commandName, $matches);
+        preg_match(self::COMMAND_REGEXP, $commandName, $matches);
         $domain = ucfirst($matches['domain'] ?? '');
         // action words : action part words split by `-` or `:`  and CamelCased (one word,  ucfirst() is ok)
         $actionWords = array_map('ucfirst', preg_split('/[:-]/', $matches['action'] ?? ''));
@@ -134,9 +139,8 @@ class FOPCommandFormatsValidator
             $this->results->addResult(
                 new ValidationResult(
                     false,
-                    'Wrong command name.' . PHP_EOL . ' FQCN generated from command name : '
-                . "Expected = '$rebuiltCommandName' " . PHP_EOL
-                . "Actual = '$commandName' "));
+                    "Wrong command name '$commandName'")
+            );
             // @todo add a tip
         }
     }
@@ -155,6 +159,8 @@ class FOPCommandFormatsValidator
             . implode('[\._]', $this->getWords($actionWithoutDomain))
             . '.command'
         );
+
+
 
         if (!preg_match('/^' . $expectedCommandServiceNamePattern . '$/', $service)) {
             $this->results->addResult(new ValidationResult(false, "Domain can't be empty."));
@@ -210,7 +216,7 @@ class FOPCommandFormatsValidator
      */
     private function getFQCNRegexpMatches(string $fullyQualifiedClassName): array
     {
-        preg_match(self::FQCNRegexp, $fullyQualifiedClassName, $matches);
+        preg_match(self::FQCN_REGEXP, $fullyQualifiedClassName, $matches);
 
         return $matches ?? [];
     }
