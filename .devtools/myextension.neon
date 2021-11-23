@@ -1,5 +1,0 @@
-services:
-	-
-		class: FOP\Console\DevTools\PhpStanCustomRule
-		tags:
-			- phpstan.rules.rule

@@ -15,12 +15,4 @@ includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
   - %currentWorkingDirectory%/.devtools/phpstan_baseline.neon
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
-  - %currentWorkingDirectory%/.devtools/myextension.neon
-
-services:
-  -
-    class: FOP\Console\Tests\Validator\FOPCommandFormatsValidator
-  -
-    class: FOP\Console\Tests\Validator\PhpStanNamesConsistencyService
-    arguments:
-      yamlServicesFilePath: '%currentWorkingDirectory%/config/services.yml'
+  - %currentWorkingDirectory%/.devtools/fop_names_rules.neon
