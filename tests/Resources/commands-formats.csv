@@ -8,3 +8,5 @@ FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfercustomers,fo
 FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfercustomers.command,false,"missing ""_"" in service name"
 FOP\Console\Commands\About\Version,fop:about:version,fop.console.version.command,false,was written like that
 FOP\Console\Commands\About\AboutVersion,fop:about:version,fop.console.about.version.command,true,fixed
+FOP\Console\Commands\CartRule\CartRuleDeleteOutdated,fop:cart-rule:delete-outdated,fop.console.cart_rule.delete_outdated.command,true,multiple words domain
+FOP\Console\Commands\CartRule\CartRuleDeleteOutdated,fop:cart-rules:delete-outdated,fop.console.cart_rules.delete_outdated.command,false,unwanted 's'
