@@ -22,17 +22,12 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
+use Exception;
+use RuntimeException;
 use Symfony\Component\Yaml\Yaml;
 
 class PhpStanNamesConsistencyService
 {
-    /**
-     * @var string Regular expression for command's fully qualified class name
-     *
-     * @todo this should be in module's main file, fop_console.php
-     */
-    private const fqcnRegexp = '#^FOP\\\Console\\\Commands\\\(?<domain>\w+)\\\(?<action>\w+)$#X';
-
     /** @var string */
     private $yamlServicesFilePath;
 
@@ -48,33 +43,24 @@ class PhpStanNamesConsistencyService
         $this->validator = $validator;
     }
 
-    public function validateNames(string $fullyQualifiedClassName, string $command): bool
+    public function validateNames(string $fullyQualifiedClassName, string $command): ValidationResults
     {
         try {
             return $this->validator->validate(
-                $this->extractDomainFromFQCN($fullyQualifiedClassName),
-                $this->extractActionFromFQCN($fullyQualifiedClassName),
+                $fullyQualifiedClassName,
                 $command,
                 $this->getServiceNameForFQCN($fullyQualifiedClassName));
-        } catch (\Exception $exception) {
-            throw new \RuntimeException(__CLASS__ . ' Internal error : ' . $exception->getMessage());
+        } catch (Exception $exception) {
+            throw new RuntimeException(__CLASS__ . ' Internal error : ' . $exception->getMessage());
         }
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    public function errors(): array
-    {
-        return $this->validator->getValidationMessages();
     }
 
     private function getServiceNameForFQCN(string $fullyQualifiedClassName): string
     {
         $services = $this->getServicesNames();
         if (!isset($services[$fullyQualifiedClassName])) {
-            dump($fullyQualifiedClassName, $services);
-            throw new \Exception('Service not found in service.yaml. Maybe unsupported syntax...');
+//            dump($fullyQualifiedClassName, $services);
+            throw new Exception('Service not found in service.yaml.' . PHP_EOL . 'Maybe unsupported syntax.' . PHP_EOL . 'Use this form :' . PHP_EOL . '' . PHP_EOL . ' fop.console.domain.action.command:' . PHP_EOL . '   class: FOP\\Console\\Commands\\Domain\\DomainAction' . PHP_EOL . '   tags: [ console.command ]');
         }
 
         return $services[$fullyQualifiedClassName] ?? '';
@@ -101,7 +87,7 @@ class PhpStanNamesConsistencyService
         if (is_null($this->servicesNamesCache)) {
             $yaml = Yaml::parseFile($this->yamlServicesFilePath);
             if (!isset($yaml['services'])) {
-                throw new \RuntimeException('Unexpected Symfony config file content : "services" section not found.');
+                throw new RuntimeException('Unexpected Symfony config file content : "services" section not found.');
             }
             $filterServicesWithConsoleTag = static function (array $service) {
                 return isset($service['tags']) && in_array('console.command', $service['tags']); // direct form
@@ -121,34 +107,5 @@ class PhpStanNamesConsistencyService
         }
 
         return $this->servicesNamesCache;
-    }
-
-    /**
-     * @todo this should be in FOP\Console\Tests\Validator\FOPCommandFormatsValidator
-     */
-    private function extractDomainFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['domain'];
-    }
-
-    /**
-     * @todo this should be in FOP\Console\Tests\Validator\FOPCommandFormatsValidator
-     */
-    private function extractActionFromFQCN(string $fullyQualifiedClassName): string
-    {
-        return $this->getFQCNRegexpMatches($fullyQualifiedClassName)['action'];
-    }
-
-    /**
-     * @param string $fullyQualifiedClassName
-     *
-     * @return array{domain: string, action: string}
-     */
-    private function getFQCNRegexpMatches(string $fullyQualifiedClassName): array
-    {
-        preg_match(self::fqcnRegexp, $fullyQualifiedClassName, $matches);
-        $dummyCapture = 'not extracted from regexp.'; // @todo throw Exception instead ? Better fail silently in phpstan rule ?
-
-        return array_merge(['domain' => $dummyCapture, 'action' => $dummyCapture], $matches ?? []);
     }
 }

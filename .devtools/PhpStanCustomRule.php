@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace FOP\Console\DevTools;
 
 use FOP\Console\Tests\Validator\PhpStanNamesConsistencyService;
+use FOP\Console\Tests\Validator\ValidationResult;
 use PhpParser;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
@@ -50,11 +51,11 @@ class PhpStanCustomRule implements Rule
     private $scope;
 
     /** @var \FOP\Console\Tests\Validator\PhpStanNamesConsistencyService */
-    private $validatorService;
+    private $validator;
 
     public function __construct(PhpStanNamesConsistencyService $validatorService)
     {
-        $this->validatorService = $validatorService;
+        $this->validator = $validatorService;
     }
 
     /**
@@ -95,9 +96,16 @@ class PhpStanCustomRule implements Rule
         }
 
         $commandClassName = $scope->getClassReflection()->getName();
-        $consistencyValidation = $this->validatorService->validateNames($commandClassName, $commandName);
-        if(!$consistencyValidation) {
-            return array_map(static function (string $message) { return RuleErrorBuilder::message($message)->build();}, $this->validatorService->errors());
+        $validationResults = $this->validator->validateNames($commandClassName, $commandName);
+        if(!$validationResults->isValidationSuccessful()) {
+            return array_map(
+                static function (ValidationResult $result) {
+                    $error = RuleErrorBuilder::message($result->getMessage());
+                    empty($result->getTip()) ?: $error->tip($result->getTip());
+
+                    return $error->build();
+                    },
+                $validationResults->getFailures());
         }
 
         return [];
