@@ -55,8 +55,8 @@ class FOPCommandFormatsValidatorTest extends TestCase
         );
 
         $successful = $results->isValidationSuccessful();
-        $messages = array_reduce(iterator_to_array($results), function ($messages, ValidationResult $result) {
-            return $messages . $result->getMessage();
+        $messages = array_reduce($results->getFailures(), function ($messages, ValidationResult $result) {
+            return $messages . $result->getMessage() . PHP_EOL;
         }, '');
 
         $this->assertSame(
