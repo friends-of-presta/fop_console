@@ -22,9 +22,8 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
-/**
+use Exception; /**
  * Class FOPCommandFormatsValidator
- *
  * Rules :
  * - FQCN must follow pattern : FOP\Console\Commands\<Domain>\<Domain><Action>
  *   - <Domain> is not empty
@@ -45,14 +44,26 @@ class FOPCommandFormatsValidator
      *             `fop:domain:action`
      *             action can also have ':' and '-' in it
      */
-    private const COMMAND_REGEXP = '#^fop:(?<domain>[[:alpha:]]+):(?<action>[[:alpha:]:-]+)$#X';
+    private const COMMAND_REGEXP = '#^fop:(?<domain>[[:alpha:]:-]+):(?<action>[[:alpha:]:-]+)$#X';
+
+    /**
+     * @var string
+     *             Regular expression used to split <domain> and <action> to words in COMMAND_REGEXP
+     */
+    private const COMMAND_SPLIT_WORDS_REGEXP = '/[:-]/';
 
     /**
      * @var string regular expression for service's name
      *             `fop.console.domain.action`
      *             action can contain '.' or '_'
      */
-    private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
+    private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]\._]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
+
+    /**
+     * @var string
+     *             Regular expression used to split <domain> and <action> to words in SERVICE_REGEXP
+     */
+    private const SERVICE_SPLIT_WORDS_REGEXP = '/[._]/';
 
     /** @var ValidationResults */
     private $results;
@@ -128,11 +139,11 @@ class FOPCommandFormatsValidator
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName, string $fullyQualifiedClassName): void
     {
-        list($domain, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::COMMAND_REGEXP, '/[:-]/', $commandName);
+        list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::COMMAND_REGEXP, self::COMMAND_SPLIT_WORDS_REGEXP, $commandName);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
-        $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+        $domainWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractDomainFromFQCN($fullyQualifiedClassName));
 
-        if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
+        if ($domainWords != $domainWordsFromFQCN || $actionWords != $actionWordsFromFQCN) {
             $this->results->addResult(
                 new ValidationResult(
                     false,
@@ -158,11 +169,11 @@ class FOPCommandFormatsValidator
     private function checkServiceNameIsConsistentWithClassName(
         string $service, string $fullyQualifiedClassName): void
     {
-        list($domain, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::SERVICE_REGEXP, '/[._]/', $service);
+        list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::SERVICE_REGEXP, self::SERVICE_SPLIT_WORDS_REGEXP, $service);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
-        $domainFromFQCN = $this->extractDomainFromFQCN($fullyQualifiedClassName);
+        $domainWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractDomainFromFQCN($fullyQualifiedClassName));
 
-        if ($domain != $domainFromFQCN || $actionWords != $actionWordsFromFQCN) {
+        if ($domainWords != $domainWordsFromFQCN || $actionWords != $actionWordsFromFQCN) {
             $this->results->addResult(
                 new ValidationResult(
                     false,
@@ -231,21 +242,29 @@ class FOPCommandFormatsValidator
 
     /**
      * @param string $regexp
+     * @param string $splitWordsRegexp
      * @param string $subject
      *
-     * @return array{string, array<int, string>}
+     * @return array{array<int, string>, array<int, string>}
+     *
+     * @throws \Exception
      */
     private function extractDomainAndActionsFromRegexp(string $regexp, string $splitWordsRegexp, string $subject): array
     {
         preg_match($regexp, $subject, $matches);
-        $domain = ucfirst($matches['domain'] ?? '');
+        $domainWords = preg_split($splitWordsRegexp, $matches['domain'] ?? '');
+        if (false === $domainWords) {
+            throw new Exception("failed to extract domain words from '$subject'.");
+        }
+        $domainWords = array_map('ucfirst', $domainWords);
+
         // action words : string split in words using `-` or `:` as separator then CamelCased
         $actionWords = preg_split($splitWordsRegexp, $matches['action'] ?? '');
         if (false === $actionWords) {
-            throw new \Exception("failed to extract action words from '$subject'.");
+            throw new Exception("failed to extract action words from '$subject'.");
         }
         $actionWords = array_map('ucfirst', $actionWords);
 
-        return [$domain, $actionWords];
+        return [$domainWords, $actionWords];
     }
 }
