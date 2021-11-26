@@ -54,7 +54,7 @@ class FOPCommandFormatsValidator
 
     /**
      * @var string regular expression for service's name
-     *             `fop.console.domain.action`
+     *             `fop.console.domain.action.command`
      *             action can contain '.' or '_'
      */
     private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]_]+)\.(?<action>[[:alpha:]_]+)\.command$#X';
