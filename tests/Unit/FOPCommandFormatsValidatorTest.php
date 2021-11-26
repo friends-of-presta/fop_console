@@ -66,8 +66,21 @@ class FOPCommandFormatsValidatorTest extends TestCase
         );
     }
 
+    /**
+     * @dataProvider commandsFormatsProviderRealWorld
+     */
+    public function testValidateCurrents($commandFQCN, $commandName, $commandService, $expected)
+    {
+        $this->testValidate($commandFQCN, $commandName, $commandService, $expected);
+    }
+
     public function commandsFormatsProvider(): CSVFileIterator
     {
         return new CSVFileIterator('tests/Resources/commands-formats.csv');
+    }
+
+    public function commandsFormatsProviderRealWorld(): CSVFileIterator
+    {
+        return new CSVFileIterator('tests/Resources/commands-realworld.csv');
     }
 }
