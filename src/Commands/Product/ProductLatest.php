@@ -51,9 +51,10 @@ final class ProductLatest extends Command
             return 0;
         }
 
+        $productInformation = $this->formatProductInformation($products);
         $this->io->table(
-            ['ID', 'Name', 'Quantity', 'Price', 'Activated?'],
-            $this->formatProductInformation($products)
+            array_keys(current($productInformation)),
+            $productInformation
         );
 
         return 0;
@@ -62,7 +63,7 @@ final class ProductLatest extends Command
     /**
      * @param array $products the list of the products
      *
-     * @return array<int, array<int, string>>
+     * @return array<int, array<string, string>>
      */
     private function formatProductInformation(array $products): array
     {
@@ -70,11 +71,11 @@ final class ProductLatest extends Command
         /** @var Product $product */
         foreach ($products as $product) {
             $productsInformation[] = [
-                $product['id_product'],
-                $product['name'],
-                $product['quantity'],
-                $product['price'],
-                $product['active'] ? '✔' : '✘',
+                'ID' => $product['id_product'],
+                'Name' => $product['name'],
+                'Quantity' => $product['quantity'],
+                'Price' => $product['price'],
+                'Activated?' => $product['active'] ? '✔' : '✘',
             ];
         }
 
