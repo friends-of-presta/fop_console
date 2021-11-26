@@ -42,9 +42,9 @@ class FOPCommandFormatsValidator
     /**
      * @var string regular expression for command's name
      *             `fop:domain:action`
-     *             action can also have ':' and '-' in it
+     *             action and domain can also contain '-' in it
      */
-    private const COMMAND_REGEXP = '#^fop:(?<domain>[[:alpha:]:-]+):(?<action>[[:alpha:]:-]+)$#X';
+    private const COMMAND_REGEXP = '#^fop:(?<domain>[[:alpha:]-]+):(?<action>[[:alpha:]:-]+)$#X';
 
     /**
      * @var string
@@ -57,13 +57,13 @@ class FOPCommandFormatsValidator
      *             `fop.console.domain.action`
      *             action can contain '.' or '_'
      */
-    private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]\._]+)\.(?<action>[[:alpha:]\._]+)\.command$#X';
+    private const SERVICE_REGEXP = '#^fop\.console\.(?<domain>[[:alpha:]_]+)\.(?<action>[[:alpha:]_]+)\.command$#X';
 
     /**
      * @var string
      *             Regular expression used to split <domain> and <action> to words in SERVICE_REGEXP
      */
-    private const SERVICE_SPLIT_WORDS_REGEXP = '/[._]/';
+    private const SERVICE_SPLIT_WORDS_REGEXP = '/[_]/';
 
     /** @var ValidationResults */
     private $results;
