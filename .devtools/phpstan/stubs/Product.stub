@@ -1,0 +1,19 @@
+<?php
+
+
+class ProductCore extends ObjectModel
+{
+    /**
+     * Get new products.
+     * @param int $id_lang Language id
+     * @param int $page_number
+     * @param int $nb_products
+     * @param bool $count
+     * @param ?string $order_by
+     * @param ?string $order_way
+     * @param Context|null $context
+     *
+     * @return array<string, mixed>|false
+     */
+    public static function getNewProducts($id_lang, $page_number = 0, $nb_products = 10, $count = false, $order_by = null, $order_way = null, Context $context = null) { } /* @phpstan-ignore-line */
+}

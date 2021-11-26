@@ -36,15 +36,20 @@ final class ProductLatest extends Command
             ->setName('fop:product:latest')
             ->setAliases(['fop:latest-products'])
             ->setDescription('Displays the latest products')
-            ->setHelp('This command allows you to display the latest products')
+            ->setHelp('This command allows you to display the latest "new" products.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $products = Product::getNewProducts(1);
-
         $this->io->title('Legacy Latest Products listing');
+
+        $products = Product::getNewProducts(1);
+        if (false === $products) {
+            $this->io->text('There\'s currently no "new" products in the shop.');
+
+            return 0;
+        }
 
         $this->io->table(
             ['ID', 'Name', 'Quantity', 'Price', 'Activated?'],
