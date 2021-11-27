@@ -3,10 +3,12 @@ parameters:
     - ./
   excludes_analyse:
     - vendor/
+    - .devtools/phpstan/stubs/
   reportUnmatchedIgnoredErrors: true
   level: 5
-  stubFiles: 
+  stubFiles:
       - .devtools/phpstan/stubs/Category.stub
+      - .devtools/phpstan/stubs/Product.stub
 
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
