@@ -21,6 +21,8 @@
 namespace FOP\Console\Tests\Unit;
 
 use FOP\Console\Tests\Validator\FOPCommandFormatsValidator;
+use FOP\Console\Tests\Validator\ValidationResult;
+use FOP\Console\Tests\Validator\ValidationResults;
 use PHPUnit\Framework\TestCase;
 
 class FOPCommandFormatsValidatorTest extends TestCase
@@ -33,25 +35,52 @@ class FOPCommandFormatsValidatorTest extends TestCase
         $this->validator = new FOPCommandFormatsValidator();
     }
 
+    public function testValidateReturnsInstanceOfValidationResults()
+    {
+        $this->assertInstanceOf(
+            ValidationResults::class,
+            $this->validator->validate('fqcn', 'command:name', 'fop.service')
+        );
+    }
+
     /**
      * @dataProvider commandsFormatsProvider
      */
-    public function testValidate($commandDomain, $commandClassName, $commandName, $commandService, $expected)
+    public function testValidate($commandFQCN, $commandName, $commandService, $expected)
     {
+        $results = $this->validator->validate(
+            $commandFQCN,
+            $commandName,
+            $commandService
+        );
+
+        $successful = $results->isValidationSuccessful();
+        $messages = array_reduce($results->getFailures(), function ($messages, ValidationResult $result) {
+            return $messages . $result->getMessage() . PHP_EOL;
+        }, '');
+
         $this->assertSame(
             filter_var($expected, FILTER_VALIDATE_BOOLEAN),
-            $this->validator->validate(
-                $commandDomain,
-                $commandClassName,
-                $commandName,
-                $commandService
-            ),
-            implode(PHP_EOL, $this->validator->getValidationMessages())
+            $successful,
+            $messages
         );
+    }
+
+    /**
+     * @dataProvider commandsFormatsProviderRealWorld
+     */
+    public function testValidateCurrents($commandFQCN, $commandName, $commandService, $expected)
+    {
+        $this->testValidate($commandFQCN, $commandName, $commandService, $expected);
     }
 
     public function commandsFormatsProvider(): CSVFileIterator
     {
         return new CSVFileIterator('tests/Resources/commands-formats.csv');
+    }
+
+    public function commandsFormatsProviderRealWorld(): CSVFileIterator
+    {
+        return new CSVFileIterator('tests/Resources/commands-realworld.csv');
     }
 }
