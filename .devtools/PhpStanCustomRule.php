@@ -37,14 +37,14 @@ use PHPStan\Rules\RuleErrorBuilder;
  * Class PhpStanCustomRule
  *
  * @template T
- * @phpstan-template Stmt\ClassMethod
- * @implements PHPStan\Rules\Rule<Node\Stmt\ClassMethod>
+ * @phpstan-template \Stmt\ClassMethod
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Stmt\ClassMethod>
  */
 class PhpStanCustomRule implements Rule
 {
     const FOP_BASE_COMMAND_CLASS_NAME = \FOP\Console\Command::class;
 
-    /** @var PhpParser\Node\Stmt\ClassMethod */
+    /** @var \PhpParser\Node\Stmt\ClassMethod */
     private $node;
 
     /** @var \PHPStan\Analyser\Scope */
@@ -52,6 +52,9 @@ class PhpStanCustomRule implements Rule
 
     /** @var \FOP\Console\Tests\Validator\PhpStanNamesConsistencyService */
     private $validator;
+
+    /** @var bool for debug only */
+    private $verbose = true;
 
     public function __construct(PhpStanNamesConsistencyService $validatorService)
     {
@@ -95,7 +98,12 @@ class PhpStanCustomRule implements Rule
             ];
         }
 
-        $commandClassName = $scope->getClassReflection()->getName();
+        $commandClass = $scope->getClassReflection();
+        if(is_null($commandClass)) {
+            throw new \Exception('Class reflection failed.');
+        }
+
+        $commandClassName = $commandClass->getName();
         $validationResults = $this->validator->validateNames($commandClassName, $commandName);
         if(!$validationResults->isValidationSuccessful()) {
             return array_map(
@@ -171,13 +179,16 @@ class PhpStanCustomRule implements Rule
         return in_array(self::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
     }
 
+    /**
+     * @param mixed $output
+     */
     private function debug($output): void
     {
         $this->verbose && var_export($output); /* @phpstan-ignore-line */
         $this->verbose && var_export(PHP_EOL); /* @phpstan-ignore-line */
     }
 
-    private function debugNode($node)
+    private function debugNode(Node $node) : void
     {
         $nd = new NodeDumper();
         dump($nd->dump($node));
