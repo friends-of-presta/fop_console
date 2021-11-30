@@ -11,11 +11,11 @@ FOP\Console\Commands\Generate\GenerateHtaccess,fop:generate:htaccess,fop.console
 FOP\Console\Commands\Generate\GenerateRobots,fop:generate:robots,fop.console.generate.robots.command,true
 FOP\Console\Commands\Group\GroupTransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,true
 FOP\Console\Commands\Hook\HookAdd,fop:hook:add,fop.console.hook.add.command,true
-FOP\Console\Commands\Image\ImageGenerateProducts,fop:image:generate:products,fop.console.image.generate_products.command,true
-FOP\Console\Commands\Image\ImageGenerateCategories,fop:image:generate:categories,fop.console.image.generate_categories.command,true
-FOP\Console\Commands\Image\ImageGenerateManufacturers,fop:image:generate:manufacturers,fop.console.image.generate_manufacturers.command,true
-FOP\Console\Commands\Image\ImageGenerateSuppliers,fop:image:generate:suppliers,fop.console.image.generate_suppliers.command,true
-FOP\Console\Commands\Image\ImageGenerateStores,fop:image:generate:stores,fop.console.image.generate_stores.command,true
+FOP\Console\Commands\Image\ImageGenerateProducts,fop:image:generate:products,fop.console.image.generate_products.command,false
+FOP\Console\Commands\Image\ImageGenerateCategories,fop:image:generate:categories,fop.console.image.generate_categories.command,false
+FOP\Console\Commands\Image\ImageGenerateManufacturers,fop:image:generate:manufacturers,fop.console.image.generate_manufacturers.command,false
+FOP\Console\Commands\Image\ImageGenerateSuppliers,fop:image:generate:suppliers,fop.console.image.generate_suppliers.command,false
+FOP\Console\Commands\Image\ImageGenerateStores,fop:image:generate:stores,fop.console.image.generate_stores.command,false
 FOP\Console\Commands\Module\ModuleUnhook,fop:module:unhook,fop.console.module.unhook.command,true
 FOP\Console\Commands\Module\ModuleHook,fop:module:hook,fop.console.module.hook.command,true
 FOP\Console\Commands\Module\ModuleHooks,fop:module:hooks,fop.console.module.hooks.command,true
