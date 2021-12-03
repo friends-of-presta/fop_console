@@ -39,10 +39,11 @@ use PHPStan\Rules\RuleErrorBuilder;
  * @template T
  * @phpstan-template \Stmt\ClassMethod
  * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Stmt\ClassMethod>
+ * Do not set class as final : inheritance is needed for phpstan test.
  */
 class PhpStanCustomRule implements Rule
 {
-    const FOP_BASE_COMMAND_CLASS_NAME = \FOP\Console\Command::class;
+    public const FOP_BASE_COMMAND_CLASS_NAME = \FOP\Console\Command::class;
 
     /** @var \PhpParser\Node\Stmt\ClassMethod */
     private $node;
@@ -86,6 +87,7 @@ class PhpStanCustomRule implements Rule
         /* @var Stmt\ClassMethod $node */
         if (!$this->nodeIsConfigureMethod()
             || !$this->nodeIsInClassFopCommand()) {
+//            $this->verbose && print('fini avant');
             return [];
         }
 
@@ -165,6 +167,7 @@ class PhpStanCustomRule implements Rule
 
     private function nodeIsConfigureMethod(): bool
     {
+//        $this->verbose && ( print(__FUNCTION__) && var_dump('configure' === $this->node->name->toString()) );
         return 'configure' === $this->node->name->toString();
     }
 
@@ -175,8 +178,14 @@ class PhpStanCustomRule implements Rule
             throw new \LogicException('This rule is supposed to be executed on a class\' method but no reflected class found.');
         }
 
+//        if($this->verbose) {
+//           $this->debug(__FUNCTION__);
+//           $this->debug(in_array(static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames()) );
+//           $this->debug([static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames()]);
+//        }
+
         /* @var $class \PHPStan\Reflection\ClassReflection */
-        return in_array(self::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
+        return in_array(static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
     }
 
     /**
