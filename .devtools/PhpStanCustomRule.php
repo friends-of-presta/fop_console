@@ -54,9 +54,6 @@ class PhpStanCustomRule implements Rule
     /** @var \FOP\Console\Tests\Validator\PhpStanNamesConsistencyService */
     private $validator;
 
-    /** @var bool for debug only */
-    private $verbose = true;
-
     public function __construct(PhpStanNamesConsistencyService $validatorService)
     {
         $this->validator = $validatorService;
@@ -87,7 +84,6 @@ class PhpStanCustomRule implements Rule
         /* @var Stmt\ClassMethod $node */
         if (!$this->nodeIsConfigureMethod()
             || !$this->nodeIsInClassFopCommand()) {
-//            $this->verbose && print('fini avant');
             return [];
         }
 
@@ -156,8 +152,6 @@ class PhpStanCustomRule implements Rule
 
         // we might filter false positive by checking argument type.
         if ('Scalar_String' !== $setNameNode->args[0]->value->getType()) {
-//            $this->debug('setName() found but argument is not a string.');
-//            $this->debugNode($setNameNode);
 
             return '';
         }
@@ -167,7 +161,6 @@ class PhpStanCustomRule implements Rule
 
     private function nodeIsConfigureMethod(): bool
     {
-//        $this->verbose && ( print(__FUNCTION__) && var_dump('configure' === $this->node->name->toString()) );
         return 'configure' === $this->node->name->toString();
     }
 
@@ -178,28 +171,8 @@ class PhpStanCustomRule implements Rule
             throw new \LogicException('This rule is supposed to be executed on a class\' method but no reflected class found.');
         }
 
-//        if($this->verbose) {
-//           $this->debug(__FUNCTION__);
-//           $this->debug(in_array(static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames()) );
-//           $this->debug([static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames()]);
-//        }
-
         /* @var $class \PHPStan\Reflection\ClassReflection */
         return in_array(static::FOP_BASE_COMMAND_CLASS_NAME, $class->getParentClassesNames());
     }
 
-    /**
-     * @param mixed $output
-     */
-    private function debug($output): void
-    {
-        $this->verbose && var_export($output); /* @phpstan-ignore-line */
-        $this->verbose && var_export(PHP_EOL); /* @phpstan-ignore-line */
-    }
-
-    private function debugNode(Node $node) : void
-    {
-        $nd = new NodeDumper();
-        dump($nd->dump($node));
-    }
 }
