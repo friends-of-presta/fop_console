@@ -52,6 +52,7 @@ class PhpStanCustomRuleTest extends RuleTestCase
         // we can't use the original class, so we use an extended class.
         // this is because PhpStanCustomRule::nodeIsInClassFopCommand() checks the FQDN and therefore it needs to be changed
         // with the namespace of the tested class (FOP\Console\Tests\Resources\Commands\Domain).
+        /* @phpstan-ignore-next-line */
         return new class($mockedValidatorService) extends PhpStanCustomRule {
             public const FOP_BASE_COMMAND_CLASS_NAME = 'FOP\Console\Tests\Resources\Commands\Command';
         };

@@ -34,7 +34,7 @@ class PhpStanNamesConsistencyService
     /** @var \FOP\Console\Tests\Validator\FOPCommandFormatsValidator */
     private $validator;
 
-    /** @var array<string, string> */
+    /** @var ?array<string, string> */
     private $servicesNamesCache;
 
     public function __construct(string $yamlServicesFilePath, FOPCommandFormatsValidator $validator)
