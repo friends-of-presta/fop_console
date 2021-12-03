@@ -76,11 +76,11 @@ class PhpStanCustomRuleTest extends RuleTestCase
             ], [
             [
                 self::FAKE_ERROR_MESSAGE_1, // asserted error message
-                27, // asserted error line -
+                29, // asserted error line -
             ],
             [
-                'this makes the test fails',
-                26,
+                self::FAKE_ERROR_MESSAGE_2,
+                29,
             ],
         ]);
     }
