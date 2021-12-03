@@ -10,3 +10,15 @@ parameters:
 			message: "#^Function dump invoked with 2 parameters, 1 required\\.$#"
 			count: 1
 			path: ../src/Commands/Configuration/ConfigurationExport.php
+
+# The rule can not determine if the command name is correct because it's constructed at runtime.
+		-
+			message: "#^Console command name can not be extracted\\. Therefore consistency with classname can't be checked\\.$#"
+			count: 1
+			path: ../src/Commands/Image/ImageGenerateAbstract.php
+
+#	This error happens in a stub's test file. It must be ignored in the baseline otherwise the phpstan's unit test will fail.
+		-
+			message: "#^Call to an undefined method FOP\\\\Console\\\\Tests\\\\Resources\\\\Commands\\\\Domain\\\\DomainAction\\:\\:setName\\(\\)\\.$#"
+			count: 1
+			path: ../tests/Resources/Commands/Domain/DomainAction.php

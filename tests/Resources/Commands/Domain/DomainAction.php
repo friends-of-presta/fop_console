@@ -28,6 +28,6 @@ final class DomainAction extends Command
 {
     protected function configure(): void
     {
-        $this->setName('fop:category:clean'); /* @phpstan-ignore-line */
+        $this->setName('fop:category:clean');
     }
 }
