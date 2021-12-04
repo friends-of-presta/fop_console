@@ -30,7 +30,7 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class Version extends Command
+final class AboutVersion extends Command
 {
     const GITHUB_RELEASES_YAML_URL = 'https://api.github.com/repos/friends-of-presta/fop_console/releases/latest';
 
