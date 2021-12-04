@@ -135,6 +135,7 @@ class EnvironmentSetupDev extends Command
         //Regenerate htaccess
         $this->io->text('<info>Regenerate htaccess</info>');
         $command = $this->getApplication()->find('fop:generate:htaccess');
+        $command->initialize($input, $output);
         $returnCode = $command->execute($input, $output);
         $res = $res && !$returnCode;
 
