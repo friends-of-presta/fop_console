@@ -20,13 +20,13 @@
 
 namespace FOP\Console\Tests\Unit;
 
-use FOP\Console\DevTools\PhpStanCustomRule;
+use FOP\Console\DevTools\PhpStanNamesConsistencyRule;
 use FOP\Console\Tests\Validator\PhpStanNamesConsistencyService;
 use FOP\Console\Tests\Validator\ValidationResult;
 use FOP\Console\Tests\Validator\ValidationResults;
 use PHPStan\Testing\RuleTestCase;
 
-class PhpStanCustomRuleTest extends RuleTestCase
+class PhpStanNamesConsistencyRuleTest extends RuleTestCase
 {
     private const FAKE_ERROR_MESSAGE_1 = 'ĝi estas eraro.';
     private const FAKE_ERROR_MESSAGE_2 = 'tio estas alia eraro.';
@@ -50,10 +50,10 @@ class PhpStanCustomRuleTest extends RuleTestCase
         $mockedValidatorService->method('validateNames')->willReturn($validationResults);
 
         // we can't use the original class, so we use an extended class.
-        // this is because PhpStanCustomRule::nodeIsInClassFopCommand() checks the FQDN and therefore it needs to be changed
+        // this is because PhpStanNamesConsistencyRule::nodeIsInClassFopCommand() checks the FQDN and therefore it needs to be changed
         // with the namespace of the tested class (FOP\Console\Tests\Resources\Commands\Domain).
         /* @phpstan-ignore-next-line */
-        return new class($mockedValidatorService) extends PhpStanCustomRule {
+        return new class($mockedValidatorService) extends PhpStanNamesConsistencyRule {
             public const FOP_BASE_COMMAND_CLASS_NAME = 'FOP\Console\Tests\Resources\Commands\Command';
         };
     }

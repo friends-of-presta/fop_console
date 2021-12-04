@@ -34,14 +34,14 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * Class PhpStanCustomRule
+ * Class PhpStanNamesConsistencyRule
  *
  * @template T
  * @phpstan-template \Stmt\ClassMethod
  * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Stmt\ClassMethod>
  * Do not set class as final : inheritance is needed for phpstan test.
  */
-class PhpStanCustomRule implements Rule
+class PhpStanNamesConsistencyRule implements Rule
 {
     public const FOP_BASE_COMMAND_CLASS_NAME = \FOP\Console\Command::class;
 

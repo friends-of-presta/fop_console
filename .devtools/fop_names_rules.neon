@@ -1,6 +1,6 @@
 services:
   -
-    class: FOP\Console\DevTools\PhpStanCustomRule
+    class: FOP\Console\DevTools\PhpStanNamesConsistencyRule
     tags:
       - phpstan.rules.rule
   -
