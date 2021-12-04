@@ -121,8 +121,8 @@ services:
     class: FOP\Console\Commands\Theme\ThemeResetLayout
     tags: [ console.command ]
 
-  fop.console.version.command:
-    class: FOP\Console\Commands\About\Version
+  fop.console.about.version.command:
+    class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
 
 imports:
