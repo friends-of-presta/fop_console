@@ -16,6 +16,13 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 [Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
 
+Alternatively, run this in a shell :
+
+```bash
+#!/bin/bash
+wget https://git.io/JMF3q --output-document /tmp/fop_console.zip && unzip /tmp/fop_console.zip -d modules && ./bin/console pr:mo install fop_console
+```
+
 ## Install from sources
 
 If you want use the dev branch, you can install from github.
