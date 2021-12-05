@@ -23,5 +23,5 @@ namespace FOP\Console\Commands\Image;
 class ImageGenerateManufacturers extends ImageGenerateAbstract
 {
     /** @var string Image type */
-    const IMAGE_TYPE = 'manufacturers';
+    public const IMAGE_TYPE = 'manufacturers';
 }

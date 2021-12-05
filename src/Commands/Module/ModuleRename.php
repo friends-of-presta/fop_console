@@ -69,10 +69,18 @@ final class ModuleRename extends Command
             )
 
             ->addOption('new-author', 'a', InputOption::VALUE_REQUIRED, 'New author name')
-            ->addOption('extra-replacement', 'r', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'Extra search/replace pairs')
-            ->addOption('cased-extra-replacement', 'R', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'Extra search/replace pairs formatted with all usual case formats')
+            ->addOption(
+                'extra-replacement',
+                'r',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Extra search/replace pairs'
+            )
+            ->addOption(
+                'cased-extra-replacement',
+                'R',
+                InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
+                'Extra search/replace pairs formatted with all usual case formats'
+            )
             ->addOption('keep-old', 'k', InputOption::VALUE_NONE, 'Keep the old module untouched and only creates a copy of it with the new name')
 
             ->setHelp('This command allows you to replace the name of a module in the files and in the database.'
@@ -252,28 +260,40 @@ final class ModuleRename extends Command
             //string-to-format
             'kebabCase' => function ($string) {
                 return strtolower(
-                    implode('-',
-                    str_replace('_', '',
+                    implode(
+                        '-',
+                        str_replace(
+                        '_',
+                        '',
                         preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    ))
+                    )
+                    )
                 );
             },
             //STRING_TO_FORMAT
             'upperCaseSnakeCase' => function ($string) {
                 return strtoupper(
-                    implode('_',
-                    str_replace('_', '',
+                    implode(
+                        '_',
+                        str_replace(
+                        '_',
+                        '',
                         preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    ))
+                    )
+                    )
                 );
             },
             //string_to_format
             'snakeCase' => function ($string) {
                 return strtolower(
-                    implode('_',
-                    str_replace('_', '',
+                    implode(
+                        '_',
+                        str_replace(
+                        '_',
+                        '',
                         preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    ))
+                    )
+                    )
                 );
             },
             //Stringtoformat

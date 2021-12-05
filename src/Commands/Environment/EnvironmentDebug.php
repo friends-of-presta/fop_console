@@ -31,7 +31,7 @@ class EnvironmentDebug extends Command
     /**
      * @var array possible allowed dev mode passed in command
      */
-    const ALLOWED_COMMAND = ['status', 'enable', 'disable', 'toggle'];
+    public const ALLOWED_COMMAND = ['status', 'enable', 'disable', 'toggle'];
 
     /**
      * {@inheritdoc}

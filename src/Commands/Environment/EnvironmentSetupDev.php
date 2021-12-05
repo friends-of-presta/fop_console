@@ -53,10 +53,11 @@ class EnvironmentSetupDev extends Command
         $this->setName('fop:environment:setup-dev')
             ->setAliases(['fop:dev:setup-env'])
             ->setDescription('Install your project for local developement')
-            ->setHelp('<info>This command update database configuration with dev parameters (url, ssl, passwords). </info>' . PHP_EOL .
+            ->setHelp(
+                '<info>This command update database configuration with dev parameters (url, ssl, passwords). </info>' . PHP_EOL .
                         '<info>How to use : </info>' . PHP_EOL .
                         '<info>php bin/console fop:dev:setup-env --host=localhost --purl="/pro/clients/jojo/"  --modify-employee-pwd=1 --modify-customer-pwd=1 --employee-pwd=fopisnice --customer-pwd=fopisnice --ssl=0</info>'
-                        );
+            );
 
         $this->addUsage('--host=[localhost]');
         $this->addUsage('--purl=[physical_url]');

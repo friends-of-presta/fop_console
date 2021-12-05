@@ -31,6 +31,7 @@ use Exception; /**
  * - command name (symfony command name) is consistent with <Domain> and <Action>
  * - service name (symfony service declaration) is consistent with <Domain> and <Action>
  */
+
 class FOPCommandFormatsValidator
 {
     /**
@@ -137,7 +138,9 @@ class FOPCommandFormatsValidator
      * @return void
      */
     private function checkCommandNameIsConsistentWithClassName(
-        string $commandName, string $fullyQualifiedClassName): void
+        string $commandName,
+        string $fullyQualifiedClassName
+    ): void
     {
         list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::COMMAND_REGEXP, self::COMMAND_SPLIT_WORDS_REGEXP, $commandName);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
@@ -147,7 +150,8 @@ class FOPCommandFormatsValidator
             $this->results->addResult(
                 new ValidationResult(
                     false,
-                    "Wrong command name '$commandName'")
+                    "Wrong command name '$commandName'"
+                )
             );
 
             return;
@@ -167,7 +171,9 @@ class FOPCommandFormatsValidator
      * @throws \Exception
      */
     private function checkServiceNameIsConsistentWithClassName(
-        string $service, string $fullyQualifiedClassName): void
+        string $service,
+        string $fullyQualifiedClassName
+    ): void
     {
         list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::SERVICE_REGEXP, self::SERVICE_SPLIT_WORDS_REGEXP, $service);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
@@ -177,7 +183,8 @@ class FOPCommandFormatsValidator
             $this->results->addResult(
                 new ValidationResult(
                     false,
-                    "Wrong service name '$service'")
+                    "Wrong service name '$service'"
+                )
             );
 
             return;

@@ -31,7 +31,8 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
         $override_class = ClassGenerator::fromArray(
             ['name' => $this->getModuleOverrideClassName(),
              'extendedclass' => $this->getModuleClassName(),
-                ]);
+                ]
+        );
 
         $fileGenerator = new FileGenerator();
         $fileGenerator->setClass($override_class);

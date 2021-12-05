@@ -37,7 +37,7 @@ final class CategoryClean extends Command
     /**
      * @var array possible command
      */
-    const ALLOWED_COMMAND = ['status', 'toggle', 'enable-no-empty', 'disable-empty'];
+    public const ALLOWED_COMMAND = ['status', 'toggle', 'enable-no-empty', 'disable-empty'];
 
     /**
      * {@inheritdoc}

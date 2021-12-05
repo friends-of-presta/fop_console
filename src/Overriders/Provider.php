@@ -65,7 +65,9 @@ class Provider
             }
         );
         // just keep overriders that handle this path
-        $overriders = array_filter($overriders, function ($overrider) {return $overrider->handle(); });
+        $overriders = array_filter($overriders, function ($overrider) {
+            return $overrider->handle();
+        });
 
         return $overriders;
     }
