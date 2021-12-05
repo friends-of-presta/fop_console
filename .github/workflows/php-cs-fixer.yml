@@ -11,7 +11,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.composer/cache
-          key: php-composer-cache
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-
 
       - name: Checkout
         uses: actions/checkout@v2.0.0
