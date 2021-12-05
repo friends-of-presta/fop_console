@@ -263,10 +263,10 @@ final class ModuleRename extends Command
                     implode(
                         '-',
                         str_replace(
-                        '_',
-                        '',
-                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    )
+                            '_',
+                            '',
+                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                        )
                     )
                 );
             },
@@ -276,10 +276,10 @@ final class ModuleRename extends Command
                     implode(
                         '_',
                         str_replace(
-                        '_',
-                        '',
-                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    )
+                            '_',
+                            '',
+                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                        )
                     )
                 );
             },
@@ -289,10 +289,10 @@ final class ModuleRename extends Command
                     implode(
                         '_',
                         str_replace(
-                        '_',
-                        '',
-                        preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
-                    )
+                            '_',
+                            '',
+                            preg_split('/(?=[A-Z])/', $string, -1, PREG_SPLIT_NO_EMPTY)
+                        )
                     )
                 );
             },

@@ -96,11 +96,11 @@ class PhpStanNamesConsistencyService
             $commands = array_filter($yaml['services'], $filterServicesWithConsoleTag);
             $servicesWithServiceField = array_map(
                 static function (string $service, array $classDefinition) {
-                return [
+                    return [
                     'service' => $service,
                     'class' => $classDefinition['class'],
                 ];
-            },
+                },
                 array_keys($commands),
                 $commands
             );

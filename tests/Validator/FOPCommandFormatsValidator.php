@@ -140,8 +140,7 @@ class FOPCommandFormatsValidator
     private function checkCommandNameIsConsistentWithClassName(
         string $commandName,
         string $fullyQualifiedClassName
-    ): void
-    {
+    ): void {
         list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::COMMAND_REGEXP, self::COMMAND_SPLIT_WORDS_REGEXP, $commandName);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
         $domainWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractDomainFromFQCN($fullyQualifiedClassName));
@@ -173,8 +172,7 @@ class FOPCommandFormatsValidator
     private function checkServiceNameIsConsistentWithClassName(
         string $service,
         string $fullyQualifiedClassName
-    ): void
-    {
+    ): void {
         list($domainWords, $actionWords) = $this->extractDomainAndActionsFromRegexp(self::SERVICE_REGEXP, self::SERVICE_SPLIT_WORDS_REGEXP, $service);
         $actionWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractActionWithoutDomainFromFQCN($fullyQualifiedClassName));
         $domainWordsFromFQCN = $this->getWordsFromCamelCasedString($this->extractDomainFromFQCN($fullyQualifiedClassName));

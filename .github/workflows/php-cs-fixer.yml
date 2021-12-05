@@ -29,6 +29,5 @@ jobs:
       - name: Run PHP-CS-Fixer
         run : |
           cd ${{ github.workspace }}
-          php -v
           ./vendor/bin/php-cs-fixer --version
           ./vendor/bin/php-cs-fixer fix --dry-run --diff ./

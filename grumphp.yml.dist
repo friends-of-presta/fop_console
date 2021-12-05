@@ -1,7 +1,7 @@
 grumphp:
   tasks:
     phpcsfixer:
-      config: .php_cs.dist
+      config: .php_cs-fixer.dist.php
     phpstan: ~
   parallel:
     enabled: false
