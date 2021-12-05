@@ -11,7 +11,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.composer/cache
-          key: composer-${{ hashFiles('composer.lock') }}
+          key: composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             composer-
 
@@ -29,4 +29,6 @@ jobs:
       - name: Run PHP-CS-Fixer
         run : |
           cd ${{ github.workspace }}
+          php -v
+          ./vendor/bin/php-cs-fixer --version
           ./vendor/bin/php-cs-fixer fix --dry-run --diff ./
