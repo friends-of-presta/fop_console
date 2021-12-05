@@ -20,7 +20,7 @@
     }
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.2.5",
     "laminas/laminas-code": "3.4.1",
     "ext-json": "*"
   },
