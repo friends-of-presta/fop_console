@@ -22,6 +22,7 @@ namespace FOP\Console\Commands\Environment;
 
 use Configuration;
 use FOP\Console\Command;
+use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
 use ShopUrl;
 use Symfony\Component\Console\Input\InputInterface;
@@ -293,14 +294,61 @@ class EnvironmentSetupDev extends Command
     /**
      * Enable debug mode
      *
-     * @return int
+     * - First, check if _PS_MODE_DEV_ is set and truthy.
+     * - In case it's not defined (can this happen ?), check the env variable PS_DEV_MODE.
+     * - In case it's not defined, rely on \PrestaShop\PrestaShop\Adapter\Debug\DebugMode().
+     *
+     * @return void
      */
-    protected function enableDebugMode(): int
+    protected function enableDebugMode(): void
     {
-        $this->io->text('<info>Active debug mode</info>');
-        $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
+        // 1. check by current defined value, most reliable value.
+        if (defined('_PS_MODE_DEV_') && true === (bool) _PS_MODE_DEV_) {
+            $this->io->write('<info>Debug mode enabled. (_PS_MODE_DEV_ defined).</info>');
 
-        return $debugMode->enable();
+            return;
+        }
+
+        // 2. check by environment variable PS_DEV_MODE.
+        // On a docker install, PS_DEV_MODE is defined and take priority on the value defined in config/defines.inc.php.
+        // https://github.com/PrestaShop/docker/blob/master/base/config_files/defines_custom.inc.php
+        // So we can suppose (weak) that PS_DEV_MODE defines the current debug mode.
+        $envDebugMode = getenv('PS_DEV_MODE');
+        if (true === boolval($envDebugMode)) {
+            $this->io->write('<info>Debug mode enabled (defined by environment variable) OK.</info>');
+
+            return;
+        }
+
+        // env var set but not truthy
+        if ($envDebugMode !== false) {
+            $this->io->error('Debug mode disabled (defined by environment variable)'
+                . PHP_EOL . ' You must change it in the OS.'
+                . PHP_EOL . ' Current value : ' . var_export($envDebugMode, true)
+            );
+
+            return;
+        }
+
+        // 3. Rely on DebugMode
+        $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
+        if ($debugMode->isDebugModeEnabled()) {
+            $this->io->write('<info>Debug mode enabled OK (untouched).</info>');
+
+            return;
+        }
+
+        $enabled = $debugMode->enable();
+
+        if ($enabled === DebugMode::DEBUG_MODE_SUCCEEDED) {
+            $this->io->write('<info>Debug mode enabled OK.</info>');
+
+            return;
+        }
+
+        $this->io->error(
+            'Failed to change debug using the DebugMode adapter.'
+            . PHP_EOL . ' Error code : ' . var_export($enabled, true));
     }
 
     /**
