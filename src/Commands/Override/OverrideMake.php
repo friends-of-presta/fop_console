@@ -38,7 +38,8 @@ class OverrideMake extends Command
         $this
             ->setName('fop:override:make')
             ->setDescription('Generate a file to make an override.')
-            ->setHelp('This command provides a quick way to generate on override.'
+            ->setHelp(
+                'This command provides a quick way to generate on override.'
                 . PHP_EOL . 'Just provide the path of the file to override.'
 
                 . PHP_EOL . PHP_EOL . 'Examples : '

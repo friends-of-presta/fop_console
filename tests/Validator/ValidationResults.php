@@ -70,6 +70,9 @@ class ValidationResults implements IteratorAggregate
     {
         return array_filter(
             iterator_to_array($this),
-            function (ValidationResult $result) { return !$result->isSuccessful(); });
+            function (ValidationResult $result) {
+                return !$result->isSuccessful();
+            }
+        );
     }
 }

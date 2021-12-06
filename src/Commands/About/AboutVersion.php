@@ -32,7 +32,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class AboutVersion extends Command
 {
-    const GITHUB_RELEASES_YAML_URL = 'https://api.github.com/repos/friends-of-presta/fop_console/releases/latest';
+    public const GITHUB_RELEASES_YAML_URL = 'https://api.github.com/repos/friends-of-presta/fop_console/releases/latest';
 
     /** @var \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository */
     private $moduleRepository;

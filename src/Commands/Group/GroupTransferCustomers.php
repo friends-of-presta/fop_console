@@ -194,10 +194,10 @@ final class GroupTransferCustomers extends Command
                 $customer->update();
             } catch (\Exception $e) {
                 $output->writeln(
-                        '<error>
+                    '<error>
                             An error has occurred when try to update customer ' . $customer->email . ' to group ' . $this->getGroupName($groupFrom->id) . ' : ' . $e->getMessage() .
                         '</error>'
-                    );
+                );
                 ++$hasError;
 
                 return self::FAILURE;

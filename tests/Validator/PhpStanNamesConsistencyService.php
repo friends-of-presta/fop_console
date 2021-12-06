@@ -49,7 +49,8 @@ class PhpStanNamesConsistencyService
             return $this->validator->validate(
                 $fullyQualifiedClassName,
                 $command,
-                $this->getServiceNameForFQCN($fullyQualifiedClassName));
+                $this->getServiceNameForFQCN($fullyQualifiedClassName)
+            );
         } catch (Exception $exception) {
             throw new RuntimeException(__CLASS__ . ' Internal error : ' . $exception->getMessage());
         }
@@ -93,12 +94,13 @@ class PhpStanNamesConsistencyService
                 return isset($service['tags']) && in_array('console.command', $service['tags']); // direct form
             };
             $commands = array_filter($yaml['services'], $filterServicesWithConsoleTag);
-            $servicesWithServiceField = array_map(static function (string $service, array $classDefinition) {
-                return [
+            $servicesWithServiceField = array_map(
+                static function (string $service, array $classDefinition) {
+                    return [
                     'service' => $service,
                     'class' => $classDefinition['class'],
                 ];
-            },
+                },
                 array_keys($commands),
                 $commands
             );

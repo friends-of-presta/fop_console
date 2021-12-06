@@ -34,7 +34,7 @@ final class ShopMaintenance extends Command
     /**
      * @var array possible allowed maintenance mode passed in command
      */
-    const ALLOWED_COMMAND = ['enable', 'disable', 'toggle', 'status', 'ips', 'addip', 'addmyip'];
+    public const ALLOWED_COMMAND = ['enable', 'disable', 'toggle', 'status', 'ips', 'addip', 'addmyip'];
 
     /**
      * {@inheritdoc}

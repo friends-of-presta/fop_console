@@ -29,8 +29,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ThemeResetLayout extends Command
 {
-    const ID_SHOP_ARGUMENT = 'id_shop';
-    const COMMAND_FAILURE = 1;
+    public const ID_SHOP_ARGUMENT = 'id_shop';
+    public const COMMAND_FAILURE = 1;
 
     protected function configure(): void
     {

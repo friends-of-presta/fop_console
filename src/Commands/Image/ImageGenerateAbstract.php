@@ -36,7 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class ImageGenerateAbstract extends Command
 {
     /** @var string Image type (overrided in subclasses) */
-    const IMAGE_TYPE = '';
+    public const IMAGE_TYPE = '';
 
     /** @var array */
     protected $errors = [];
