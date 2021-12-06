@@ -323,7 +323,8 @@ class EnvironmentSetupDev extends Command
 
         // env var set but not truthy
         if ($envDebugMode !== false) {
-            $this->io->error('Debug mode disabled (defined by environment variable)'
+            $this->io->error(
+                'Debug mode disabled (defined by environment variable)'
                 . PHP_EOL . ' You must change it in the OS.'
                 . PHP_EOL . ' Current value : ' . var_export($envDebugMode, true)
             );
@@ -349,7 +350,8 @@ class EnvironmentSetupDev extends Command
 
         $this->io->error(
             'Failed to change debug using the DebugMode adapter.'
-            . PHP_EOL . ' Error code : ' . var_export($enabled, true));
+            . PHP_EOL . ' Error code : ' . var_export($enabled, true)
+        );
     }
 
     /**
