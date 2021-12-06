@@ -29,7 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class EnvironmentDebug extends Command
 {
     /**
-     * @var array possible allowed dev mode passed in command
+     * @var array<int, string> commands
      */
     public const ALLOWED_COMMAND = ['status', 'enable', 'disable', 'toggle'];
 
@@ -41,28 +41,27 @@ class EnvironmentDebug extends Command
         $this
             ->setName('fop:environment:debug')
             ->setAliases(['fop:debug-mode'])
-            ->setDescription('Enable or disable debug mode.')
+            ->setDescription('Show, enable or disable debug mode.')
             ->setHelp('Get or change debug mode. Change _PS_MODE_DEV_ value.')
             ->addArgument(
                 'action',
                 InputArgument::OPTIONAL,
-                'enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
+                'show, enable or disable debug mode ( possible values : ' . $this->getPossibleActions() . ') ',
                 'status'
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->displayMessageIfDevModeEnvIsSet();
+
         $action = $input->getArgument('action');
         $debugMode = new DebugAdapter();
         $isDebugModEnabled = $debugMode->isDebugModeEnabled();
 
         switch ($action) {
             case 'status':
-                $this->io->text('Current debug mode : ' . ($isDebugModEnabled ? 'enabled' : 'disabled'));
+                $this->io->block('Current debug mode : ' . ($isDebugModEnabled ? '✅ enabled' : '❌ disabled'));
 
                 return 0;
             case 'toggle':
@@ -83,7 +82,7 @@ class EnvironmentDebug extends Command
         }
 
         if ($returnCode === DebugAdapter::DEBUG_MODE_SUCCEEDED) {
-            $this->io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? 'enabled' : 'disabled') . '.');
+            $this->io->success('Debug mode changed : ' . ($debugMode->isDebugModeEnabled() ? '✅ enabled' : '❌ disabled') . '.');
 
             return 0;
         }
@@ -96,5 +95,34 @@ class EnvironmentDebug extends Command
     private function getPossibleActions(): string
     {
         return implode(',', self::ALLOWED_COMMAND);
+    }
+
+    /**
+     * Display a message if PS_DEV_MODE environment variable is set.
+     * @see https://github.com/PrestaShop/docker/blob/master/base/config_files/defines_custom.inc.php
+     * @return void
+     */
+    private function displayMessageIfDevModeEnvIsSet(): void
+    {
+        $custom_defines_file_path = dirname(__DIR__, 5) . '/config/defines_custom.inc.php';
+        $custom_defines_file_exists = file_exists($custom_defines_file_path);
+        opcache_invalidate($custom_defines_file_path);
+        opcache_invalidate(dirname(__DIR__, 5) . '/config/defines.inc.php');
+
+        if (false !== getenv('PS_DEV_MODE') || $custom_defines_file_exists) {
+            $this->io->note('This command may show inaccurate state and changes may not work.' . PHP_EOL.
+            'The environment variable PS_DEV_MODE is defined !'.PHP_EOL.
+            'This can be the sign that the php constant _PS_MODE_DEV_ is handled at runtime by the environment variable PS_DEV_MODE.'.PHP_EOL.
+            'You may change the env mode by changing it\'s value or rebuild a docker container.');
+
+            !$custom_defines_file_exists
+                ?: $this->io->note("'$custom_defines_file_path' exists, check it.");
+
+            $evaluatedDevMode = (bool) getenv('PS_DEV_MODE');
+            $this->io->note(
+                'The current value of PS_DEV_MODE environment variable is "'.getenv('PS_DEV_MODE').'"'.PHP_EOL
+            .'So the PS_DEV_MODE may be '.($evaluatedDevMode ? 'enabled' : 'disabled').'.'
+            );
+        }
     }
 }
