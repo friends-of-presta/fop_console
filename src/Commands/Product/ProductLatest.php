@@ -75,7 +75,6 @@ final class ProductLatest extends Command
                 'Name' => $product['name'],
                 'Quantity' => $product['quantity'],
                 'Price' => $product['price'],
-                'Activated?' => $product['active'] ? '✔' : '✘',
             ];
         }
 
