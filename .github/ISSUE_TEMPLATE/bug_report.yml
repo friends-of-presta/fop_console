@@ -2,6 +2,14 @@ name: Bug report
 description: Report a bug, something unexpected.
 labels: ['bug']
 body:
+  - type: markdown
+    attributes:
+      value: |
+        # Oops !
+
+        Something went wrong, we're sorry to ear it.
+
+        Please provide the maximum informations you can to help us reproduce the bug.
   - type: input
     attributes:
       label: PrestaShop version(s)
