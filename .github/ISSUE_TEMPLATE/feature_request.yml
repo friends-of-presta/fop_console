@@ -3,6 +3,15 @@ description: Ask for a new command
 title: 'New Command : '
 labels: ['feature']
 body:
+  - type: markdown
+    attributes:
+      value: |
+        # Submit a new command request
+
+        Thanks for taking time to request a new command.
+
+        If you want to implement this command, you are welcome, we'll be pleased to help you in our spare time.
+        Otherwise, if anyone think it deserves to be implemented, we'll write it.
   - type: input
     attributes:
       label: Domain
@@ -26,7 +35,4 @@ body:
       label: Command description
       description: What does the command do ?
       placeholder: With this command you can ...
-  - type: markdown
-    attributes:
-      value: |
-        Additionnal informations
+
