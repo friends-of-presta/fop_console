@@ -14,6 +14,6 @@ parameters:
 
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
-  - %currentWorkingDirectory%/.devtools/phpstan_baseline.neon
+  - %currentWorkingDirectory%/phpstan_baseline.neon
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
   - %currentWorkingDirectory%/.devtools/fop_names_rules.neon
