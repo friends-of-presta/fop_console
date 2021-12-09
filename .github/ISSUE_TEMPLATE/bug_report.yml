@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a bug, something unexpected.
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Oops !
+
+        Something went wrong, we're sorry to ear it.
+
+        Please provide the maximum informations you can to help us reproduce the bug.
+  - type: input
+    attributes:
+      label: PrestaShop version(s)
+      value: 1.7.
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Php version
+      multiple: true
+      options:
+        - "7.2"
+        - "7.3"
+        - "7.4"
+        - "8.0 (not yet supported)"
+        - "8.1 (not yet supported)"
+  - type: dropdown
+    attributes:
+      label: Fop Console version
+      multiple: true
+      options:
+        - before 1.4 (please specify below)
+        - "1.4"
+        - dev
+  - type: dropdown
+    attributes:
+      label: Operating system
+      options:
+        - linux
+        - macos
+        - windows
+  - type: input
+    attributes:
+      label: command
+      value: "fop:"
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: Provide information to reproduce the bug
