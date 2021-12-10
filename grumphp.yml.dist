@@ -2,7 +2,9 @@ grumphp:
   tasks:
     phpcsfixer:
       config: .php_cs-fixer.dist.php
-    phpstan: ~
+    phpstan:
+      level: 5 # Otherwise, Grum overwrite level at 0 by default in 0.19.1 version
+      ignore_patterns: ['/(^\.|\/\.)/'] # Ignore dot files because PHPStan does
   parallel:
     enabled: false
   fixer:
