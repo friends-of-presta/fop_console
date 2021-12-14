@@ -7,7 +7,7 @@ parameters:
     - .devtools/phpstan/stubs/
     - tests/Resources/
   reportUnmatchedIgnoredErrors: true
-  level: 5 # If changed, need to be changed in grumphp.yml.dist too
+  level: 5 # If changed, needs to be changed in grumphp.yml.dist too
   stubFiles:
     - .devtools/phpstan/stubs/Category.stub
     - .devtools/phpstan/stubs/Product.stub
