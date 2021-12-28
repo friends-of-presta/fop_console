@@ -17,6 +17,10 @@ services:
     class: FOP\Console\Commands\Category\CategoryClean
     tags: [ console.command ]
 
+  fop.console.category.products_count.command:
+    class: FOP\Console\Commands\Category\CategoryProductsCount
+    tags: [ console.command ]
+
   fop.console.configuration.export.command:
     class: FOP\Console\Commands\Configuration\ConfigurationExport
     tags: [ console.command ]
