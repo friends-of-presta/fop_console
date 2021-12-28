@@ -79,7 +79,7 @@ final class CategoryProductsCount extends Command
 
         if (!$outputPathname) {
             $tree = new TreeHelper();
-            $tree->addArray($this->formatCategoriesToTree($rootCategory, $categoryId));
+            $tree->addArray($this->formatCategoriesToTree($rootCategory));
 
             $tree->printTree($output);
         } else {
