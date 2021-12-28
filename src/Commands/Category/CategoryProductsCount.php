@@ -110,7 +110,7 @@ final class CategoryProductsCount extends Command
         $categoryLabel = $this->getCategoryLabel((int) $category['id_category'], $languageId);
 
         if (empty($category['children'])) {
-            return [$categoryLabel];
+            return [$categoryLabel => []];
         }
 
         $categoriesTree[$categoryLabel] = [];
