@@ -310,8 +310,8 @@ final class ModuleRename extends Command
 
         $searchAndReplacePairs = [
             [
-                'search' => [$this->oldModuleInfos['prefix']] + $this->findAndReplaceTool->getWords($this->oldModuleInfos['name']),
-                'replace' => [$this->newModuleInfos['prefix']] + $this->findAndReplaceTool->getWords($this->newModuleInfos['name']),
+                'search' => $this->oldModuleInfos['name'],
+                'replace' => $this->newModuleInfos['name'],
                 'caseFormats' => $usualCaseFormats,
             ],
             [
@@ -320,8 +320,8 @@ final class ModuleRename extends Command
                 'caseFormats' => $usualCaseFormats,
             ],
             [
-                'search' => $this->oldModuleInfos['name'],
-                'replace' => $this->newModuleInfos['name'],
+                'search' => array_merge([$this->oldModuleInfos['prefix']], $this->findAndReplaceTool->getWords($this->oldModuleInfos['name'])),
+                'replace' => array_merge([$this->newModuleInfos['prefix']], $this->findAndReplaceTool->getWords($this->newModuleInfos['name'])),
                 'caseFormats' => $usualCaseFormats,
             ],
         ];
@@ -391,10 +391,13 @@ final class ModuleRename extends Command
                 ? $searchAndReplacePair['caseFormats']
                 : [];
 
-            $replacePairs += $this->findAndReplaceTool->findReplacePairsInFiles(
-                $oldModuleFiles,
-                $this->findAndReplaceTool->getCasedReplacePairs(
-                    $search, $replace, $caseFormats
+            $replacePairs = array_merge(
+                $replacePairs,
+                $this->findAndReplaceTool->findReplacePairsInFiles(
+                    $oldModuleFiles,
+                    $this->findAndReplaceTool->getCasedReplacePairs(
+                        $search, $replace, $caseFormats
+                    )
                 )
             );
         }
