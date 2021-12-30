@@ -46,7 +46,8 @@ final class CategoryProductsCount extends Command
         $this->setName('fop:category:products-count')
             ->setDescription('Get the number of products for category and its children (root category by default)')
             ->addUsage('./bin/console fop:category:products-count')
-            ->addUsage('--output=[filename]')
+            ->addUsage('2')
+            ->addUsage('--output=filename.csv')
             ->addArgument('id-category', InputArgument::OPTIONAL, 'Category id')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Write the output to a csv file');
     }
