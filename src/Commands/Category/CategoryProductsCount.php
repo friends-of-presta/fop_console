@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace FOP\Console\Commands\Category;
 
 use Category;
+use Exception;
 use FOP\Console\Command;
 use PBergman\Console\Helper\TreeHelper;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
@@ -34,9 +35,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class CategoryProductsCount extends Command
 {
     /**
-     * @var LegacyContext
+     * @var int
      */
-    private $legacyContext;
+    private $languageId;
 
     /**
      * {@inheritdoc}
@@ -48,14 +49,8 @@ final class CategoryProductsCount extends Command
             ->addUsage('2')
             ->addUsage('--output=filename.csv')
             ->addArgument('id-category', InputArgument::OPTIONAL, 'Category id')
+            ->addOption('id-lang', 'l', InputOption::VALUE_REQUIRED, 'Language id')
             ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Write the output to a csv file');
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output): void
-    {
-        parent::initialize($input, $output);
-
-        $this->legacyContext = $this->getContainer()->get('prestashop.adapter.legacy.context');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -64,6 +59,25 @@ final class CategoryProductsCount extends Command
             ? intval($input->getArgument('id-category'))
             : Category::getRootCategory()->id
         ;
+
+        $this->languageId = intval($input->getOption('id-lang'));
+        if (!$this->languageId) {
+            try {
+                /** @var LegacyContext|null */
+                $legacyContext = $this->getContainer()->get('prestashop.adapter.legacy.context');
+
+                if ($legacyContext) {
+                    $this->languageId = $legacyContext->getContext()->language->id;
+                }
+            } catch (Exception $e) {
+            }
+        }
+
+        if (!$this->languageId) {
+            $this->io->error("Language id can't be retrieved.");
+
+            return 0;
+        }
 
         $outputPathname = $input->getOption('output');
 
@@ -105,8 +119,10 @@ final class CategoryProductsCount extends Command
      */
     private function formatCategoriesToTree(array $category)
     {
-        $languageId = $this->legacyContext->getLanguage()->id;
-        $categoryLabel = $this->getCategoryLabel((int) $category['id_category'], $languageId);
+        $categoryObject = new Category((int) $category['id_category'], $this->languageId);
+        $categoryName = $categoryObject->getName();
+        $productsCount = $this->getCategoryProductsCount($categoryObject);
+        $categoryLabel = $this->getCategoryLabel($categoryName, $productsCount);
 
         if (empty($category['children'])) {
             return [$categoryLabel => []];
@@ -130,17 +146,18 @@ final class CategoryProductsCount extends Command
      */
     private function formatCategoriesToCSV(array $category, int $maxDepth)
     {
-        $languageId = $this->legacyContext->getLanguage()->id;
         $categoryId = (int) $category['id_category'];
-        $depth = (int) $category['level_depth'];
-        $categoryLabel = $this->getCategoryLabel($categoryId, $languageId);
+        $categoryObject = new Category($categoryId, $this->languageId);
+        $productsCount = $this->getCategoryProductsCount($categoryObject);
+        $categoryLabel = $this->getCategoryLabel($categoryObject->getName(), $productsCount);
+        $depth = $categoryObject->level_depth;
 
         $categoriesCSV = [array_merge(
             [$categoryId],
             array_fill(0, $depth - 1, ' '),
             [$categoryLabel],
             array_fill(0, max(0, $maxDepth - $depth), ' '),
-            [(new Category($categoryId))->getProducts($languageId, 0, 0, null, null, true)]
+            [$productsCount]
         )];
 
         if (key_exists('children', $category)) {
@@ -167,12 +184,13 @@ final class CategoryProductsCount extends Command
         return (int) $category['level_depth'];
     }
 
-    public function getCategoryLabel(int $categoryId, int $languageId): string
+    public function getCategoryProductsCount(Category $category): int
     {
-        $category = new Category($categoryId);
-        $categoryName = $category->name[$languageId];
-        $productsCount = $category->getProducts($languageId, 0, 0, null, null, true);
+        return $category->getProducts($this->languageId, 0, 0, null, null, true);
+    }
 
-        return "$categoryName ($productsCount)";
+    public function getCategoryLabel(string $name, int $productsCount)
+    {
+        return "$name ($productsCount)";
     }
 }
