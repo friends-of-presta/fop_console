@@ -120,7 +120,7 @@ final class CategoryProductsCount extends Command
     private function formatCategoriesToTree(array $category)
     {
         $categoryObject = new Category((int) $category['id_category'], $this->languageId);
-        $categoryName = $categoryObject->getName();
+        $categoryName = $categoryObject->name;
         $productsCount = $this->getCategoryProductsCount($categoryObject);
         $categoryLabel = $this->getCategoryLabel($categoryName, $productsCount);
 
@@ -149,7 +149,7 @@ final class CategoryProductsCount extends Command
         $categoryId = (int) $category['id_category'];
         $categoryObject = new Category($categoryId, $this->languageId);
         $productsCount = $this->getCategoryProductsCount($categoryObject);
-        $categoryLabel = $this->getCategoryLabel($categoryObject->getName(), $productsCount);
+        $categoryLabel = $this->getCategoryLabel($categoryObject->name, $productsCount);
         $depth = $categoryObject->level_depth;
 
         $categoriesCSV = [array_merge(
