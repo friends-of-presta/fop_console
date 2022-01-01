@@ -186,7 +186,7 @@ final class CategoryProductsCount extends Command
 
     public function getCategoryProductsCount(Category $category): int
     {
-        return $category->getProducts($this->languageId, 0, 0, null, null, true);
+        return intval($category->getProducts($this->languageId, 0, 0, null, null, true));
     }
 
     public function getCategoryLabel(string $name, int $productsCount)
