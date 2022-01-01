@@ -120,9 +120,10 @@ final class CategoryProductsCount extends Command
     private function formatCategoriesToTree(array $category)
     {
         $categoryObject = new Category((int) $category['id_category'], $this->languageId);
-        $categoryName = $categoryObject->name;
-        $productsCount = $this->getCategoryProductsCount($categoryObject);
-        $categoryLabel = $this->getCategoryLabel($categoryName, $productsCount);
+        $categoryLabel = $this->getCategoryLabel(
+            $categoryObject->name,
+            $this->getCategoryProductsCount($categoryObject)
+        );
 
         if (empty($category['children'])) {
             return [$categoryLabel => []];
