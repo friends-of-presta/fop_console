@@ -103,8 +103,6 @@ services:
 
   fop.console.module.generate.command:
     class: FOP\Console\Commands\Module\ModuleGenerate
-    calls:
-      - [setTwig, ["@twig"]]
     tags: [console.command]
 
   fop.console.override.make.command:
