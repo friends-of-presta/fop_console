@@ -1,0 +1,27 @@
+{
+  "name": "{{ module_name }}",
+  "description": "<edit>",
+  "homepage": "<edit>",
+  "license": "<edit>",
+  "type": "prestashop-module",
+  "authors": [
+    {
+      "name": "<edit>",
+      "email": "<edit>"
+    }
+  ],
+  "minimum-stability": "dev",
+  "config": {
+    "preferred-install": "dist"
+  },
+  "autoload": {
+    "psr-4": {
+      "{{name_space_psr4}}\\": "src/"
+    }
+  },
+  "require-dev": {
+    "mockery/mockery": "^1.4@dev",
+    "phpunit/phpunit": "~8.5.16",
+    "symfony/phpunit-bridge": "^3.4"
+  }
+}
