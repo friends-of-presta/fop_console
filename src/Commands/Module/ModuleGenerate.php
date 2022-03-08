@@ -43,7 +43,6 @@ class ModuleGenerate extends Command
         $this->base_folder = _PS_MODULE_DIR_ . 'fop_console/templates/generate_module_command/module';
         $this->base_controller_folder = $this->base_folder . '/controller';
         $this->base_test_folder = $this->base_folder . '/test';
-        $this->twig = $this->getContainer()->get('twig');
     }
 
     /**
@@ -174,6 +173,8 @@ class ModuleGenerate extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->twig = $this->getContainer()->get('twig');
+
         $modulename = $input->getArgument('modulename');
         $namespace = $input->getArgument('namespace');
 
