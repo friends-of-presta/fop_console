@@ -23,7 +23,7 @@
     "php": "^7.2.5",
     "laminas/laminas-code": "3.4.1",
     "ext-json": "*",
-    "nette/php-generator": "v3.6.x-dev"
+    "nette/php-generator": "^3.6"
   },
   "config": {
     "prepend-autoloader": false,
@@ -37,8 +37,7 @@
     "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
     "phpstan/phpstan": "^0.12.58",
-    "phpunit/phpunit": "^7.0",
-    "vincentlanglet/twig-cs-fixer": "^0.4.4"
+    "phpunit/phpunit": "^7.0"
   },
   "scripts": {
     "fop_check": [
