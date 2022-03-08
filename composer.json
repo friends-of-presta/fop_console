@@ -37,7 +37,8 @@
     "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
     "phpstan/phpstan": "^0.12.58",
-    "phpunit/phpunit": "^7.0"
+    "phpunit/phpunit": "^7.0",
+    "vincentlanglet/twig-cs-fixer": "^0.4.4"
   },
   "scripts": {
     "fop_check": [
