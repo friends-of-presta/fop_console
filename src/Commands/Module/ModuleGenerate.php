@@ -76,9 +76,9 @@ class ModuleGenerate extends Command
                 'module_name' => $modulename,
                 'name_space' => $namespace,
             ]);
-        $file = PhpFile::fromCode($controller_code);
+//        $file = PhpFile::fromCode($controller_code);
         $this->filesystem->dumpFile($this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'src' .
-            DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . 'ConfigurationController.php', $file->__toString());
+            DIRECTORY_SEPARATOR . 'Controller' . DIRECTORY_SEPARATOR . 'ConfigurationController.php', $controller_code);
     }
 
     protected function createControllerForm($modulename, $namespace)
@@ -88,11 +88,11 @@ class ModuleGenerate extends Command
             'module_name' => $modulename,
             'name_space' => $namespace,
         ]);
-        $file = PhpFile::fromCode($controller_code);
+//        $file = PhpFile::fromCode($controller_code);
         $this->filesystem->dumpFile(
             $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'src' .
             DIRECTORY_SEPARATOR . 'Form' . DIRECTORY_SEPARATOR . 'Type' . DIRECTORY_SEPARATOR . 'ConfigurationType.php',
-            $file->__toString()
+            $controller_code
         );
     }
 
