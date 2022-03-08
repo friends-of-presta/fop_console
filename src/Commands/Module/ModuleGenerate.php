@@ -43,11 +43,7 @@ class ModuleGenerate extends Command
         $this->base_folder = _PS_MODULE_DIR_ . 'fop_console/templates/generate_module_command/module';
         $this->base_controller_folder = $this->base_folder . '/controller';
         $this->base_test_folder = $this->base_folder . '/test';
-    }
-
-    public function setTwig(Environment $environment)
-    {
-        $this->twig = $environment;
+        $this->twig = $this->getContainer()->get('twig');
     }
 
     /**
