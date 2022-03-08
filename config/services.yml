@@ -53,6 +53,12 @@ services:
     class: FOP\Console\Commands\Generate\GenerateRobots
     tags: [ console.command ]
 
+  fop.console.generate.module:
+    class: FOP\Console\Commands\Generate\GenerateModule
+    calls:
+      - [setTwig, ['@twig']]
+    tags: [ console.command ]
+
   fop.console.group.transfer_customers.command:
     class: FOP\Console\Commands\Group\GroupTransferCustomers
     tags: [ console.command ]
@@ -124,6 +130,7 @@ services:
   fop.console.about.version.command:
     class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
+
 
 imports:
   - { resource: overriders.yml }
