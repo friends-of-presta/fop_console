@@ -25,8 +25,7 @@ class {{ module_name|capitalize }} extends Module
         parent::__construct();
 
         $this->displayName = $this->trans('<humna module name here>',[],'Modules.{{ module_name|capitalize }}.Admin');
-        $this->description = $this->trans('<description here>',[], 'Modules.{{ module_name|capitalize }}.Admin');
-
+        $this->description = $this->trans('<description here>',[], 'Modules.{{ module_name|capitalize}}.Admin');
         $this->confirmUninstall = $this->trans('Are you sure?',[], 'Modules.{{ module_name|capitalize }}.Admin');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
@@ -59,11 +58,11 @@ class {{ module_name|capitalize }} extends Module
         Tools::redirectAdmin(
             $this->context->link->getAdminLink(
                 'Admin{{ module_name|capitalize }}',  //edit
+                'Admin{{module_name|capitalize }}',  //edit
                 true,
                 ['route' => 'admin_{{ module_name }}_configuration']
             )
         );
 
     }
-
 }
