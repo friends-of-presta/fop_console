@@ -1,3 +1,25 @@
+This document is a draft, it's not complete but you can read it before contributing.
+
+Contribution are welcome !
+However, you can't just throw some and let the others do the job to polish your work.
+
+## Development installation
+
+- Fork the repository
+- checkout this forked repository
+- do some coding
+- validate your code : see Coding standards
+
+## Coding standards
+
+This repository relies on some tools to free reviewers from the tedious tasks.
+
+This tools are processed by GitHub's actions and can be processed on your local copy.
+Be sure to run this tools before submitting a Pull request, otherwise it can't be merged.
+
+- `vendor/bin/phpstan analyse ./`
+- `vendor/bin/php-cs-fixer fix ./ --dry-run` (remove `--dry-run` to fix the code.)
+
 ## Create your owns Commands
 
 The official documentation from PrestaShop and Symfony Core teams are still right, but you need
