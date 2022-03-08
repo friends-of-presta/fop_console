@@ -30,11 +30,11 @@ use Twig\Environment;
 
 class ModuleGenerate extends Command
 {
-    protected Filesystem $filesystem;
-    protected string $base_controller_folder;
-    protected string $base_test_folder;
-    protected string $base_folder;
-    private Environment $twig;
+    protected $filesystem;
+    protected $base_controller_folder;
+    protected $base_test_folder;
+    protected $base_folder;
+    private $twig;
 
     public function __construct()
     {
@@ -153,7 +153,7 @@ class ModuleGenerate extends Command
         );
     }
 
-    protected function creteComposerJson($modulename, $namespace)
+    protected function createComposerJson($modulename, $namespace)
     {
         $composer_code = $this->twig->render($this->base_folder . DIRECTORY_SEPARATOR . 'composer.json.twig', [
             'module_name' => $modulename,
@@ -185,7 +185,7 @@ class ModuleGenerate extends Command
         $this->createMain($modulename);
 
         $output->writeln('create composer.json');
-        $this->creteComposerJson($modulename, $namespace);
+        $this->createComposerJson($modulename, $namespace);
 
         $output->writeln('create config');
         $this->createConfig($modulename);

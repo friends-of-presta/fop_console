@@ -11,7 +11,7 @@ services:
 
   fop.console.cache.clear.command:
     class: FOP\Console\Commands\Cache\CacheClear
-    tags: [console.command]
+    tags: [ console.command ]
 
   fop.console.category.clean.command:
     class: FOP\Console\Commands\Category\CategoryClean
