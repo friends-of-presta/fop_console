@@ -1,0 +1,25 @@
+/**
+ * <your license here>
+ */
+(function () {
+
+        $.ajax({
+            type: 'GET',
+            headers: {"cache-control": "no-cache"},
+            url: prestashop.urls.shop_domain_url,
+            async: true,
+            data: {
+                fc: 'module',
+                module: '{{ module_name }}',
+                controller: '{{ front_controller_name }}',
+                action: '{{ front_controller_name }}',
+                ajax: true,
+            },
+            success: function (data) {
+                alert('success');
+            },
+            error: function (jqXHR, statusText, errorThrown) {
+                alert('error');
+            }
+        });
+})()
