@@ -65,8 +65,10 @@ class ModuleGenerate extends Command
             'module_name' => $modulename,
             'name_space_psr4' => str_replace('\\', '\\\\', $namespace),
         ]);
-        $this->filesystem->dumpFile($this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'composer.json',
-            $composer_code);
+        $this->filesystem->dumpFile(
+            $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'composer.json',
+            $composer_code
+        );
     }
 
     protected function createConfig($modulename)
@@ -74,8 +76,10 @@ class ModuleGenerate extends Command
         $module_config_path =
             $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'admin';
         $this->filesystem->mkdir($module_config_path);
-        $this->filesystem->copy($this->base_controller_folder . DIRECTORY_SEPARATOR . 'services.yml',
-            $module_config_path . DIRECTORY_SEPARATOR . 'services.yml');
+        $this->filesystem->copy(
+            $this->base_controller_folder . DIRECTORY_SEPARATOR . 'services.yml',
+            $module_config_path . DIRECTORY_SEPARATOR . 'services.yml'
+        );
     }
 
     protected function createController($modulename, $namespace)
@@ -99,9 +103,11 @@ class ModuleGenerate extends Command
             'name_space' => $namespace,
         ]);
 //        $file = PhpFile::fromCode($controller_code);
-        $this->filesystem->dumpFile($this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'src' .
+        $this->filesystem->dumpFile(
+            $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'src' .
             DIRECTORY_SEPARATOR . 'Form' . DIRECTORY_SEPARATOR . 'Type' . DIRECTORY_SEPARATOR . 'ConfigurationType.php',
-            $controller_code);
+            $controller_code
+        );
     }
 
     protected function createControllerTemplate($modulename, $templatename)
@@ -110,8 +116,10 @@ class ModuleGenerate extends Command
             $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'templates' .
             DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'controller';
         $this->filesystem->mkdir($module_view_path);
-        $this->filesystem->copy($this->base_controller_folder . DIRECTORY_SEPARATOR . 'template_controller.twig',
-            $module_view_path . DIRECTORY_SEPARATOR . 'admin_configuration.html.twig');
+        $this->filesystem->copy(
+            $this->base_controller_folder . DIRECTORY_SEPARATOR . 'template_controller.twig',
+            $module_view_path . DIRECTORY_SEPARATOR . 'admin_configuration.html.twig'
+        );
     }
 
     protected function createFrontController($module_name, $front_controller_name)
@@ -142,8 +150,10 @@ class ModuleGenerate extends Command
                 'module_name' => $module_name,
                 'front_controller_name' => $front_controller_name,
             ]);
-        $this->filesystem->dumpFile($js_folder . DIRECTORY_SEPARATOR . $front_controller_name . '.js',
-            $js_front_controller_code);
+        $this->filesystem->dumpFile(
+            $js_folder . DIRECTORY_SEPARATOR . $front_controller_name . '.js',
+            $js_front_controller_code
+        );
     }
 
     protected function createMain($modulename)
@@ -152,8 +162,10 @@ class ModuleGenerate extends Command
             'module_name' => $modulename,
         ]);
 
-        $this->filesystem->dumpFile($this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . $modulename . '.php',
-            $controller_code);
+        $this->filesystem->dumpFile(
+            $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . $modulename . '.php',
+            $controller_code
+        );
     }
 
     protected function createModule($modulename)
@@ -179,10 +191,14 @@ class ModuleGenerate extends Command
         $module_dir = $this->getModuleDirectory($modulename);
         $test_dir = $module_dir . DIRECTORY_SEPARATOR . 'test';
         $this->filesystem->mkdir($test_dir);
-        $this->filesystem->copy($this->base_test_folder . DIRECTORY_SEPARATOR . 'bootstrap.php.twig',
-            $test_dir . DIRECTORY_SEPARATOR . 'bootstrap.php');
-        $this->filesystem->copy($this->base_test_folder . DIRECTORY_SEPARATOR . 'phpunit.xml.twig',
-            $module_dir . DIRECTORY_SEPARATOR . 'phpunit.xml');
+        $this->filesystem->copy(
+            $this->base_test_folder . DIRECTORY_SEPARATOR . 'bootstrap.php.twig',
+            $test_dir . DIRECTORY_SEPARATOR . 'bootstrap.php'
+        );
+        $this->filesystem->copy(
+            $this->base_test_folder . DIRECTORY_SEPARATOR . 'phpunit.xml.twig',
+            $module_dir . DIRECTORY_SEPARATOR . 'phpunit.xml'
+        );
     }
 
     /**
