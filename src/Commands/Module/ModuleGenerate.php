@@ -44,7 +44,7 @@ class ModuleGenerate extends Command
     {
         parent::__construct();
         $this->filesystem = new Filesystem();
-        $this->base_folder = _PS_MODULE_DIR_ . 'fop_console/templates/generate_module_command/module';
+        $this->base_folder = _PS_MODULE_DIR_ . 'fop_console/src/Resources/templates/generate_module_command/module';
         $this->base_controller_folder = $this->base_folder . '/controller';
         $this->base_view_folder = $this->base_folder . '/views';
         $this->base_test_folder = $this->base_folder . '/test';
