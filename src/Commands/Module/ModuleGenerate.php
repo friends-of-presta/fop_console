@@ -209,7 +209,6 @@ class ModuleGenerate extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        xdebug_break();
         $this->twig = $this->getContainer()
             ->get('twig');
 
@@ -270,13 +269,13 @@ class ModuleGenerate extends Command
         $helper = $this->getHelper('question');
 
         $ask_module_name = new Question('Please enter the name of the module (ex. testmodule): ', 'testmodule');
-        $ask_new_module = new Question('Is a new module? [yes,no] ', 'no');
+
         $ask_namespace = new Question('Please enter the name space (ex Test\Module): ', 'Test\Module');
         $ask_front_controller = new Question('You need add a front controller? [yes/no]: ', 'no');
         $ask_front_controller_name = new Question('What\'s the name of the front contoller? [yes/no]: ', 'no');
 
         $this->module_name = $helper->ask($input, $output, $ask_module_name);
-        $this->is_new_module = ($helper->ask($input, $output, $ask_new_module) === 'yes');
+        $this->is_new_module = !file_exists($this->getModuleDirectory($this->module_name));
 
         if ($this->is_new_module === true) {
             $this->module_namespace = $helper->ask($input, $output, $ask_namespace);
