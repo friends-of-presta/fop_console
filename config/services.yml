@@ -15,7 +15,7 @@ services:
 
   fop.console.category.clean.command:
     class: FOP\Console\Commands\Category\CategoryClean
-    tags: [console.command]
+    tags: [ console.command ]
 
   fop.console.configuration.export.command:
     class: FOP\Console\Commands\Configuration\ConfigurationExport
