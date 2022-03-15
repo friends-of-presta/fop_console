@@ -64,7 +64,7 @@ class ModuleGenerate extends Command
     {
         $composer_code = $this->twig->render($this->base_folder . DIRECTORY_SEPARATOR . 'composer.json.twig', [
             'module_name' => $modulename,
-            'test'=>$this->test_generation,
+            'test' => $this->test_generation,
             'name_space_psr4' => str_replace('\\', '\\\\', $namespace),
         ]);
         $this->filesystem->dumpFile(
@@ -239,7 +239,7 @@ class ModuleGenerate extends Command
             $output->writeln('create configuration controller template');
             $this->createControllerTemplate($this->module_name, $this->module_namespace);
 
-            if($this->test_generation === true) {
+            if ($this->test_generation === true) {
                 $output->writeln('create test folder');
                 $this->createTest($this->module_name);
             }
@@ -284,7 +284,7 @@ class ModuleGenerate extends Command
 
         if ($this->is_new_module === true) {
             $this->module_namespace = $helper->ask($input, $output, $ask_namespace);
-            $this->test_generation = $helper->ask($input, $output, $ask_phpunit_generation)==='yes';
+            $this->test_generation = $helper->ask($input, $output, $ask_phpunit_generation) === 'yes';
         }
 
         if ($helper->ask($input, $output, $ask_front_controller) === 'yes') {
