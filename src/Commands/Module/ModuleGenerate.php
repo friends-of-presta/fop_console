@@ -29,25 +29,25 @@ use Symfony\Component\Filesystem\Filesystem;
 class ModuleGenerate extends Command
 {
     protected $filesystem;
-    protected $base_controller_folder;
-    protected $base_test_folder;
-    protected $base_folder;
-    protected $module_name;
-    protected $module_namespace;
-    protected $front_controller_name;
-    protected $is_new_module = false;
-    protected $base_view_folder;
-    protected $test_generation = false;
+    protected $baseControllerFolder;
+    protected $baseTestFolder;
+    protected $baseFolder;
+    protected $moduleName;
+    protected $moduleNamespace;
+    protected $frontControllerName;
+    protected $isNewModule = false;
+    protected $baseViewFolder;
+    protected $testGeneration = false;
     private $twig;
 
     public function __construct()
     {
         parent::__construct();
         $this->filesystem = new Filesystem();
-        $this->base_folder = _PS_MODULE_DIR_ . 'fop_console/src/Resources/templates/generate_module_command/module';
-        $this->base_controller_folder = $this->base_folder . '/controller';
-        $this->base_view_folder = $this->base_folder . '/views';
-        $this->base_test_folder = $this->base_folder . '/test';
+        $this->baseFolder = _PS_MODULE_DIR_ . 'fop_console/src/Resources/templates/generate_module_command/module';
+        $this->baseControllerFolder = $this->baseFolder . '/controller';
+        $this->baseViewFolder = $this->baseFolder . '/views';
+        $this->baseTestFolder = $this->baseFolder . '/test';
     }
 
     /**
@@ -62,9 +62,9 @@ class ModuleGenerate extends Command
 
     protected function createComposerJson($modulename, $namespace)
     {
-        $composer_code = $this->twig->render($this->base_folder . DIRECTORY_SEPARATOR . 'composer.json.twig', [
+        $composer_code = $this->twig->render($this->baseFolder . DIRECTORY_SEPARATOR . 'composer.json.twig', [
             'module_name' => $modulename,
-            'test' => $this->test_generation,
+            'test' => $this->testGeneration,
             'name_space_psr4' => str_replace('\\', '\\\\', $namespace),
         ]);
         $this->filesystem->dumpFile(
@@ -79,7 +79,7 @@ class ModuleGenerate extends Command
             $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'admin';
         $this->filesystem->mkdir($module_config_path);
         $this->filesystem->copy(
-            $this->base_controller_folder . DIRECTORY_SEPARATOR . 'services.yml',
+            $this->baseControllerFolder . DIRECTORY_SEPARATOR . 'services.yml',
             $module_config_path . DIRECTORY_SEPARATOR . 'services.yml'
         );
     }
@@ -87,7 +87,7 @@ class ModuleGenerate extends Command
     protected function createController($modulename, $namespace)
     {
         $controller_code =
-            $this->twig->render($this->base_controller_folder . DIRECTORY_SEPARATOR . 'configuration.php.twig', [
+            $this->twig->render($this->baseControllerFolder . DIRECTORY_SEPARATOR . 'configuration.php.twig', [
                 'class_name' => 'ConfigurationController',
                 'module_name' => $modulename,
                 'name_space' => $namespace,
@@ -99,7 +99,7 @@ class ModuleGenerate extends Command
 
     protected function createControllerForm($modulename, $namespace)
     {
-        $controller_code = $this->twig->render($this->base_controller_folder . DIRECTORY_SEPARATOR . 'form.php.twig', [
+        $controller_code = $this->twig->render($this->baseControllerFolder . DIRECTORY_SEPARATOR . 'form.php.twig', [
             'class_name' => 'ConfigurationType',
             'module_name' => $modulename,
             'name_space' => $namespace,
@@ -119,7 +119,7 @@ class ModuleGenerate extends Command
             DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR . 'controller';
         $this->filesystem->mkdir($module_view_path);
         $this->filesystem->copy(
-            $this->base_controller_folder . DIRECTORY_SEPARATOR . 'template_controller.twig',
+            $this->baseControllerFolder . DIRECTORY_SEPARATOR . 'template_controller.twig',
             $module_view_path . DIRECTORY_SEPARATOR . 'admin_configuration.html.twig'
         );
     }
@@ -127,11 +127,11 @@ class ModuleGenerate extends Command
     protected function createFrontController($module_name, $front_controller_name)
     {
         $front_controller_folder =
-            $this->getModuleDirectory($this->module_name) . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'front';
+            $this->getModuleDirectory($this->moduleName) . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'front';
 
         $this->filesystem->mkdir($front_controller_folder);
 
-        $model_front_file_name = $this->base_controller_folder . DIRECTORY_SEPARATOR . 'front_controller.php.twig';
+        $model_front_file_name = $this->baseControllerFolder . DIRECTORY_SEPARATOR . 'front_controller.php.twig';
         $front_controller_code = $this->twig->render($model_front_file_name, [
             'module_name' => $module_name,
             'front_controller_name' => $front_controller_name,
@@ -143,11 +143,11 @@ class ModuleGenerate extends Command
 
     protected function createFrontControllerJavascript($module_name, $front_controller_name)
     {
-        $js_folder = $this->getModuleDirectory($this->module_name) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'js';
+        $js_folder = $this->getModuleDirectory($this->moduleName) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . 'js';
         $this->filesystem->mkdir($js_folder);
 
         $js_front_controller_code =
-            $this->twig->render($this->base_view_folder . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR .
+            $this->twig->render($this->baseViewFolder . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR .
                 'front_controller.js.twig', [
                 'module_name' => $module_name,
                 'front_controller_name' => $front_controller_name,
@@ -160,7 +160,7 @@ class ModuleGenerate extends Command
 
     protected function createMain($modulename)
     {
-        $controller_code = $this->twig->render($this->base_folder . DIRECTORY_SEPARATOR . 'main.php.twig', [
+        $controller_code = $this->twig->render($this->baseFolder . DIRECTORY_SEPARATOR . 'main.php.twig', [
             'module_name' => $modulename,
         ]);
 
@@ -181,7 +181,7 @@ class ModuleGenerate extends Command
         if ($this->filesystem->exists($module_route_path) === false) {
             $this->filesystem->mkdir($module_route_path);
         }
-        $route_code = $this->twig->render($this->base_controller_folder . DIRECTORY_SEPARATOR . 'routes.yml.twig', [
+        $route_code = $this->twig->render($this->baseControllerFolder . DIRECTORY_SEPARATOR . 'routes.yml.twig', [
             'module_name' => $modulename,
             'name_space' => $namespace,
         ]);
@@ -194,11 +194,11 @@ class ModuleGenerate extends Command
         $test_dir = $module_dir . DIRECTORY_SEPARATOR . 'test';
         $this->filesystem->mkdir($test_dir);
         $this->filesystem->copy(
-            $this->base_test_folder . DIRECTORY_SEPARATOR . 'bootstrap.php.twig',
+            $this->baseTestFolder . DIRECTORY_SEPARATOR . 'bootstrap.php.twig',
             $test_dir . DIRECTORY_SEPARATOR . 'bootstrap.php'
         );
         $this->filesystem->copy(
-            $this->base_test_folder . DIRECTORY_SEPARATOR . 'phpunit.xml.twig',
+            $this->baseTestFolder . DIRECTORY_SEPARATOR . 'phpunit.xml.twig',
             $module_dir . DIRECTORY_SEPARATOR . 'phpunit.xml'
         );
     }
@@ -214,34 +214,34 @@ class ModuleGenerate extends Command
         $this->twig = $this->getContainer()
             ->get('twig');
 
-        if ($this->is_new_module === true) {
+        if ($this->isNewModule === true) {
             $output->writeln('create module folder');
-            $this->createModule($this->module_name);
+            $this->createModule($this->moduleName);
 
             $output->writeln('create main file');
-            $this->createMain($this->module_name);
+            $this->createMain($this->moduleName);
 
             $output->writeln('create composer.json');
-            $this->createComposerJson($this->module_name, $this->module_namespace);
+            $this->createComposerJson($this->moduleName, $this->moduleNamespace);
 
             $output->writeln('create config');
-            $this->createConfig($this->module_name);
+            $this->createConfig($this->moduleName);
 
             $output->writeln('create routes');
-            $this->createRoute($this->module_name, $this->module_namespace);
+            $this->createRoute($this->moduleName, $this->moduleNamespace);
 
             $output->writeln('create configuration controller');
-            $this->createController($this->module_name, $this->module_namespace);
+            $this->createController($this->moduleName, $this->moduleNamespace);
 
             $output->writeln('create form ');
-            $this->createControllerForm($this->module_name, $this->module_namespace);
+            $this->createControllerForm($this->moduleName, $this->moduleNamespace);
 
             $output->writeln('create configuration controller template');
-            $this->createControllerTemplate($this->module_name, $this->module_namespace);
+            $this->createControllerTemplate($this->moduleName, $this->moduleNamespace);
 
-            if ($this->test_generation === true) {
+            if ($this->testGeneration === true) {
                 $output->writeln('create test folder');
-                $this->createTest($this->module_name);
+                $this->createTest($this->moduleName);
             }
 
             $output->writeln('....');
@@ -249,12 +249,12 @@ class ModuleGenerate extends Command
             $output->writeln('OK! Now you can edit composer.json and run "composer install" inside your new module.');
             $output->writeln('');
         } else {
-            if ($this->front_controller_name) {
+            if ($this->frontControllerName) {
                 $output->writeln('create front controller file');
-                $this->createFrontController($this->module_name, $this->front_controller_name);
+                $this->createFrontController($this->moduleName, $this->frontControllerName);
 
                 $output->writeln('create front javascript file');
-                $this->createFrontControllerJavascript($this->module_name, $this->front_controller_name);
+                $this->createFrontControllerJavascript($this->moduleName, $this->frontControllerName);
             }
         }
     }
@@ -279,16 +279,16 @@ class ModuleGenerate extends Command
         $ask_front_controller_name = new Question('What\'s the name of the front contoller? [yes/no]: ', 'no');
         $ask_phpunit_generation = new Question('You want to add tests? [yes/no]: ', 'no');
 
-        $this->module_name = $helper->ask($input, $output, $ask_module_name);
-        $this->is_new_module = !file_exists($this->getModuleDirectory($this->module_name));
+        $this->moduleName = $helper->ask($input, $output, $ask_module_name);
+        $this->isNewModule = !file_exists($this->getModuleDirectory($this->moduleName));
 
-        if ($this->is_new_module === true) {
-            $this->module_namespace = $helper->ask($input, $output, $ask_namespace);
-            $this->test_generation = $helper->ask($input, $output, $ask_phpunit_generation) === 'yes';
+        if ($this->isNewModule === true) {
+            $this->moduleNamespace = $helper->ask($input, $output, $ask_namespace);
+            $this->testGeneration = $helper->ask($input, $output, $ask_phpunit_generation) === 'yes';
         }
 
         if ($helper->ask($input, $output, $ask_front_controller) === 'yes') {
-            $this->front_controller_name = $helper->ask($input, $output, $ask_front_controller_name);
+            $this->frontControllerName = $helper->ask($input, $output, $ask_front_controller_name);
         }
     }
 }
