@@ -37,6 +37,7 @@ class ModuleGenerate extends Command
     protected $front_controller_name;
     protected $is_new_module = false;
     protected $base_view_folder;
+    protected $test_generation = false;
     private $twig;
 
     public function __construct()
@@ -63,6 +64,7 @@ class ModuleGenerate extends Command
     {
         $composer_code = $this->twig->render($this->base_folder . DIRECTORY_SEPARATOR . 'composer.json.twig', [
             'module_name' => $modulename,
+            'test'=>$this->test_generation,
             'name_space_psr4' => str_replace('\\', '\\\\', $namespace),
         ]);
         $this->filesystem->dumpFile(
@@ -237,8 +239,11 @@ class ModuleGenerate extends Command
             $output->writeln('create configuration controller template');
             $this->createControllerTemplate($this->module_name, $this->module_namespace);
 
-            $output->writeln('create test folder');
-            $this->createTest($this->module_name);
+            if($this->test_generation === true) {
+                $output->writeln('create test folder');
+                $this->createTest($this->module_name);
+            }
+
             $output->writeln('....');
 
             $output->writeln('OK! Now you can edit composer.json and run "composer install" inside your new module.');
@@ -269,16 +274,17 @@ class ModuleGenerate extends Command
         $helper = $this->getHelper('question');
 
         $ask_module_name = new Question('Please enter the name of the module (ex. testmodule): ', 'testmodule');
-
         $ask_namespace = new Question('Please enter the name space (ex Test\Module): ', 'Test\Module');
         $ask_front_controller = new Question('You need add a front controller? [yes/no]: ', 'no');
         $ask_front_controller_name = new Question('What\'s the name of the front contoller? [yes/no]: ', 'no');
+        $ask_phpunit_generation = new Question('You want to add tests? [yes/no]: ', 'no');
 
         $this->module_name = $helper->ask($input, $output, $ask_module_name);
         $this->is_new_module = !file_exists($this->getModuleDirectory($this->module_name));
 
         if ($this->is_new_module === true) {
             $this->module_namespace = $helper->ask($input, $output, $ask_namespace);
+            $this->test_generation = $helper->ask($input, $output, $ask_phpunit_generation)==='yes';
         }
 
         if ($helper->ask($input, $output, $ask_front_controller) === 'yes') {
