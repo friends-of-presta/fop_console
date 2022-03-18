@@ -49,7 +49,8 @@ php bin/console pr:mo install fop_console
 * `fop:configuration:import`           Import configuration values
 * `fop:container:check`                Health check of the Service Container
 * `fop:customer-groups`                Customer groups
-* `fop:employee:list`                  List registered employees  
+* `fop:employee:list`                  List registered employees
+* `fop:employee:change-password`       Change employee password
 * `fop:environment:debug-mode`         Enable or Disable debug mode.
 * `fop:environment:setup-dev`          Install your project for local developement
 * `fop:export:data`                    Allows to export data in XML
