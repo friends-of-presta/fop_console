@@ -1,7 +1,7 @@
 This document is a draft, it's not complete but you can read it before contributing.
 
-Contribution are welcome !
-However, you can't just throw some and let the others do the job to polish your work.
+Contributionr are welcome !
+However, you can't just _throw_ some code and let the others do the job to polish your work.
 
 ## Development installation
 
