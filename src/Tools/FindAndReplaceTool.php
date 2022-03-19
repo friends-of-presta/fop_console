@@ -29,7 +29,7 @@ class FindAndReplaceTool
     /**
      * @var array
      */
-    const USUAL_SEPARATORS = [' ', '_', '.', ',', '/'];
+    public const USUAL_SEPARATORS = [' ', '_', '.', ',', '/'];
 
     /**
      * Get words separated by separators if provided, otherwise following pascal case format.
@@ -151,7 +151,8 @@ class FindAndReplaceTool
             'camelCase' => function ($words) {
                 return lcfirst(
                     implode(
-                        array_map('ucfirst',
+                        array_map(
+                            'ucfirst',
                             array_map('strtolower', $words)
                         )
                     )

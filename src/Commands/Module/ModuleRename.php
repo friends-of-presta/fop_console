@@ -216,7 +216,9 @@ final class ModuleRename extends Command
         }
 
         $formattedFullName['name'] = str_ireplace(
-            $oldModuleFullName['prefix'], '', $oldModuleClass
+            $oldModuleFullName['prefix'],
+            '',
+            $oldModuleClass
         ) ?: $oldModuleFullName['name'];
 
         if (empty($formattedFullName['prefix'])) {
@@ -232,7 +234,9 @@ final class ModuleRename extends Command
                 if ($questionHelper->ask($input, $output, $question)) {
                     $formattedFullName['prefix'] = $potentialPrefix;
                     $formattedFullName['name'] = str_ireplace(
-                        $formattedFullName['prefix'], '', $formattedFullName['name']
+                        $formattedFullName['prefix'],
+                        '',
+                        $formattedFullName['name']
                     );
                 }
             }
@@ -396,7 +400,9 @@ final class ModuleRename extends Command
                 $this->findAndReplaceTool->findReplacePairsInFiles(
                     $oldModuleFiles,
                     $this->findAndReplaceTool->getCasedReplacePairs(
-                        $search, $replace, $caseFormats
+                        $search,
+                        $replace,
+                        $caseFormats
                     )
                 )
             );
