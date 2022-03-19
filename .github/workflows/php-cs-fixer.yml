@@ -21,13 +21,13 @@ jobs:
       - name: "Setup Php 7.2"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: "7.2"
 
       - name: "Install Composer"
         run: composer install
 
       - name: Run PHP-CS-Fixer
-        run : |
+        run: |
           cd ${{ github.workspace }}
           ./vendor/bin/php-cs-fixer --version
           ./vendor/bin/php-cs-fixer fix --dry-run --diff ./
