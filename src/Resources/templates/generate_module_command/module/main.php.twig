@@ -14,7 +14,8 @@ class {{ module_name|capitalize }} extends Module
     {
         $this->name = '{{ module_name }}';
         $this->version = '1.0.0';
-        $this->author = '??????'; // edit
+
+        $this->author = '??????'; //TODO: Edit
         $this->need_instance = 0;
 
         /**
@@ -24,8 +25,10 @@ class {{ module_name|capitalize }} extends Module
 
         parent::__construct();
 
-        $this->displayName = $this->trans('<humna module name here>',[],'Modules.{{ module_name|capitalize }}.Admin');
-        $this->description = $this->trans('<description here>',[], 'Modules.{{ module_name|capitalize }}.Admin');
+        //TODO: Edit  'module name here'
+        $this->displayName = $this->trans('module name here',[],'Modules.{{ module_name|capitalize }}.Admin');
+        //TODO: Edit  ''description here'
+        $this->description = $this->trans('description here',[], 'Modules.{{ module_name|capitalize }}.Admin');
         $this->confirmUninstall = $this->trans('Are you sure?',[], 'Modules.{{ module_name|capitalize }}.Admin');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
