@@ -5,7 +5,7 @@
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-require_once _PS_MODULE_DIR_.{{ module_name }}.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+require_once _PS_MODULE_DIR_.'{{ module_name }}'.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
 class {{ module_name|capitalize }} extends Module
 {
     protected $config_form = false;
@@ -50,18 +50,11 @@ class {{ module_name|capitalize }} extends Module
         return parent::uninstall();
     }
 
-    /**
-     * Load the configuration form
-     */
     public function getContent()
     {
-        /**
-         * la configurazione del modulo è gestita dal controller
-         */
         Tools::redirectAdmin(
             $this->context->link->getAdminLink(
-                'Admin{{ module_name|capitalize }}',  //edit
-                'Admin{{ module_name|capitalize }}',  //edit
+                'Admin{{ module_name|capitalize }}',
                 true,
                 ['route' => 'admin_{{ module_name }}_configuration']
             )
