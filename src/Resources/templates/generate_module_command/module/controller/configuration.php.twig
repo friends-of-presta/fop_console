@@ -38,7 +38,7 @@ class {{ class_name }} extends FrameworkBundleAdminController
                     $this->getContext()->shop->id
                 );
             }
-        $this->addFlash('success', 'Configurazione salvata');
+        $this->addFlash('success', 'Congifuration saved');
         }
         return $this->render(
             '@Modules/{{ module_name }}/views/templates/admin/controller/admin_configuration.html.twig',
