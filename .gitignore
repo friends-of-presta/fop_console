@@ -17,3 +17,4 @@ tests/Resources/modules/*
 
 ; tests
 .phpunit.result.cache
+.php-cs-fixer.cache

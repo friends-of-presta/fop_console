@@ -1,0 +1,51 @@
+<?php
+/**
+* <your license here>
+*/
+
+namespace {{ name_space }}\Controller;
+
+use {{ name_space }}\Form\Type\ConfigurationType;
+use Configuration;
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\Request;
+
+class {{ class_name }} extends FrameworkBundleAdminController
+{
+	public function configuration(Request $request)
+	{
+        $conf = [
+            'CONFNAME',
+        ];
+        $data = [];
+        foreach ($conf as $key) {
+            $data[$key] = Configuration::get(
+                $key,
+                $this->getContext()->shop->id_shop_group,
+                $this->getContext()->shop->id
+            );
+        }
+        $form = $this->createForm(ConfigurationType::class, $data);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+        $data = $form->getData();
+            foreach ($data as $conf_name => $conf_value) {
+                Configuration::updateValue(
+                    $conf_name,
+                    $conf_value,
+                    $this->getContext()->shop->id_shop_group,
+                    $this->getContext()->shop->id
+                );
+            }
+        $this->addFlash('success', 'Configuration saved');
+        }
+        return $this->render(
+            '@Modules/{{ module_name }}/views/templates/admin/controller/admin_configuration.html.twig',
+            array(
+                'form' => $form->createView(),
+                )
+            );
+
+	}
+}

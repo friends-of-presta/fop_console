@@ -105,6 +105,10 @@ services:
     class: FOP\Console\Commands\Module\ModuleNonEssential
     tags: [ console.command ]
 
+  fop.console.module.generate.command:
+    class: FOP\Console\Commands\Module\ModuleGenerate
+    tags: [ console.command ]
+
   fop.console.override.make.command:
     class: FOP\Console\Commands\Override\OverrideMake
     tags: [ console.command ]

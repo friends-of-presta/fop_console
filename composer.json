@@ -22,10 +22,14 @@
   "require": {
     "php": "^7.2.5",
     "laminas/laminas-code": "3.4.1",
-    "ext-json": "*"
+    "ext-json": "*",
+    "nette/php-generator": "^3.6"
   },
   "config": {
-    "prepend-autoloader": false
+    "prepend-autoloader": false,
+    "allow-plugins": {
+      "phpro/grumphp": true
+    }
   },
   "license": "AFL-3.0",
   "type": "prestashop-module",
