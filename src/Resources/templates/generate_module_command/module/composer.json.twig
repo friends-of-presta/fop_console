@@ -12,11 +12,15 @@
     ],
     "minimum-stability": "dev",
     "config": {
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "prepend-autoloader": false
     },
     "autoload": {
         "psr-4": {
             "{{ name_space_psr4 }}\\": "src/"
+        },
+        "config": {
+            "prepend-autoloader": false
         }
     }
     {% if test == true %},
