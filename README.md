@@ -45,7 +45,7 @@ php bin/console pr:mo install fop_console
 * `fop:about:version`                  Display the Fop Console version (on disk, on database, latest available release)
 * `fop:cache:clear`                    Replace the cache directory with an empty one.
 * `fop:category:clean`                 Manage empty categories
-  `fop:category:products-count`        Get the number of products for category and its children :tada: new in 1.5
+* `fop:category:products-count`        Get the number of products for category and its children :tada: new in 1.5
 * `fop:configuration:export`           Export configuration values (from ps_configuration table)
 * `fop:configuration:import`           Import configuration values
 * `fop:container:check`                Health check of the Service Container
@@ -64,7 +64,7 @@ php bin/console pr:mo install fop_console
 * `fop:image:generate:products`        Regenerate products thumbnails
 * `fop:image:generate:stores`          Regenerate stores thumbnails
 * `fop:image:generate:suppliers`       Regenerate suppliers thumbnails
-  `fop:module:generate`                Scaffold new PrestaShop module :tada: new in 1.5
+* `fop:module:generate`                Scaffold new PrestaShop module :tada: new in 1.5
 * `fop:module:hook`                    Attach one module on specific hook
 * `fop:module:hooks`                   Get modules list
 * `fop:module:non-essential`           Manage non essential modules
