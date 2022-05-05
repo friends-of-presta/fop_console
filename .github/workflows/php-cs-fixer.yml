@@ -30,4 +30,4 @@ jobs:
         run: |
           cd ${{ github.workspace }}
           ./vendor/bin/php-cs-fixer --version
-          ./vendor/bin/php-cs-fixer fix --dry-run --diff ./
+          ./vendor/bin/php-cs-fixer fix --config=".php_cs-fixer.dist.php" --dry-run --diff ./

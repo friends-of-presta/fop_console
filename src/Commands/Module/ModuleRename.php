@@ -330,7 +330,7 @@ final class ModuleRename extends Command
             ],
         ];
 
-        if (isset($this->newModuleInfos['author'])) {
+        if (!empty($this->newModuleInfos['author'])) {
             array_push(
                 $searchAndReplacePairs,
                 [
@@ -381,15 +381,11 @@ final class ModuleRename extends Command
         $replacePairs = [];
 
         foreach ($searchAndReplacePairs as $searchAndReplacePair) {
-            if (!isset($searchAndReplacePair['search'])
-                || empty($searchAndReplacePair['search'])) {
+            if (empty($searchAndReplacePair['search'])) {
                 continue;
             }
             $search = $searchAndReplacePair['search'];
-
-            $replace = isset($searchAndReplacePair['replace'])
-                ? $searchAndReplacePair['replace']
-                : '';
+            $replace = $searchAndReplacePair['replace'];
 
             $caseFormats = isset($searchAndReplacePair['caseFormats'])
                 ? $searchAndReplacePair['caseFormats']
