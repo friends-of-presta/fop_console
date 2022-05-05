@@ -25,7 +25,7 @@ class Fop_Console extends Module
     public function __construct()
     {
         $this->name = 'fop_console';
-        $this->version = '1.4.0';
+        $this->version = '1.5.0';
         $this->author = 'Friends of Presta';
 
         parent::__construct();
