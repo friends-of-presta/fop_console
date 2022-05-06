@@ -146,12 +146,12 @@ final class ConfigurationExport extends Command
 
 //        $db = $this->getContainer()->get('prestashop.adapter.legacy_db'); // not on ps 1.7.5
         $db = Db::getInstance();
-        $querySuccess = $db->executeS($query);
-        if (false === $querySuccess) {
+        $results = $db->executeS($query);
+        if (!is_array($results)) {
             dump($query->build(), $db->getMsgError());
             throw new RuntimeException('sql query error : see dump above.');
         }
 
-        return array_combine(array_column($querySuccess, 'name'), array_column($querySuccess, 'value'));
+        return array_column($results, 'value', 'name');
     }
 }
