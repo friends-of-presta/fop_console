@@ -40,8 +40,11 @@ final class ConfigurationExport extends Command
     /** @var ?string */
     private $output_file;
 
-    /** @var array */
+    /** @var array<int, string> */
     private $configuration_keys;
+
+    /** @var bool */
+    private $overwrite_existing_file = false;
 
     protected function configure(): void
     {
@@ -66,25 +69,27 @@ final class ConfigurationExport extends Command
 
     protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $this->configuration_keys = (array) $input->getArgument('keys');
-        $this->output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
+        $output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
         $force_mode = $input->getOption('force');
         $fs = new Filesystem();
 
-        if ($fs->exists($this->output_file)
+        if (!is_null($output_file)
+            && $fs->exists($output_file)
             && !$force_mode
-            && !$this->io->confirm(sprintf('Overwrite %s ? ', $this->output_file), false)
+            && $this->io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
         ) {
-            $this->io->caution($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
-
-            exit(1); // file not written, so return "no" : 1
+            $this->overwrite_existing_file = true;
         }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $this->configuration_keys = (array) $input->getArgument('keys');
+        $this->output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
+        $this->overwrite_existing_file = $this->overwrite_existing_file || $input->getOption('force');
+
         try {
-            /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
+            /** @var \PrestaShop\PrestaShop\Adapter\Configuration<string> $configuration_service */
             $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
 
             $to_export = [];
@@ -109,13 +114,16 @@ final class ConfigurationExport extends Command
             }
 
             $fs = new Filesystem();
+            if (false === $this->overwrite_existing_file && $fs->exists($this->output_file)) {
+                throw new \RuntimeException('Output file exists, command aborted.');
+            }
             $fs->dumpFile($this->output_file, $json_export);
 
             $this->io->success("configuration(s) dumped to file '$this->output_file'");
 
             return 0;
         } catch (Throwable $exception) {
-            $this->io->error("Error in command {$this->getName()} : {$exception->getMessage()}.");
+            $this->io->error("{$this->getName()} : {$exception->getMessage()}");
 
             return 1;
         }
