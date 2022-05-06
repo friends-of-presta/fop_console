@@ -37,9 +37,6 @@ final class ConfigurationExport extends Command
 {
     private const PS_CONFIGURATIONS_FILE = 'ps_configurations.json';
 
-    /** @var ?string */
-    private $output_file;
-
     /** @var array<int, string> */
     private $configuration_keys;
 
@@ -55,15 +52,18 @@ final class ConfigurationExport extends Command
                 . PHP_EOL . 'Exported file can later be used to import values, using configuration:import command.'
                 . PHP_EOL . '<keys> are configuration names, "PS_LANG_DEFAULT" for example, multiple keys can be provided.'
                 . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.'
+                . PHP_EOL . 'To print output instead of writing to file use the --stdout option'
                 . PHP_EOL . PHP_EOL . 'This command is not multishop compliant, neither multilang. (Contributions are welcome)'
                 . PHP_EOL . PHP_EOL . 'Examples :'
                 . PHP_EOL . 'dump one value : <info>./bin/console fop:configuration:export PS_COUNTRY_DEFAULT</info>'
                 . PHP_EOL . 'dump multiples values : <info>./bin/console fop:configuration:export PS_COMBINATION_FEATURE_ACTIVE PS_CUSTOMIZATION_FEATURE_ACTIVE PS_FEATURE_FEATURE_ACTIVE
 </info>'
                 . PHP_EOL . 'dump multiples values using mysql "like" syntax : <info>./bin/console fop:configuration:export --file configuration_blocksocial.json BLOCKSOCIAL_%</info>'
+                . PHP_EOL . 'dump value to standard output : <info>./bin/console fop:configuration:export --stdout BLOCKSOCIAL_%</info>'
             )
-            ->addOption('file', null, InputOption::VALUE_REQUIRED, 'file to dump to', self::PS_CONFIGURATIONS_FILE)
+            ->addOption('file', null, InputOption::VALUE_OPTIONAL, 'file to dump to', self::PS_CONFIGURATIONS_FILE)
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'overwrite existing file')
+            ->addOption('stdout', null, InputOption::VALUE_NONE, 'write to standard output instead of file')
             ->addArgument('keys', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'configuration values to export');
     }
 
@@ -85,41 +85,15 @@ final class ConfigurationExport extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->configuration_keys = (array) $input->getArgument('keys');
-        $this->output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
+        $output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
         $this->overwrite_existing_file = $this->overwrite_existing_file || $input->getOption('force');
+        $stdout = (bool) $input->getOption('stdout');
 
         try {
-            /** @var \PrestaShop\PrestaShop\Adapter\Configuration<string> $configuration_service */
-            $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
-
-            $to_export = [];
-            foreach ($this->configuration_keys as $key) {
-                // keys to query with a 'like' syntaxe from db
-                if (false !== strpos($key, '%')) {
-                    $to_export = array_merge($to_export, $this->queryConfigurationsLike($key));
-                    continue;
-                }
-
-                if (!$configuration_service->has($key)) {
-                    $this->io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
-                    continue;
-                }
-
-                $to_export[$key] = $configuration_service->get($key);
-            }
-
-            $json_export = json_encode($to_export, JSON_PRETTY_PRINT);
-            if (false === $json_export) {
-                throw new RuntimeException('Failed to json encode configuration');
-            }
-
-            $fs = new Filesystem();
-            if (false === $this->overwrite_existing_file && $fs->exists($this->output_file)) {
-                throw new \RuntimeException('Output file exists, command aborted.');
-            }
-            $fs->dumpFile($this->output_file, $json_export);
-
-            $this->io->success("configuration(s) dumped to file '$this->output_file'");
+            $configuration_values = $this->getConfigurationValues();
+            $stdout
+                ? $this->printToStandardOutput($configuration_values)
+                : $this->writeToFile($configuration_values, $output_file);
 
             return 0;
         } catch (Throwable $exception) {
@@ -127,6 +101,56 @@ final class ConfigurationExport extends Command
 
             return 1;
         }
+    }
+
+    /**
+     * @return array<string, string>
+     *
+     * @throws \PrestaShopDatabaseException
+     * @throws \PrestaShopException
+     */
+    private function getConfigurationValues(): array
+    {
+        /** @var \PrestaShop\PrestaShop\Adapter\Configuration<string> $configuration_service */
+        $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
+
+        $to_export = [];
+        foreach ($this->configuration_keys as $key) {
+            // keys to query with a 'like' syntaxe from db
+            if (false !== strpos($key, '%')) {
+                $to_export = array_merge($to_export, $this->queryConfigurationsLike($key));
+                continue;
+            }
+
+            if (!$configuration_service->has($key)) {
+                $this->io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
+                continue;
+            }
+
+            $to_export[$key] = $configuration_service->get($key);
+        }
+
+        return $to_export;
+    }
+
+    private function writeToFile(array $configuration_values, string $output_file): void
+    {
+        $json_export = json_encode($configuration_values, JSON_PRETTY_PRINT);
+        if (false === $json_export) {
+            throw new RuntimeException('Failed to json encode configuration');
+        }
+
+        $fs = new Filesystem();
+        if (false === $this->overwrite_existing_file && $fs->exists($output_file)) {
+            throw new RuntimeException('Output file exists, command aborted.');
+        }
+        $fs->dumpFile($output_file, $json_export);
+
+        $this->io->success("configuration(s) dumped to file '$output_file'");
+    }
+
+    private function printToStandardOutput(array $configuration_values): void
+    {
     }
 
     /**
