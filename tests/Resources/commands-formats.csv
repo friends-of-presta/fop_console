@@ -1,0 +1,14 @@
+FOP\Console\Commands\Domain\DomainCommand,fop:domain:command,fop.console.domain.command.command,true,base format
+FOP\Console\Commands\Module\ModuleRename,fop:module:rename,fop.console.module.rename.command,true,concret basic example
+FOP\Console\Commands\Logs\LogsFlush,fop:logs:flush,fop.console.logs.flush.command,true,single word domain & single words action (like previous)
+FOP\Console\Commands\CartRules\CartRulesDelete,fop:cart-rules:delete,fop.console.cart_rules.delete.command,true,2 words domain & single words action
+FOP\Console\Commands\CartRules\CartRulesDeleteOutdated,fop:cart-rules:delete-outdated,fop.console.cart_rules.delete_outdated.command,true,2 words domain & 2 words action
+FOP\Console\Commands\Group\TransferCustomers,fop:group:transfer-customers,fop.console.group.transfer_customers.command,false,Domain missing in class name
+FOP\Console\Commands\GroupTransferCustomers,fop:group-transfer-customers,fop.console.group_transfer_customers.command,false,No domain / action
+FOP\Console\Commands\CartRules\CartRulesDeleteOutdated,fop:cart_rules:delete_outdated,fop.console.cart_rules.delete_outdated.command,false,wrong word separator in command name
+FOP\Console\Commands\CartRules\CartRulesDeleteOutdated,fop:cart:rules:delete,fop.console.cart_rules.delete_command,false,wrong word separator in command name
+FOP\Console\Commands\CartRules\CartRulesDelete,fop:cart-rules:delete,fop.console.cart-rules.delete-command,false,wrong word separator in service name
+FOP\Console\Commands\CartRules\CartRulesDelete,fop:cart-rules:delete,fop.console.cart-rules.delete-command,false,wrong word separator in service name
+FOP\Console\Commands\Logs\Flush,fop:logs:flush,fop.console.flush.logs.command,false,wrong words order in service name
+FOP\Console\Commands\About\Version,fop:about:version,fop.console.about.version.command,false,real word example 1 : missing repetead domain name
+FOP\Console\Commands\About\AboutVersion,fop:about:version,fop.console.about.version.command,true,fixed

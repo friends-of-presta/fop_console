@@ -11,22 +11,34 @@
   "autoload": {
     "psr-4": {
       "FOP\\Console\\": "src/"
+    },
+    "classmap": [".devtools/"]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "FOP\\Console\\Tests\\": "tests/"
     }
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.2.5",
     "laminas/laminas-code": "3.4.1",
-    "ext-json": "*"
+    "ext-json": "*",
+    "nette/php-generator": "^3.6",
+    "pbergman/tree-helper": "^1.0"
   },
   "config": {
-    "prepend-autoloader": false
+    "prepend-autoloader": false,
+    "allow-plugins": {
+      "phpro/grumphp": true
+    }
   },
   "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
     "prestashop/php-dev-tools": "4.*",
     "phpro/grumphp": "0.19.1",
-    "phpstan/phpstan": "^0.12.58"
+    "phpstan/phpstan": "1.*",
+    "phpunit/phpunit": "^7.0"
   },
   "scripts": {
     "fop_check": [

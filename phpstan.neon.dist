@@ -1,14 +1,19 @@
 parameters:
   paths:
+    # If dotfile path added, need to be added in grumphp.yml.dist too
     - ./
-  excludes_analyse:
+  excludePaths:
     - vendor/
+    - .devtools/phpstan/stubs/
+    - tests/Resources/
   reportUnmatchedIgnoredErrors: true
-  level: 5
-  stubFiles: 
-      - .devtools/phpstan/stubs/Category.stub
+  level: 5 # If changed, needs to be changed in grumphp.yml.dist too
+  stubFiles:
+    - .devtools/phpstan/stubs/Category.stub
+    - .devtools/phpstan/stubs/Product.stub
 
 includes:
   - %currentWorkingDirectory%/.devtools/.phpstan_bootstrap.neon
-  - %currentWorkingDirectory%/.devtools/phpstan_baseline.neon
+  - %currentWorkingDirectory%/phpstan_baseline.neon
   - %currentWorkingDirectory%/vendor/prestashop/php-dev-tools/phpstan/ps-module-extension.neon
+  - %currentWorkingDirectory%/.devtools/fop_names_rules.neon

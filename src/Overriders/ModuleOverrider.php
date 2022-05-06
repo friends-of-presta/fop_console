@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) Since 2020 Friends of Presta
  *
@@ -16,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console\Overriders;
@@ -31,7 +31,8 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
         $override_class = ClassGenerator::fromArray(
             ['name' => $this->getModuleOverrideClassName(),
              'extendedclass' => $this->getModuleClassName(),
-                ]);
+                ]
+        );
 
         $fileGenerator = new FileGenerator();
         $fileGenerator->setClass($override_class);

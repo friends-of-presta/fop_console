@@ -9,6 +9,12 @@
 .php_cs.cache
 /.devtools/.phpstan_bootstrap_config.php
 grumphp.yml
+tests/Resources/modules/*
+!tests/Resources/modules/README.md
 
 ; ide
 /.idea
+
+; tests
+.phpunit.result.cache
+.php-cs-fixer.cache

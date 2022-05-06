@@ -1,0 +1,60 @@
+<?php
+/**
+* <your license here>
+*/
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+require_once _PS_MODULE_DIR_.'{{ module_name }}'.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+class {{ module_name|capitalize }} extends Module
+{
+    protected $config_form = false;
+
+    public function __construct()
+    {
+        $this->name = '{{ module_name }}';
+        $this->version = '1.0.0';
+
+        $this->author = 'Your name'; //TODO edit
+        $this->need_instance = 0;
+
+        /**
+         * Set $this->bootstrap to true if your module is compliant with bootstrap (PrestaShop 1.6)
+         */
+        $this->bootstrap = true;
+
+        parent::__construct();
+
+        //TODO: Edit  'module name here'
+        $this->displayName = $this->trans('module name here',[],'Modules.{{ module_name|capitalize }}.Admin');
+        //TODO: Edit  ''description here'
+        $this->description = $this->trans('description here',[], 'Modules.{{ module_name|capitalize }}.Admin');
+        $this->confirmUninstall = $this->trans('Are you sure?',[], 'Modules.{{ module_name|capitalize }}.Admin');
+
+        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+    }
+
+    public function install()
+    {
+
+        return parent::install();
+    }
+
+    public function uninstall()
+    {
+
+        return parent::uninstall();
+    }
+
+    public function getContent()
+    {
+        Tools::redirectAdmin(
+            $this->context->link->getAdminLink(
+                'Admin{{ module_name|capitalize }}',
+                true,
+                ['route' => 'admin_{{ module_name }}_configuration']
+            )
+        );
+
+    }
+}

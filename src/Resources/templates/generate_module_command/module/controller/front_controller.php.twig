@@ -1,0 +1,22 @@
+<?php
+
+/**
+* < your license here>
+*/
+
+class {{ module_name|capitalize }}{{ front_controller_name|capitalize }}ModuleFrontController extends
+ModuleFrontController
+{
+    public $ssl = true;
+
+    public function displayAjax{{ front_controller_name|capitalize }}()
+    {
+        $this->ajaxRender('your html here');
+    }
+
+    public function init()
+    {
+        return parent::init();
+    }
+
+}

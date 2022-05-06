@@ -1,0 +1,37 @@
+name: New Command request
+description: Ask for a new command
+title: 'New Command : '
+labels: ['feature']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # Submit a new command request
+
+        Thanks for taking time to request a new command.
+
+        If you want to implement this command, you are welcome, we'll be pleased to help you in our spare time.
+        Otherwise, if anyone think it deserves to be implemented, we'll write it.
+  - type: input
+    attributes:
+      label: Domain
+      placeholder: modules, configuration, etc
+    validations:
+      required: false
+  - type: input
+    attributes:
+      label: Command
+      placeholder: disable, list, etc
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: parameters
+      description: describe each parameter.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Command description
+      description: What does the command do ?
+      placeholder: With this command you can ...

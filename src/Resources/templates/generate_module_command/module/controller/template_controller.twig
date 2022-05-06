@@ -1,0 +1,45 @@
+{% extends '@PrestaShop/Admin/layout.html.twig' %}
+{#TODO: Edit#}
+{% set layoutTitle = 'xxxxxx'|trans({}, 'Admin.Modules.') %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    {#TODO: Edit#}
+                    {{ 'Configuration'|trans({}, 'Admin.Modules.xxxxx') }}
+                </div>
+                <div class="card-body">
+                    <div class="form-group row">
+                        {#TODO: Edit#}
+                        <div class="form-control-label">{{ 'xxxxxx'|trans({}, 'Admin.Modules.xxxxxxx') }}</div>
+                        <div class="col-sm-4">
+                            {{ form_errors(form.CONFNAME) }}
+                            {{ form_widget(form.CONFNAME) }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+
+    <div class="col">
+        <div class="card">
+            <div class="card-footer">
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-primary">{{ 'Save'|trans({}, 'Admin.Action') }}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: none">
+        {{ form_rest(form) }}
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

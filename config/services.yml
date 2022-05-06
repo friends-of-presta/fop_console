@@ -5,153 +5,138 @@ services:
   fop.console.console_loader:
     class: FOP\Console\Context\ConsoleLoader
     arguments:
-      - '@prestashop.adapter.legacy.context'
-      - '@prestashop.adapter.shop.context'
-      - '%kernel.root_dir%'
+      - "@prestashop.adapter.legacy.context"
+      - "@prestashop.adapter.shop.context"
+      - "%kernel.root_dir%"
 
-  fop.console.version.command:
-    class: FOP\Console\Commands\About\Version
-    tags:
-      - { name: console.command }
+  fop.console.cache.clear.command:
+    class: FOP\Console\Commands\Cache\CacheClear
+    tags: [ console.command ]
 
-  fop.console.modules.unhook_module.command:
-    class: FOP\Console\Commands\Modules\UnhookModule
-    tags:
-      - { name: console.command }
+  fop.console.category.clean.command:
+    class: FOP\Console\Commands\Category\CategoryClean
+    tags: [ console.command ]
 
-  fop.console.modules.hook_module.command:
-    class: FOP\Console\Commands\Modules\HookModule
-    tags:
-      - { name: console.command }
+  fop.console.category.products_count.command:
+    class: FOP\Console\Commands\Category\CategoryProductsCount
+    tags: [ console.command ]
 
-  fop.console.modules.list_module_hooks.command:
-    class: FOP\Console\Commands\Modules\ModuleHooks
-    tags:
-      - { name: console.command }
+  fop.console.configuration.export.command:
+    class: FOP\Console\Commands\Configuration\ConfigurationExport
+    tags: [ console.command ]
 
-  fop.console.modules.rename_module.command:
-    class: FOP\Console\Commands\Modules\RenameModule
-    tags:
-      - { name: console.command }
+  fop.console.configuration.import.command:
+    class: FOP\Console\Commands\Configuration\ConfigurationImport
+    tags: [ console.command ]
 
-  fop.console.latest_products.command:
-    class: FOP\Console\Commands\LatestProducts
-    tags:
-      - { name: console.command }
+  fop.console.container.check.command:
+    class: FOP\Console\Commands\Container\ContainerCheck
+    tags: [ console.command ]
 
-  fop.console.export.command:
-    class: FOP\Console\Commands\Export
-    tags:
-      - { name: console.command }
+  fop.console.employee.list.command:
+    class: FOP\Console\Commands\Employee\EmployeeList
+    tags: [ console.command ]
 
-  fop.console.status.command:
-    class: FOP\Console\Commands\ShopStatus
-    tags:
-      - { name: console.command }
+  fop.console.employee.change_password.command:
+    class: FOP\Console\Commands\Employee\EmployeeChangePassword
+    tags: [ console.command ]
 
-  fop.console.check_service_container.command:
-    class: FOP\Console\Commands\CheckServiceContainer
-    tags:
-      - { name: console.command }
+  fop.console.environment.debug.command:
+    class: FOP\Console\Commands\Environment\EnvironmentDebug
+    tags: [ console.command ]
 
-  fop.console.debug_mode.command:
-    class: FOP\Console\Commands\DebugMode
-    tags:
-      - { name: console.command }
+  fop.console.environment.setup_dev.command:
+    class: FOP\Console\Commands\Environment\EnvironmentSetupDev
+    tags: [ console.command ]
 
-  fop.console.maintenance.command:
-    class: FOP\Console\Commands\Maintenance
-    tags:
-      - { name: console.command }
+  fop.console.export.data.command:
+    class: FOP\Console\Commands\Export\ExportData
+    tags: [ console.command ]
 
-  fop.console.generate_htaccess.command:
-    class: FOP\Console\Commands\GenerateHtaccess
-    tags:
-      - { name: console.command }
+  fop.console.generate.htaccess.command:
+    class: FOP\Console\Commands\Generate\GenerateHtaccess
+    tags: [ console.command ]
 
-  fop.console.generate_robots.command:
-    class: FOP\Console\Commands\GenerateRobots
-    tags:
-      - { name: console.command }
+  fop.console.generate.robots.command:
+    class: FOP\Console\Commands\Generate\GenerateRobots
+    tags: [ console.command ]
 
-  fop.console.clear_cache_files.command:
-    class: FOP\Console\Commands\ClearCacheFiles
-    tags:
-      - { name: console.command }
+  fop.console.group.transfer_customers.command:
+    class: FOP\Console\Commands\Group\GroupTransferCustomers
+    tags: [ console.command ]
 
-  fop.console.add_hook.command:
-    class: FOP\Console\Commands\AddHook
-    tags:
-      - { name: console.command }
+  fop.console.hook.add.command:
+    class: FOP\Console\Commands\Hook\HookAdd
+    tags: [ console.command ]
 
-  fop.console.images_generate_products.command:
-    class: FOP\Console\Commands\Images\GenerateProducts
-    tags:
-      - { name: console.command }
+  fop.console.image.generate_products.command:
+    class: FOP\Console\Commands\Image\ImageGenerateProducts
+    tags: [ console.command ]
 
-  fop.console.images_generate_categories.command:
-    class: FOP\Console\Commands\Images\GenerateCategories
-    tags:
-      - { name: console.command }
+  fop.console.image.generate_categories.command:
+    class: FOP\Console\Commands\Image\ImageGenerateCategories
+    tags: [ console.command ]
 
-  fop.console.images_generate_manufacturers.command:
-    class: FOP\Console\Commands\Images\GenerateManufacturers
-    tags:
-      - { name: console.command }
+  fop.console.image.generate_manufacturers.command:
+    class: FOP\Console\Commands\Image\ImageGenerateManufacturers
+    tags: [ console.command ]
 
-  fop.console.images_generate_suppliers.command:
-    class: FOP\Console\Commands\Images\GenerateSuppliers
-    tags:
-      - { name: console.command }
+  fop.console.image.generate_suppliers.command:
+    class: FOP\Console\Commands\Image\ImageGenerateSuppliers
+    tags: [ console.command ]
 
-  fop.console.images_generate_stores.command:
-    class: FOP\Console\Commands\Images\GenerateStores
-    tags:
-      - { name: console.command }
+  fop.console.image.generate_stores.command:
+    class: FOP\Console\Commands\Image\ImageGenerateStores
+    tags: [ console.command ]
 
-  fop.console.theme-reset.command:
-    class: FOP\Console\Commands\ThemeResetLayout
+  fop.console.module.unhook.command:
+    class: FOP\Console\Commands\Module\ModuleUnhook
+    tags: [ console.command ]
+
+  fop.console.module.hook.command:
+    class: FOP\Console\Commands\Module\ModuleHook
+    tags: [ console.command ]
+
+  fop.console.module.hooks.command:
+    class: FOP\Console\Commands\Module\ModuleHooks
+    tags: [ console.command ]
+
+  fop.console.module.rename.command:
+    class: FOP\Console\Commands\Module\ModuleRename
+    tags: [ console.command ]
+
+  fop.console.module.non_essential.command:
+    class: FOP\Console\Commands\Module\ModuleNonEssential
+    tags: [ console.command ]
+
+  fop.console.module.generate.command:
+    class: FOP\Console\Commands\Module\ModuleGenerate
+    tags: [ console.command ]
 
   fop.console.override.make.command:
-    class: FOP\Console\Commands\MakeOverride
-    tags:
-      - { name: console.command }
+    class: FOP\Console\Commands\Override\OverrideMake
+    tags: [ console.command ]
 
-  fop.console.dev_setup_env.command:
-    class: FOP\Console\Commands\DevSetupEnv
-    tags:
-      - { name: console.command }
-      
-  fop.console.configuration.export:
-    class: FOP\Console\Commands\Configuration\Export
-    tags:
-      - { name: console.command }
+  fop.console.product.latest.command:
+    class: FOP\Console\Commands\Product\ProductLatest
+    tags: [ console.command ]
 
-  fop.console.configuration.import:
-    class: FOP\Console\Commands\Configuration\Import
-    tags:
-      - { name: console.command }
+  fop.console.shop.status.command:
+    class: FOP\Console\Commands\Shop\ShopStatus
+    tags: [ console.command ]
 
-  fop.console.customers.groups.command:
-    class: FOP\Console\Commands\Customers\CustomersGroups
-    tags:
-      - { name: console.command }
+  fop.console.shop.maintenance.command:
+    class: FOP\Console\Commands\Shop\ShopMaintenance
+    tags: [ console.command ]
 
-  fop.console.modules.command:
-    class: FOP\Console\Commands\Modules\NonEssentialModules
-    tags:
-      - { name: console.command }
+  fop.console.theme.reset_layout.command:
+    class: FOP\Console\Commands\Theme\ThemeResetLayout
+    tags: [ console.command ]
 
-  fop.console.category.command:
-    class: FOP\Console\Commands\Categories\CleanCategory
-    tags:
-      - { name: console.command }
+  fop.console.about.version.command:
+    class: FOP\Console\Commands\About\AboutVersion
+    tags: [ console.command ]
 
-  fop.console.employees.list:
-    class: \FOP\Console\Commands\Employees\ListEmployees
-    tags:
-      - { name: console.command }
 
 imports:
   - { resource: overriders.yml }
-

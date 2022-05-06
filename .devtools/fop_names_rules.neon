@@ -1,0 +1,11 @@
+services:
+  -
+    class: FOP\Console\DevTools\PhpStanNamesConsistencyRule
+    tags:
+      - phpstan.rules.rule
+  -
+    class: FOP\Console\Tests\Validator\FOPCommandFormatsValidator
+  -
+    class: FOP\Console\Tests\Validator\PhpStanNamesConsistencyService
+    arguments:
+      yamlServicesFilePath: '%currentWorkingDirectory%/config/services.yml'

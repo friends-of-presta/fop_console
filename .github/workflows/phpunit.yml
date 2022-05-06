@@ -1,0 +1,43 @@
+name: PHPUnit
+on:
+  - push
+  - pull_request
+jobs:
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+
+      - name: Add kjmodulebedrock as a test module
+        uses: actions/checkout@v2
+        with:
+          repository: "Kaudaj/kjmodulebedrock"
+          ref: "b1bf4921fe017498120237c3744daeb9fb81675e"
+          path: "tests/Resources/modules/kjmodulebedrock"
+
+      - name: Cache vendor folder
+        uses: actions/cache@v1
+        with:
+          path: vendor
+          key: php-${{ hashFiles('composer.lock') }}
+
+      - name: Cache composer folder
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache
+          key: php-composer-cache
+
+      - name: "Setup Php 7.2"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "7.2"
+
+      - name: "Install Composer"
+        run: composer install
+
+      - name: Run PHPUnit
+        run: |
+          cd ${{ github.workspace }}
+          ./vendor/bin/phpunit -c tests/Unit/phpunit.xml

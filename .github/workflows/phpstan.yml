@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        presta-versions: [ '1.7.5.0', '1.7.5.2', '1.7.6.9', '1.7.7.8', '1.7.8.0' ]
+        presta-versions: [ '1.7.5.0', '1.7.5.2', '1.7.6.9', '1.7.7.8', '1.7.8.5' ]
 
     steps:
       - name: Checkout

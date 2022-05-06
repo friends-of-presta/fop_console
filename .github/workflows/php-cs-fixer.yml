@@ -11,7 +11,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.composer/cache
-          key: php-composer-cache
+          key: composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-
 
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -19,12 +21,13 @@ jobs:
       - name: "Setup Php 7.2"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: "7.2"
 
       - name: "Install Composer"
         run: composer install
 
       - name: Run PHP-CS-Fixer
-        run : |
+        run: |
           cd ${{ github.workspace }}
-          ./vendor/bin/php-cs-fixer fix --dry-run ./
+          ./vendor/bin/php-cs-fixer --version
+          ./vendor/bin/php-cs-fixer fix --config=".php_cs-fixer.dist.php" --dry-run --diff ./

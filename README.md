@@ -16,6 +16,13 @@ These commands are mainly for developers, just some basic knowledge of command l
 
 [Donwload a zip release](https://github.com/friends-of-presta/fop_console/releases) and install it like any other module.
 
+Alternatively, run this in a shell :
+
+```bash
+#!/bin/bash
+wget https://git.io/JMF3q --output-document /tmp/fop_console.zip && unzip /tmp/fop_console.zip -d modules && ./bin/console pr:mo install fop_console
+```
+
 ## Install from sources
 
 If you want use the dev branch, you can install from github.
@@ -36,35 +43,38 @@ php bin/console pr:mo install fop_console
 ## Current commands
 
 * `fop:about:version`                  Display the Fop Console version (on disk, on database, latest available release)
-* `fop:add-hook`                       Create a new hook in database
-* `fop:category`                       Manage empty categories
-* `fop:check-container`                Health check of the Service Container
-* `fop:clear-cache`                    Replace the cache directory with an empty one.
+* `fop:cache:clear`                    Replace the cache directory with an empty one.
+* `fop:category:clean`                 Manage empty categories
+* `fop:category:products-count`        Get the number of products for category and its children :tada: new in 1.5
 * `fop:configuration:export`           Export configuration values (from ps_configuration table)
 * `fop:configuration:import`           Import configuration values
+* `fop:container:check`                Health check of the Service Container
 * `fop:customer-groups`                Customer groups
-* `fop:debug-mode`                     Enable or Disable debug mode.
-* `fop:dev:setup-env`                  Install your project for local developement
-* `fop:employees:list`                 List registered employees  
-* `fop:export`                         Allows to export data in XML
+* `fop:employee:list`                  List registered employees
+* `fop:employee:change-password`       Change employee password :tada: new in 1.5
+* `fop:environment:debug-mode`         Enable or Disable debug mode.
+* `fop:environment:setup-dev`          Install your project for local developement
+* `fop:export:data`                    Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
 * `fop:generate:robots`                Generate the robots.txt file
-* `fop:modules:hook`                   Attach one module on specific hook
-* `fop:modules:unhook`                 Detach module from hook
-* `fop:modules:hooks`                  Get modules list
-* `fop:modules:non-essential`          Manage non essential modules
-* `fop:modules:rename`                 Rename a module
-* `fop:images:generate:categories`     Regenerate categories thumbnails
-* `fop:images:generate:manufacturers`  Regenerate manufacturers thumbnails
-* `fop:images:generate:products`       Regenerate products thumbnails
-* `fop:images:generate:stores`         Regenerate stores thumbnails
-* `fop:images:generate:suppliers`      Regenerate suppliers thumbnails
-* `fop:latest-products`                Displays the latest products
-* `fop:maintenance`                    Configure maintenance mode
+* `fop:group:transfer-customers`       Transfers or add customers from a group to an other
+* `fop:hook:add`                       Create hook in database
+* `fop:image:generate:categories`      Regenerate categories thumbnails
+* `fop:image:generate:manufacturers`   Regenerate manufacturers thumbnails
+* `fop:image:generate:products`        Regenerate products thumbnails
+* `fop:image:generate:stores`          Regenerate stores thumbnails
+* `fop:image:generate:suppliers`       Regenerate suppliers thumbnails
+* `fop:module:generate`                Scaffold new PrestaShop module :tada: new in 1.5
+* `fop:module:hook`                    Attach one module on specific hook
+* `fop:module:hooks`                   Get modules list
+* `fop:module:non-essential`           Manage non essential modules
+* `fop:module:rename`                  Rename a module
+* `fop:module:unhook`                  Detach module from hook
 * `fop:override:make`                  Generate a file to make an override
-* `fop:shop-status`                    Display shops statuses
-* `fop:theme-reset`                    Reset current (or selected) theme
-
+* `fop:product:latest`                 Displays the latest products
+* `fop:shop:maintenance`               Configure maintenance mode
+* `fop:shop:status`                    Display shops statuses
+* `fop:theme:reset-layout`             Reset current (or selected) theme
 
 ## Create your owns Commands
 
@@ -76,9 +86,6 @@ to extends our class.
 
 // psr-4 autoloader
 
-// if the command is located at src/Commands
-namespace FOP\Console\Commands; 
-// or if command is located in a subfolder
 namespace FOP\Console\Commands\Domain; // e.g. namespace FOP\Console\Commands\Configuration
 
 use FOP\Console\Command;
@@ -86,7 +93,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class MyCommand extends Command
+final class DomainAction extends Command
 {
     /**
      * {@inheritdoc}
@@ -94,9 +101,9 @@ final class MyCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('fop:mycommand') // e.g 'fop:shop-status'
+            ->setName('fop:domain') // e.g 'fop:export'
             // or
-            ->setName('fop:domain:mycommand') // e.g 'fop:configuration:export' 
+            ->setName('fop:domain:action') // e.g 'fop:configuration:export' 
             ->setDescription('Describe the command on a user perspective.');
     }
 
@@ -105,8 +112,7 @@ final class MyCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-        $io->text('Hello friends of PrestaShop!');
+        $this->io->text('Hello friends of PrestaShop!');
 
         return 0; // return 0 on success or 1 on failure.
     }
@@ -129,12 +135,12 @@ To list only fop commands :
 
 To toggle the debug-mode (_PS_DEV_MODE_) run :
 ```shell
-./bin/console fop:debug-mode toggle
+./bin/console fop:environment:debug toggle
 ```
 
 To get help about a command :
 ```shell
-./bin/console help fop:debug-mode
+./bin/console help fop:environment:debug
 ```
 
 You are ready to go !

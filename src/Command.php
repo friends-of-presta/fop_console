@@ -15,6 +15,7 @@
  * @author    Friends of Presta <infos@friendsofpresta.org>
  * @copyright since 2020 Friends of Presta
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License ("AFL") v. 3.0
+ *
  */
 
 namespace FOP\Console;
@@ -23,13 +24,17 @@ use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
- * Symfony Command class for PrestaShop allowed to rely on legacy classes
+ * Symfony Command with legacy support.
  */
 abstract class Command extends ContainerAwareCommand
 {
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
+    protected $io;
+
+    protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $container = $this->getContainer();
         $commandDefinition = $this->getDefinition();
@@ -37,6 +42,14 @@ abstract class Command extends ContainerAwareCommand
 
         $container->get('fop.console.console_loader')->loadConsoleContext($input);
 
-        return parent::initialize($input, $output);
+        $this->io = new SymfonyStyle($input, $output);
+
+        if (isset($_SERVER['argv']) && count($_SERVER['argv']) > 1
+            && in_array($_SERVER['argv'][1], $this->getAliases())
+        ) {
+            $this->io->warning("This command has a new name : {$this->getName()}. The alias you entered is deprecated and will be deleted in version 2.");
+        }
+
+        parent::initialize($input, $output);
     }
 }
