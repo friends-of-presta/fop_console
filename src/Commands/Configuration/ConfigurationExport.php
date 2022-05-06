@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Configuration;
 
+use Db;
 use DbQuery;
 use FOP\Console\Command;
 use RuntimeException;
@@ -30,10 +31,17 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Throwable;
 
 final class ConfigurationExport extends Command
 {
     private const PS_CONFIGURATIONS_FILE = 'ps_configurations.json';
+
+    /** @var ?string */
+    private $output_file;
+
+    /** @var array */
+    private $configuration_keys;
 
     protected function configure(): void
     {
@@ -44,7 +52,7 @@ final class ConfigurationExport extends Command
                 . PHP_EOL . 'Exported file can later be used to import values, using configuration:import command.'
                 . PHP_EOL . '<keys> are configuration names, "PS_LANG_DEFAULT" for example, multiple keys can be provided.'
                 . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.'
-                . PHP_EOL . PHP_EOL . 'This command is not multishop, neither multilang.'
+                . PHP_EOL . PHP_EOL . 'This command is not multishop compliant, neither multilang. (Contributions are welcome)'
                 . PHP_EOL . PHP_EOL . 'Examples :'
                 . PHP_EOL . 'dump one value : <info>./bin/console fop:configuration:export PS_COUNTRY_DEFAULT</info>'
                 . PHP_EOL . 'dump multiples values : <info>./bin/console fop:configuration:export PS_COMBINATION_FEATURE_ACTIVE PS_CUSTOMIZATION_FEATURE_ACTIVE PS_FEATURE_FEATURE_ACTIVE
@@ -56,52 +64,61 @@ final class ConfigurationExport extends Command
             ->addArgument('keys', InputArgument::IS_ARRAY | InputArgument::REQUIRED, 'configuration values to export');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function interact(InputInterface $input, OutputInterface $output): void
     {
-        $configuration_keys = (array) $input->getArgument('keys');
-        $output_file = $input->getOption('file');
+        $this->configuration_keys = (array) $input->getArgument('keys');
+        $this->output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
         $force_mode = $input->getOption('force');
         $fs = new Filesystem();
 
-        if ($fs->exists($output_file)
+        if ($fs->exists($this->output_file)
             && !$force_mode
-            && !$this->io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
+            && !$this->io->confirm(sprintf('Overwrite %s ? ', $this->output_file), false)
         ) {
-            $this->io->comment($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
+            $this->io->caution($this->getName() . ' command aborted, ' . self::PS_CONFIGURATIONS_FILE . ' not touched.');
+
+            exit(1); // file not written, so return "no" : 1
+        }
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        try {
+            /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
+            $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
+
+            $to_export = [];
+            foreach ($this->configuration_keys as $key) {
+                // keys to query with a 'like' syntaxe from db
+                if (false !== strpos($key, '%')) {
+                    $to_export = array_merge($to_export, $this->queryConfigurationsLike($key));
+                    continue;
+                }
+
+                if (!$configuration_service->has($key)) {
+                    $this->io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
+                    continue;
+                }
+
+                $to_export[$key] = $configuration_service->get($key);
+            }
+
+            $json_export = json_encode($to_export, JSON_PRETTY_PRINT);
+            if (false === $json_export) {
+                throw new RuntimeException('Failed to json encode configuration');
+            }
+
+            $fs = new Filesystem();
+            $fs->dumpFile($this->output_file, $json_export);
+
+            $this->io->success("configuration(s) dumped to file '$this->output_file'");
 
             return 0;
+        } catch (Throwable $exception) {
+            $this->io->error("Error in command {$this->getName()} : {$exception->getMessage()}.");
+
+            return 1;
         }
-
-        /** @var \PrestaShop\PrestaShop\Adapter\Configuration $configuration_service */
-        $configuration_service = $this->getContainer()->get('prestashop.adapter.legacy.configuration');
-
-        $to_export = [];
-        foreach ($configuration_keys as $key) {
-            // keys to query with a 'like' syntaxe from db
-            if (false !== strpos($key, '%')) {
-                $to_export = array_merge($to_export, $this->queryConfigurationsLike($key));
-                continue;
-            }
-
-            if (!$configuration_service->has($key)) {
-                $this->io->warning(sprintf("Configuration key not found '%s' : ignored.", $key));
-                continue;
-            }
-
-            $to_export[$key] = $configuration_service->get($key);
-        }
-
-        $json_export = json_encode($to_export, JSON_PRETTY_PRINT);
-        if (false === $json_export) {
-            throw new RuntimeException('Failed to json encode configuration');
-        }
-
-        $fs = new Filesystem();
-        $fs->dumpFile($output_file, $json_export);
-
-        $this->io->success("configuration(s) dumped to file '{$output_file}'");
-
-        return 1;
     }
 
     /**
@@ -114,19 +131,19 @@ final class ConfigurationExport extends Command
      */
     private function queryConfigurationsLike(string $key_like_term): array
     {
-        $query = new DbQuery(); // @todo sup Core
+        $query = new DbQuery();
         $query->select('name, value')
-        ->from('configuration')
-        ->where(sprintf('name LIKE "%s"', $key_like_term));
+            ->from('configuration')
+            ->where(sprintf('name LIKE "%s"', $key_like_term));
 
 //        $db = $this->getContainer()->get('prestashop.adapter.legacy_db'); // not on ps 1.7.5
-        $db = \Db::getInstance();
-        $r = $db->executeS($query);
-        if (false === $r) {
+        $db = Db::getInstance();
+        $querySuccess = $db->executeS($query);
+        if (false === $querySuccess) {
             dump($query->build(), $db->getMsgError());
-            throw new \Exception('sql query error : see dump above.');
+            throw new RuntimeException('sql query error : see dump above.');
         }
 
-        return array_combine(array_column($r, 'name'), array_column($r, 'value'));
+        return array_combine(array_column($querySuccess, 'name'), array_column($querySuccess, 'value'));
     }
 }
