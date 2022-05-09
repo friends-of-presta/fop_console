@@ -45,6 +45,10 @@ services:
     class: FOP\Console\Commands\Environment\EnvironmentDebug
     tags: [ console.command ]
 
+  fop.console.environment.get_parameters.command:
+    class: FOP\Console\Commands\Environment\EnvironmentGetParameters
+    tags: [ console.command ]
+
   fop.console.environment.setup_dev.command:
     class: FOP\Console\Commands\Environment\EnvironmentSetupDev
     tags: [ console.command ]
