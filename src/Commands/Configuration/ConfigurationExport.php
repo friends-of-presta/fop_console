@@ -35,9 +35,16 @@ use Throwable;
 
 final class ConfigurationExport extends Command
 {
+    /** @var string Default export filename */
     private const PS_CONFIGURATIONS_FILE = 'ps_configurations.json';
 
-    /** @var array<int, string> */
+    /** @var int When output to standart output, some truncation is needed for a correct display */
+    public const STDOUT_VALUE_MAX_LENGTH = 100;
+
+    /** @var string How null value is rendered on standard output */
+    public const NULL_REPRESENTATION = '<null>';
+
+    /** @var array<int, string> Configuration keys to dump, provided by command line. */
     private $configuration_keys;
 
     /** @var bool */
@@ -48,10 +55,10 @@ final class ConfigurationExport extends Command
         $this->setName('fop:configuration:export')
             ->setDescription('Export configuration values (from ps_configuration table).')
             ->setHelp(
-                'Dump configuration(s) to a json file.'
-                . PHP_EOL . 'Exported file can later be used to import values, using configuration:import command.'
+                'Dump configuration(s) to a json file or to standard output (--stdout).'
+                . PHP_EOL . 'Exported file can later be used to import values, using <note>fop:configuration:import</note> command.'
                 . PHP_EOL . '<keys> are configuration names, "PS_LANG_DEFAULT" for example, multiple keys can be provided.'
-                . PHP_EOL . '<keys> can also be mysql like values : use "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.'
+                . PHP_EOL . '<keys> can also be a mysql like expression : "PSGDPR_%" to export all configuration starting with "PSGDPR_" for example.'
                 . PHP_EOL . 'To print output instead of writing to file use the --stdout option'
                 . PHP_EOL . PHP_EOL . 'This command is not multishop compliant, neither multilang. (Contributions are welcome)'
                 . PHP_EOL . PHP_EOL . 'Examples :'
@@ -71,9 +78,10 @@ final class ConfigurationExport extends Command
     {
         $output_file = $input->getOption('file') ? (string) $input->getOption('file') : null;
         $force_mode = $input->getOption('force');
+        $stdout = $input->getOption('stdout');
         $fs = new Filesystem();
 
-        if (!is_null($output_file)
+        if (!$stdout
             && $fs->exists($output_file)
             && !$force_mode
             && $this->io->confirm(sprintf('Overwrite %s ? ', $output_file), false)
@@ -104,7 +112,7 @@ final class ConfigurationExport extends Command
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      *
      * @throws \PrestaShopDatabaseException
      * @throws \PrestaShopException
@@ -133,6 +141,12 @@ final class ConfigurationExport extends Command
         return $to_export;
     }
 
+    /**
+     * @param array<string, mixed> $configuration_values
+     * @param string $output_file
+     *
+     * @return void
+     */
     private function writeToFile(array $configuration_values, string $output_file): void
     {
         $json_export = json_encode($configuration_values, JSON_PRETTY_PRINT);
@@ -149,8 +163,32 @@ final class ConfigurationExport extends Command
         $this->io->success("configuration(s) dumped to file '$output_file'");
     }
 
+    /**
+     * @param array<string, mixed> $configuration_values
+     *
+     * @return void
+     */
     private function printToStandardOutput(array $configuration_values): void
     {
+        $truncate = static function (string $value) {
+            $tr_mark = strlen($value) < self::STDOUT_VALUE_MAX_LENGTH ? '' : ' (...)';
+
+            return substr($value, -self::STDOUT_VALUE_MAX_LENGTH) . $tr_mark;
+        };
+
+        $configurations_with_keys_as_first_value = array_map(
+            static function ($value, $key) use ($truncate) {
+                $value = is_string($value)
+                    ? $truncate($value)
+                    : $value ?? '<info>' . self::NULL_REPRESENTATION . '</info>'; // not a string, probably null, but let's be careful.
+
+                return [$key, $value];
+            },
+            $configuration_values,
+            array_keys($configuration_values)
+        );
+
+        $this->io->table(['Configuration name', 'Value'], $configurations_with_keys_as_first_value);
     }
 
     /**
