@@ -17,6 +17,10 @@ services:
     class: FOP\Console\Commands\Category\CategoryClean
     tags: [ console.command ]
 
+  fop.console.category.products_count.command:
+    class: FOP\Console\Commands\Category\CategoryProductsCount
+    tags: [ console.command ]
+
   fop.console.configuration.export.command:
     class: FOP\Console\Commands\Configuration\ConfigurationExport
     tags: [ console.command ]
@@ -31,6 +35,10 @@ services:
 
   fop.console.employee.list.command:
     class: FOP\Console\Commands\Employee\EmployeeList
+    tags: [ console.command ]
+
+  fop.console.employee.change_password.command:
+    class: FOP\Console\Commands\Employee\EmployeeChangePassword
     tags: [ console.command ]
 
   fop.console.environment.debug.command:
@@ -128,6 +136,7 @@ services:
   fop.console.about.version.command:
     class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
+
 
 imports:
   - { resource: overriders.yml }

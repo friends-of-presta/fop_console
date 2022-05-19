@@ -64,8 +64,9 @@ final class CSVFileIterator implements \Iterator
 
     public function next(): void
     {
-        $this->current = fgetcsv($this->file);
-
-        ++$this->key;
+        do {
+            $this->current = fgetcsv($this->file);
+            ++$this->key;
+        } while ($this->valid() && $this->current === [null]);
     }
 }

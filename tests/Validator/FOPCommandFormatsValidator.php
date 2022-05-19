@@ -31,7 +31,6 @@ use Exception; /**
  * - command name (symfony command name) is consistent with <Domain> and <Action>
  * - service name (symfony service declaration) is consistent with <Domain> and <Action>
  */
-
 class FOPCommandFormatsValidator
 {
     /**

@@ -22,7 +22,6 @@ namespace FOP\Console\Commands\Container;
 
 use Exception;
 use FOP\Console\Command;
-use PrestaShopBundle\Exception\NotImplementedException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -67,8 +66,6 @@ final class ContainerCheck extends Command
             ) {
                 try {
                     $this->getContainer()->get($serviceId);
-                } catch (NotImplementedException $notImplementedException) {
-                    $services[] = [$serviceId, '<comment>' . $this->formatException($notImplementedException) . '</comment>'];
                 } catch (Exception $exception) {
                     $services[] = [$serviceId, '<fg=red>' . $this->formatException($exception) . '</>'];
                 } catch (Throwable $error) {

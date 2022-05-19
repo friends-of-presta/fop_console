@@ -19,8 +19,10 @@ $fopPsConfig = new class extends PrestaShop\CodingStandards\CsFixer\Config {
 
 $fopPsConfig
     ->setUsingCache(true)
+    ->setCacheFile('.php_cs.cache')
     ->getFinder()
     ->in(__DIR__)
-    ->exclude('vendor');
+    ->exclude('vendor')
+    ->notPath('tests/Resources');
 
 return $fopPsConfig;

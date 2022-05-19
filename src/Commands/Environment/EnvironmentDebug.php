@@ -99,20 +99,24 @@ class EnvironmentDebug extends Command
 
     /**
      * Display a message if PS_DEV_MODE environment variable is set.
+     *
      * @see https://github.com/PrestaShop/docker/blob/master/base/config_files/defines_custom.inc.php
+     *
      * @return void
      */
     private function displayMessageIfDevModeEnvIsSet(): void
     {
         $custom_defines_file_path = dirname(__DIR__, 5) . '/config/defines_custom.inc.php';
         $custom_defines_file_exists = file_exists($custom_defines_file_path);
-        opcache_invalidate($custom_defines_file_path);
-        opcache_invalidate(dirname(__DIR__, 5) . '/config/defines.inc.php');
+        if (function_exists('opcache_invalidate')) {
+            opcache_invalidate($custom_defines_file_path);
+            opcache_invalidate(dirname(__DIR__, 5) . '/config/defines.inc.php');
+        }
 
         if (false !== getenv('PS_DEV_MODE') || $custom_defines_file_exists) {
-            $this->io->note('This command may show inaccurate state and changes may not work.' . PHP_EOL.
-            'The environment variable PS_DEV_MODE is defined !'.PHP_EOL.
-            'This can be the sign that the php constant _PS_MODE_DEV_ is handled at runtime by the environment variable PS_DEV_MODE.'.PHP_EOL.
+            $this->io->note('This command may show inaccurate state and changes may not work.' . PHP_EOL .
+            'The environment variable PS_DEV_MODE is defined !' . PHP_EOL .
+            'This can be the sign that the php constant _PS_MODE_DEV_ is handled at runtime by the environment variable PS_DEV_MODE.' . PHP_EOL .
             'You may change the env mode by changing it\'s value or rebuild a docker container.');
 
             !$custom_defines_file_exists
@@ -120,8 +124,8 @@ class EnvironmentDebug extends Command
 
             $evaluatedDevMode = (bool) getenv('PS_DEV_MODE');
             $this->io->note(
-                'The current value of PS_DEV_MODE environment variable is "'.getenv('PS_DEV_MODE').'"'.PHP_EOL
-            .'So the PS_DEV_MODE may be '.($evaluatedDevMode ? 'enabled' : 'disabled').'.'
+                'The current value of PS_DEV_MODE environment variable is "' . getenv('PS_DEV_MODE') . '"' . PHP_EOL
+            . 'So the PS_DEV_MODE may be ' . ($evaluatedDevMode ? 'enabled' : 'disabled') . '.'
             );
         }
     }
