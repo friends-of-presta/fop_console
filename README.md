@@ -53,6 +53,7 @@ php bin/console pr:mo install fop_console
 * `fop:employee:list`                  List registered employees
 * `fop:employee:change-password`       Change employee password :tada: new in 1.5
 * `fop:environment:debug-mode`         Enable or Disable debug mode.
+* `fop:environment:get-parameters`     Display information about the installation (db name, etc)
 * `fop:environment:setup-dev`          Install your project for local developement
 * `fop:export:data`                    Allows to export data in XML
 * `fop:generate:htaccess`              Generate the .htaccess file
