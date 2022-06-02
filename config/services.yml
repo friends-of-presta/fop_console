@@ -141,6 +141,9 @@ services:
     class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
 
+  fop.console.log.clean.command:
+    class: FOP\Console\Commands\Log\LogClean
+    tags: [ console.command ]
 
 imports:
   - { resource: overriders.yml }
