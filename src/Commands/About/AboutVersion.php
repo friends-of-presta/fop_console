@@ -25,7 +25,6 @@ namespace FOP\Console\Commands\About;
 use Exception;
 use FOP\Console\Command;
 use GuzzleHttp\Client;
-use PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,7 +33,11 @@ final class AboutVersion extends Command
 {
     public const GITHUB_RELEASES_YAML_URL = 'https://api.github.com/repos/friends-of-presta/fop_console/releases/latest';
 
-    /** @var \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepository */
+    /**
+     * @var mixed
+     *            PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface or PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface
+     *            (same interface but moved for v8 version)
+     */
     private $moduleRepository;
 
     protected function configure(): void
@@ -50,7 +53,14 @@ final class AboutVersion extends Command
 
             // get module's information from the Core, not the Adapter, not the legacy, this is the correct way.
             $this->moduleRepository = $this->getContainer()->get('prestashop.core.admin.module.repository');
-            if (!$this->moduleRepository instanceof ModuleRepositoryInterface) {
+
+            // For v8, `ModuleRepositoryInterface` as been moved
+            $isPsBeforeV8 = version_compare(_PS_VERSION_, '8.0.0', '<');
+            $isModuleRepositoryExpectedType = $isPsBeforeV8 ?
+                /* @phpstan-ignore-next-line */
+                ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface) : ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface);
+
+            if (!$isModuleRepositoryExpectedType) {
                 throw new RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
             }
         } catch (Exception $exception) {
