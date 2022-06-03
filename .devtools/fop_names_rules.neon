@@ -8,4 +8,4 @@ services:
   -
     class: FOP\Console\Tests\Validator\PhpStanNamesConsistencyService
     arguments:
-      yamlServicesFilePath: '%currentWorkingDirectory%/config/services.yml'
+      yamlServicesFilePath: '%currentWorkingDirectory%/config/console_commands.yml'

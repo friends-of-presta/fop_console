@@ -61,7 +61,8 @@ class PhpStanNamesConsistencyService
         $services = $this->getServicesNames();
         if (!isset($services[$fullyQualifiedClassName])) {
 //            dump($fullyQualifiedClassName, $services);
-            throw new Exception('Service not found in service.yaml.' . PHP_EOL . 'Maybe unsupported syntax.' . PHP_EOL . 'Use this form :' . PHP_EOL . '' . PHP_EOL . ' fop.console.domain.action.command:' . PHP_EOL . '   class: FOP\\Console\\Commands\\Domain\\DomainAction' . PHP_EOL . '   tags: [ console.command ]');
+            throw new Exception('Service not found for class ' . $fullyQualifiedClassName . ' in ' . $this->yamlServicesFilePath . PHP_EOL . 'Maybe unsupported syntax.' . PHP_EOL . 'Use this form :' . PHP_EOL . PHP_EOL . ' 
+            fop.console.domain.action.command:' . PHP_EOL . '   class: FOP\\Console\\Commands\\Domain\\DomainAction' . PHP_EOL . '   tags: [ console.command ]');
         }
 
         return $services[$fullyQualifiedClassName] ?? '';
@@ -90,10 +91,12 @@ class PhpStanNamesConsistencyService
             if (!isset($yaml['services'])) {
                 throw new RuntimeException('Unexpected Symfony config file content : "services" section not found.');
             }
-            $filterServicesWithConsoleTag = static function (array $service) {
-                return isset($service['tags']) && in_array('console.command', $service['tags']); // direct form
-            };
-            $commands = array_filter($yaml['services'], $filterServicesWithConsoleTag);
+            // filtering not needed anymore, the commands declarations are isolated in a separated file.
+//            $filterServicesWithConsoleTag = static function (array $service) {
+//                return isset($service['tags']) && in_array('console.command', $service['tags']); // direct form
+//            };
+//            $commands = array_filter($yaml['services'], $filterServicesWithConsoleTag);
+            $commands = array_filter($yaml['services']);
             $servicesWithServiceField = array_map(
                 static function (string $service, array $classDefinition) {
                     return [
