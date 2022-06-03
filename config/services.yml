@@ -12,3 +12,4 @@ services:
 imports:
   - { resource: console_commands.yml }
   - { resource: overriders.yml }
+  - { resource: bus.yml }

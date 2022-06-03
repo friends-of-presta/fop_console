@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace FOP\Console\Commands\Log;
 
 use FOP\Console\Command;
+use FOP\Console\Core\Domain\Log\Command\CleanLogCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -36,8 +37,22 @@ final class LogClean extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->io->comment('not implemented');
+        try {
+            $otto = $this->getContainer()->get('prestashop.core.query_bus');
+            $cleanQuery = new CleanLogCommand();
+            $otto->handle($cleanQuery);
 
-        return 7;
+            $this->io->warning('Not implemented.');
+//            $this->io->success('Logs cleaned.');
+
+            return 0;
+        } catch (\Throwable $throwable) {
+            if (_PS_MODE_DEV_ || $output->isVerbose()) {
+                throw $throwable;
+            }
+            $this->io->error(sprintf('%s failed : %s', $this->getName(), $throwable->getMessage()));
+
+            return 1;
+        }
     }
 }
