@@ -34,11 +34,11 @@ abstract class Command extends ContainerAwareCommand
     /** @var \Symfony\Component\Console\Style\SymfonyStyle */
     protected $io;
     
-    protected function configure()
+    public function __construct(string $name = null)
     {
+        parent::__construct($name);
+
         $this->addOption('employee', '-em', InputOption::VALUE_REQUIRED, 'Specify employee context (id).', null);
-        
-        parent::configure();
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
