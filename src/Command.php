@@ -33,7 +33,7 @@ abstract class Command extends ContainerAwareCommand
 {
     /** @var \Symfony\Component\Console\Style\SymfonyStyle */
     protected $io;
-    
+
     public function __construct(string $name = null)
     {
         parent::__construct($name);
