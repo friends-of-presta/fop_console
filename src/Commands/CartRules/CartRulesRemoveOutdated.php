@@ -29,9 +29,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class CartRulesRemoveOutdated extends Command
 {
-    private $from_date;
-    private $logs;
-
     /**
      * {@inheritdoc}
      */
@@ -60,12 +57,12 @@ class CartRulesRemoveOutdated extends Command
             return 1;
         }
 
-        $this->clearCartRules($days, $output);
+        $total = $this->clearCartRules($days, $output);
 
-        if ($this->logs['cart_rules'] === 0) {
+        if ($total === 0) {
             $io->success('Cart rules already clean. No need more.');
         } else {
-            $io->success('Cart rules clear successfully ! We delete ' . $this->logs['cart_rules'] . ' cart rules !');
+            $io->success('Cart rules clear successfully ! We delete ' . $total . ' cart rules !');
         }
 
         return 0;
@@ -74,24 +71,24 @@ class CartRulesRemoveOutdated extends Command
     /**
      * {@inheritdoc}
      */
-    private function clearCartRules(int $days = 30, OutputInterface $output)
+    private function clearCartRules(int $days = 30, OutputInterface $output): int
     {
         $instance = Db::getInstance();
 
         $date = new \DateTime('now');
         $date->sub(new \DateInterval('P' . $days . 'D'));
-        $this->from_date = $date->format('Y-m-d');
-        $output->write('Delete all cart rules with finish or inactive before ' . $this->from_date);
+        $from_date = $date->format('Y-m-d');
+        $output->write('Delete all cart rules with finish or inactive before ' . $from_date);
 
         $instance->delete('cart_rule_combination', 'id_cart_rule_1 
-            IN (SELECT id_cart_rule  FROM `' . _DB_PREFIX_ . 'cart_rule` WHERE `date_to` < "' . $this->from_date . '" OR active = 0 OR quantity = 0)
-            OR `id_cart_rule_2` IN (SELECT id_cart_rule  FROM `' . _DB_PREFIX_ . 'cart_rule` WHERE `date_to` < "' . $this->from_date . '" OR active = 0 OR quantity = 0)');
+            IN (SELECT id_cart_rule  FROM `' . _DB_PREFIX_ . 'cart_rule` WHERE `date_to` < "' . $from_date . '" OR active = 0 OR quantity = 0)
+            OR `id_cart_rule_2` IN (SELECT id_cart_rule  FROM `' . _DB_PREFIX_ . 'cart_rule` WHERE `date_to` < "' . $from_date . '" OR active = 0 OR quantity = 0)');
 
-        $instance->delete('cart_rule_product_rule_group', 'id_cart_rule IN (SELECT id_cart_rule  FROM `ps_cart_rule` WHERE `date_to` < "' . $this->from_date . '" OR active = 0 OR quantity = 0)');
+        $instance->delete('cart_rule_product_rule_group', 'id_cart_rule IN (SELECT id_cart_rule  FROM `ps_cart_rule` WHERE `date_to` < "' . $from_date . '" OR active = 0 OR quantity = 0)');
         $instance->delete('cart_rule_product_rule', 'NOT EXISTS (SELECT 1 FROM `' . _DB_PREFIX_ . 'cart_rule_product_rule_group` WHERE `' . _DB_PREFIX_ . 'cart_rule_product_rule`.`id_product_rule_group` = `' . _DB_PREFIX_ . 'cart_rule_product_rule_group`.`id_product_rule_group`)');
         $instance->delete('cart_rule_product_rule_value', 'NOT EXISTS (SELECT 1 FROM `' . _DB_PREFIX_ . 'cart_rule_product_rule` WHERE `' . _DB_PREFIX_ . 'cart_rule_product_rule_value`.`id_product_rule` = `' . _DB_PREFIX_ . 'cart_rule_product_rule`.`id_product_rule`)');
-        $instance->delete('cart_rule', '`date_to` < "' . $this->from_date . '" OR active = 0 OR quantity = 0');
+        $instance->delete('cart_rule', '`date_to` < "' . $from_date . '" OR active = 0 OR quantity = 0');
 
-        $this->logs['cart_rules'] = $instance->affected_rows();
+        return $instance->affected_rows();
     }
 }
