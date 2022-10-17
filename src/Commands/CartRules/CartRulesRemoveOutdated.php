@@ -48,7 +48,6 @@ class CartRulesRemoveOutdated extends Command
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $helper = $this->getHelper('question');
         $days = (int) $input->getOption('days');
 
         if (!is_int($days)) {
