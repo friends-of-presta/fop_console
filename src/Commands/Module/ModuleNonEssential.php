@@ -36,8 +36,19 @@ class ModuleNonEssential extends Command
      */
     private const ALLOWED_COMMAND = ['status', 'uninstall', 'install'];
 
-    private const NON_ESSENTIAL_MODULES = ['emarketing', 'gamification', 'ps_checkout',
-        'ps_eventbus', 'psaddonsconnect', 'statsvisits', 'welcome', 'ps_metrics', 'ps_facebook', 'ps_accounts', ];
+    private const NON_ESSENTIAL_MODULES = [
+        'emarketing',
+        'gamification',
+        'ps_accounts',
+        'ps_checkout',
+        'ps_eventbus',
+        'ps_facebook',
+        'ps_metrics',
+        'psaddonsconnect',
+        'psxmarketingwithgoogle',
+        'statsvisits',
+        'welcome',
+    ];
 
     /**
      * {@inheritdoc}
