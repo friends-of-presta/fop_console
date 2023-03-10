@@ -87,7 +87,7 @@ class ModuleGenerate extends Command
             $this->getModuleDirectory($modulename) . DIRECTORY_SEPARATOR . 'config' .
             DIRECTORY_SEPARATOR . 'admin';
         $this->filesystem->dumpFile(
-            $module_config_path . DIRECTORY_SEPARATOR . 'service.yml',
+            $module_config_path . DIRECTORY_SEPARATOR . 'services.yml',
             $service_code
         );
     }
