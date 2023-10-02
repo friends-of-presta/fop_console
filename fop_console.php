@@ -18,7 +18,10 @@
  *
  */
 
-require_once 'vendor/autoload.php';
+$autoloadPath = __DIR__ . '/vendor/autoload.php';
+if (file_exists($autoloadPath)) {
+    require_once $autoloadPath;
+}
 
 class Fop_Console extends Module
 {
