@@ -141,6 +141,9 @@ services:
     class: FOP\Console\Commands\About\AboutVersion
     tags: [ console.command ]
 
+  fop.console.cart_rules.remove_outdated.command:
+    class: FOP\Console\Commands\CartRules\CartRulesRemoveOutdated
+    tags: [ console.command ]
 
 imports:
   - { resource: overriders.yml }
