@@ -1,0 +1,8 @@
+services:
+
+  prestashop.adapter.category.command_handler.add_root_category_handler:
+    class: FOP\Console\Adapter\Log\CommandHandler\CleanLogHandler
+    public: true
+    tags:
+      - name: tactician.handler
+        command: FOP\Console\Core\Domain\Log\Command\CleanLogCommand
