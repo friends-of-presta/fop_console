@@ -66,7 +66,7 @@ php bin/console pr:mo install fop_console
 * `fop:image:generate:stores`          Regenerate stores thumbnails
 * `fop:image:generate:suppliers`       Regenerate suppliers thumbnails
 * `fop:module:generate`                Scaffold new PrestaShop module
-* `fop:module:hook`                    Attach one module on specific hook
+* `fop:module:hook`                    Attach one module on specific hook ex: `php bin/console fop:module:hook --module=mymodule --hook=displayHeader`
 * `fop:module:hooks`                   Get modules list
 * `fop:module:non-essential`           Manage non essential modules
 * `fop:module:rename`                  Rename a module
