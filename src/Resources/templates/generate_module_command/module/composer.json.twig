@@ -1,5 +1,5 @@
 {
-    "name": "{{ module_name }}/{{ module_name }}",
+    "name": "{{ moduleName }}/{{ moduleName }}",
     "description": "<edit>",
     "homepage": "<edit>",
     "license": "<edit>",
@@ -17,17 +17,24 @@
     },
     "autoload": {
         "psr-4": {
-            "{{ name_space_psr4 }}\\": "src/"
+            "{{ nameSpace }}\\": "src/"
         },
         "config": {
             "prepend-autoloader": false
         }
-    }
-    {% if test == true %},
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "{{ nameSpace }}\\Tests\\Admin\\": "tests/admin/",
+            "{{ nameSpace }}\\Tests\\Front\\": "tests/front/"
+        },
+        "config": {
+            "prepend-autoloader": false
+        }
+    },
     "require-dev": {
         "mockery/mockery": "^1.4@dev",
         "phpunit/phpunit": "~8.5.16",
         "symfony/phpunit-bridge": "^3.4"
-    },
-    {% endif %}
+    }
 }

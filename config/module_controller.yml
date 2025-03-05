@@ -1,0 +1,26 @@
+services:
+
+  fop.console.module_generator.controller.controller_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'controller.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/controller' ] ]
+      - [ setClassFolderName,[ 'src/Controller/' ] ]
+      - [ setFileNameModule,[ '.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.controller_generator }
+
+  fop.console.module_generator.controller.controller_twig_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\TwigFileGenerator
+    calls:
+      - [ setTemplateName, [ 'template_controller.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/controller' ] ]
+      - [ setModuleFolder,[ 'views/templates/admin/controller' ] ]
+      - [ setFileNameModule,[ 'controller.html.twig' ] ]
+    tags:
+      - { name: fop.console.module_generator.controller_generator }
+

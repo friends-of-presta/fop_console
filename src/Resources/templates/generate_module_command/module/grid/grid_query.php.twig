@@ -1,0 +1,38 @@
+<?php
+namespace {{ nameSpace }}\Grid\Query;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use PrestaShop\PrestaShop\Core\Grid\Query\AbstractDoctrineQueryBuilder;
+use PrestaShop\PrestaShop\Core\Grid\Search\SearchCriteriaInterface;
+
+class {{ className }}QueryBuilder extends AbstractDoctrineQueryBuilder
+{
+    public function getSearchQueryBuilder(SearchCriteriaInterface $searchCriteria)
+    {
+            // example to retrive records
+            $qb = $this->getBaseQuery();
+            $qb->select('p.*');
+            return $qb;
+    }
+
+    public function getCountQueryBuilder(SearchCriteriaInterface $searchCriteria)
+    {
+        // example to count records
+        $qb = $this->getBaseQuery();
+        $qb->select('COUNT(p.id_product)');
+
+        return $qb;
+    }
+
+    // Base query can be used for both Search and Count query builders
+    private function getBaseQuery()
+    {
+        // example to get query builder
+        return $this->connection
+            ->createQueryBuilder()
+            ->from($this->dbPrefix.'product', 'p')
+        ;
+    }
+}

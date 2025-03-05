@@ -1,18 +1,16 @@
 <?php
-/**
-* <your license here>
-*/
+
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-require_once _PS_MODULE_DIR_.'{{ module_name }}'.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
-class {{ module_name|capitalize }} extends Module
+require_once _PS_MODULE_DIR_.'{{ moduleName }}'.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'autoload.php';
+class {{ moduleName|capitalize }} extends Module
 {
     protected $config_form = false;
 
     public function __construct()
     {
-        $this->name = '{{ module_name }}';
+        $this->name = '{{ moduleName }}';
         $this->version = '1.0.0';
 
         $this->author = 'Your name'; //TODO edit
@@ -26,12 +24,12 @@ class {{ module_name|capitalize }} extends Module
         parent::__construct();
 
         //TODO: Edit  'module name here'
-        $this->displayName = $this->trans('module name here',[],'Modules.{{ module_name|capitalize }}.Admin');
+        $this->displayName = $this->trans('module name here',[],'Modules.{{ moduleName|capitalize }}.Admin');
         //TODO: Edit  ''description here'
-        $this->description = $this->trans('description here',[], 'Modules.{{ module_name|capitalize }}.Admin');
-        $this->confirmUninstall = $this->trans('Are you sure?',[], 'Modules.{{ module_name|capitalize }}.Admin');
+        $this->description = $this->trans('description here',[], 'Modules.{{ moduleName|capitalize }}.Admin');
+        $this->confirmUninstall = $this->trans('Are you sure?',[], 'Modules.{{ moduleName|capitalize }}.Admin');
 
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.7.8', 'max' => _PS_VERSION_);
     }
 
     public function install()
@@ -48,13 +46,18 @@ class {{ module_name|capitalize }} extends Module
 
     public function getContent()
     {
-        Tools::redirectAdmin(
-            $this->context->link->getAdminLink(
-                'Admin{{ module_name|capitalize }}',
-                true,
-                ['route' => 'admin_{{ module_name }}_configuration']
-            )
-        );
+       // TODO edit
+       // Tools::redirectAdmin(
+       //     $this->context->link->getAdminLink(
+       //         'Admin{{ moduleName|capitalize }}',
+       //         true,
+       //         ['route' => 'admin_{{ moduleName }}_configuration']
+       //     )
+       // );
 
+    }
+    public function isUsingNewTranslationSystem()
+    {
+        return true;
     }
 }

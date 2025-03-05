@@ -1,0 +1,20 @@
+<phpunit
+        bootstrap="tests/admin/bootstrap.php"
+>
+    <php>
+        <env name="_PS_IN_TEST_" value="0"/>
+        <env name="_DB_NAME_" value="xxxxx"/>
+        <env name="_DB_USER_" value="xxxxx"/>
+        <env name="_DB_PASSWORD_" value="xxxxx"/>
+        <env name="_DB_PREFIX_" value="xxxxx"/>
+        <env name="_DB_HOST_" value="xxxxxx"/>
+        <env name="_ADMIN_" value="1"/>
+        <env name="KERNEL_CLASS" value="\AppKernel" />
+    </php>
+
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

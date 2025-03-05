@@ -1,0 +1,14 @@
+services:
+
+  # configuration generation
+  fop.console.module_generator.controller.class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'form.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/form' ] ]
+      - [ setClassFolderName,[ 'src/Form/' ] ]
+      - [ setFileNameModule,[ 'Type.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.form_generator }

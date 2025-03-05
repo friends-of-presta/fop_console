@@ -1,0 +1,23 @@
+<?php
+
+namespace {{ nameSpace }}\Controller;
+
+if (!defined('_PS_VERSION_')) {
+exit;
+}
+
+use PrestaShopBundle\Controller\Admin\FrameworkBundleAdminController;
+use Symfony\Component\HttpFoundation\Request;
+
+class {{ className }} extends FrameworkBundleAdminController
+{
+	public function yourAction(Request $request)
+	{
+
+        return $this->render(
+            '@Modules/{{ moduleName }}/views/templates/admin/controller/{{ className|lower }}_controller.html.twig',
+            []
+            );
+
+	}
+}

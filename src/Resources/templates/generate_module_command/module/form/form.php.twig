@@ -3,14 +3,13 @@
  * <your license here>
  */
 
-namespace {{ name_space }}\Form\Type;
+namespace {{ nameSpace }}\Form;
 
-use PrestaShopBundle\Form\Admin\Type\SwitchType;
-use Symfony\Component\Form\AbstractType;
+use PrestaShopBundle\Form\Admin\Type\TranslatorAwareType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class {{ class_name }} extends AbstractType
+class {{ className }}Type extends TranslatorAwareType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

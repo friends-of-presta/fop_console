@@ -1,0 +1,30 @@
+<?php
+
+namespace {{nameSpace}}\Provider;
+
+use {{ nameSpace }}\Configuration\{{ className }}TextDataConfiguration;
+use PrestaShop\PrestaShop\Core\Form\FormDataProviderInterface;
+
+class {{ className }}ConfigurationTextFormDataProvider implements FormDataProviderInterface
+{
+    /**
+     * @var {{ className }}TextDataConfiguration
+     */
+    private $configurationTextDataConfiguration;
+
+    public function __construct({{ className }}TextDataConfiguration $configurationTextDataConfiguration)
+    {
+        $this->configurationTextDataConfiguration = $configurationTextDataConfiguration;
+    }
+
+    public function getData()
+    {
+        return $this->configurationTextDataConfiguration->getConfiguration();
+    }
+
+    public function setData(array $data)
+    {
+        $this->configurationTextDataConfiguration->updateConfiguration($data);
+    }
+
+}

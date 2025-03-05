@@ -20,14 +20,12 @@
 namespace FOP\Console\Commands\Module;
 
 use FOP\Console\Command;
-use FOP\Console\Generator\ClassFileGenerator;
-use FOP\Console\Generator\MainModuleFileGenerator;
 use FOP\Console\Generator\ContentFileDTO;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 
-class ModuleGenerate extends Command
+class ModuleGenerateController extends Command
 {
     private array $generatorServices = [];
     private string $moduleName;
@@ -40,8 +38,8 @@ class ModuleGenerate extends Command
 
     protected function configure(): void
     {
-        $this->setName('fop:module:generate')
-            ->setDescription('Scaffold module');
+        $this->setName('fop:module:generate:controller')
+            ->setDescription('Add backoffice controller in  Prestashop module');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -49,25 +47,15 @@ class ModuleGenerate extends Command
         $this->twig = $this->getContainer()
             ->get('twig');
 
-        $output->writeln('create module');
-        $this->generate($this->moduleName);
+        $output->writeln('create front controller');
+        $this->createGrid($this->moduleName);
     }
 
-    private function generate($moduleName)
+    private function createGrid($moduleName)
     {
-        //create module folder
-        $filesystem = $this->getContainer()->get('filesystem');
-        $filesystem->mkdir(_PS_MODULE_DIR_.$moduleName);
-        $filesystem->mkdir(_PS_MODULE_DIR_.$moduleName.'/config');
-        $filesystem->mkdir(_PS_MODULE_DIR_.$moduleName.'/src');
-        $filesystem->mkdir(_PS_MODULE_DIR_.$moduleName.'/tests');
         foreach ($this->generatorServices as $serviceGenerator) {
             $serviceGenerator->setModuleName($this->moduleName);
             $serviceGenerator->setTwigValues($this->configGeneration);
-            if ($serviceGenerator instanceof MainModuleFileGenerator) {
-                $serviceGenerator->setModuleFolder($this->moduleName);
-                $serviceGenerator->setFileNameModule('.php');
-            }
             $serviceGenerator->generate();
         }
     }
@@ -83,22 +71,29 @@ class ModuleGenerate extends Command
 
         $this->moduleName = $helper->ask($input, $output, $ask_module_name);
 
+        if (!file_exists(_PS_MODULE_DIR_.$this->moduleName)) {
+            $output->writeln('Module does not exist');
+
+            return;
+        }
+        $this->configGeneration->moduleName = $this->moduleName;
+
         $this->configGeneration->nameSpace = $helper->ask(
             $input,
             $output,
-            new Question(
-                'Please enter the name space: ',
-            )
+            new Question('Main name space? : ')
+        );
+        $this->configGeneration->className = $helper->ask(
+            $input,
+            $output,
+            new Question('Controller name? (eg: ExampleController) : ')
         );
 
-        $this->configGeneration->moduleName = $this->moduleName;
-
-        $this->configGeneration->className = Ucfirst($this->configGeneration->moduleName);
-        $this->configGeneration->serviceName = strtolower($this->configGeneration->className);
-
-
-        if (file_exists(_PS_MODULE_DIR_.$this->moduleName) === true) {
-            throw new \Exception('Module already exists');
+        if (strpos($this->configGeneration->className, 'Controller') === false) {
+            $this->configGeneration->className .= 'Controller';
         }
+
+
+        $this->configGeneration->serviceName = strtolower($this->configGeneration->className);
     }
 }

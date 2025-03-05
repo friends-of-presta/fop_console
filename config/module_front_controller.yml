@@ -1,0 +1,25 @@
+services:
+
+  fop.console.module_generator.front_controller.ajax_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'front_controllerajax.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/front_controller' ] ]
+      - [ setFileNameModule,[ '.php' ] ]
+      - [ setClassFolderName,[ 'controllers/front/' ] ]
+    tags:
+      - { name: fop.console.module_generator.front_controller_generator }
+
+  fop.console.module_generator.front_controller.ajax_javascript_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\AssetsFileGenerator
+    calls:
+      - [ setTemplateName, [ 'ajax_front_controller.js.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/front_controller' ] ]
+      - [ setFileNameModule,[ 'front_controller.js' ] ]
+      - [ setClassFolderName,[ 'views/js/' ] ]
+    tags:
+      - { name: fop.console.module_generator.front_controller_generator }

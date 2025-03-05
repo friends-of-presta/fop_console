@@ -1,0 +1,16 @@
+
+
+>>>>> please, copy this code to your controller file <<<<<
+
+public function displayGridAction(Request $request)
+{
+    $gridFactory = $this->get('{{serviceNameSpace}}_grid_{{ serviceName }}_factory');
+    $grid = $gridFactory->getGrid(new SearchCriteria());
+
+    return $this->render(
+        '@Modules/{{ moduleName }}/views/templates/admin/controller/{{ serviceName }}_grid.html.twig', [
+            'grid' =>   $this->presentGrid($grid),
+            ]
+        );
+
+}}

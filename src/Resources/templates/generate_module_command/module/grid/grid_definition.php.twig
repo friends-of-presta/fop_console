@@ -1,0 +1,98 @@
+<?php
+
+namespace {{ nameSpace }}\Grid\Definition\Factory;
+if (!defined('_PS_VERSION_')) {
+    exit;
+}
+
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\RowActionCollection;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\LinkRowAction;
+use PrestaShop\PrestaShop\Core\Grid\Action\Row\Type\SubmitRowAction;
+use PrestaShop\PrestaShop\Core\Grid\Column\ColumnCollection;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\ActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\Common\BulkActionColumn;
+use PrestaShop\PrestaShop\Core\Grid\Column\Type\DataColumn;
+use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\AbstractGridDefinitionFactory;
+use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\BulkDeleteActionTrait;
+use PrestaShop\PrestaShop\Core\Grid\Definition\Factory\DeleteActionTrait;
+
+class {{ className }}GridDefinitionFactory extends AbstractGridDefinitionFactory
+{
+    use BulkDeleteActionTrait;
+    use DeleteActionTrait;
+
+    protected function getId()
+    {
+       return 'grid';
+    }
+
+    protected function getName()
+    {
+        return $this->trans('xxxx', [], 'Module.{{ moduleName }}.Admin');
+    }
+
+    protected function getColumns()
+    {
+            // example of columns
+        return (new ColumnCollection())
+            ->add((new BulkActionColumn('bulk'))
+                ->setOptions([
+                    'bulk_field' => 'id_product',
+                ])
+            )
+            ->add((new DataColumn('id_product'))
+                ->setName($this->trans('ID', [], 'Admin.Global'))
+                ->setOptions([
+                    'field' => 'id_product',
+                ])
+            )
+            ->add((new DataColumn('reference'))
+                ->setName($this->trans('Reference', [], 'Admin.xxxx.Feature'))
+                ->setOptions([
+                'field' => 'reference',
+                ])
+            )
+         // uncomment and add actions
+        //    ->add(
+        //        (new ActionColumn('actions'))
+        //            ->setName($this->trans('Actions', [], 'Admin.Global'))
+        //            ->setOptions([
+        //                'actions' => $this->getRowActions(),
+        //            ])
+        //    )
+        ;
+    }
+
+    private function getRowActions()
+    {
+        return (new RowActionCollection('actions'))
+            ->add(
+                    (new LinkRowAction('edit'))
+                        ->setName($this->trans('Edit', [], 'Admin.Actions'))
+                        ->setIcon('edit')
+                        ->setOptions([
+                            'route' => '...........', // create edti route
+                            'route_param_name' => '......', // route param name
+                            'route_param_field' => '.........', // route param field
+                            'clickable_row' => true,
+                            ])
+                            )
+            ->add(
+                    (new SubmitRowAction('delete'))
+                        ->setName($this->trans('Delete', [], 'Admin.Actions'))
+                        ->setIcon('delete')
+                        ->setOptions([
+                                'method' => 'delete',
+                                'route' => '............', // create delete route
+                                'route_param_name' => '......', // route param name
+                                'route_param_field' => '.........', // route param field
+                                'confirm_message' => $this->trans(
+                                    'Delete selected item?',
+                                    [],
+                                    'Admin.Notifications.Warning'
+                                ),
+                            ])
+                        )
+                        ;
+    }
+}

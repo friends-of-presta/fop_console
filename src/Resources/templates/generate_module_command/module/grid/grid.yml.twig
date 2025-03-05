@@ -1,0 +1,29 @@
+services:
+    {{ serviceNameSpace }}_grid_query_{{ serviceName }}:
+        class: {{ nameSpace }}\Grid\Query\{{ className }}QueryBuilder
+        parent: 'prestashop.core.grid.abstract_query_builder'
+
+
+
+    {{ serviceNameSpace }}_grid_definition_factory_{{ serviceName }}:
+        class: {{ nameSpace }}\Grid\Definition\Factory\{{ className }}GridDefinitionFactory
+        parent: 'prestashop.core.grid.definition.factory.abstract_grid_definition'
+        public: true
+
+    {{ serviceNameSpace }}_grid_data_factory_{{ serviceName }}:
+        class: PrestaShop\PrestaShop\Core\Grid\Data\Factory\DoctrineGridDataFactory
+        arguments:
+            - '@{{ serviceNameSpace }}_grid_query_{{ serviceName }}' # service id of our query builder
+            - '@prestashop.core.hook.dispatcher' # every doctrine query builder needs the hook dispatcher
+            - '@prestashop.core.grid.query.doctrine_query_parser' # parser to get the raw SQL query
+            - '{{ serviceName }}' # this should match your grid id, in our case it's "products"
+
+
+    {{ serviceNameSpace }}_grid_{{ serviceName }}_factory:
+        class: PrestaShop\PrestaShop\Core\Grid\GridFactory
+        arguments:
+            - '@{{ serviceNameSpace }}_grid_definition_factory_{{ serviceName }}'
+            - '@{{ serviceNameSpace }}_grid_data_factory_{{ serviceName }}'
+            - '@prestashop.core.grid.filter.form_factory'
+            - '@prestashop.core.hook.dispatcher'
+        public: true

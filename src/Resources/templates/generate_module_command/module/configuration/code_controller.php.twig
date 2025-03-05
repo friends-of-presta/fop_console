@@ -1,0 +1,34 @@
+
+
+>>>>> please, copy this code to your controller file <<<<<
+
+
+    public function configAction(Request $request)
+    {
+        $textFormDataHandler = $this->get('{{ serviceNameSpace }}.handler.{{ serviceName }}_configuration_text_form_data_handler');
+
+        $textForm = $textFormDataHandler->getForm();
+        $textForm->handleRequest($request);
+
+        if ($textForm->isSubmitted() && $textForm->isValid()) {
+            /** You can return array of errors in form handler and they can be displayed to user with flashErrors */
+            $errors = $textFormDataHandler->save($textForm->getData());
+
+
+            empty($errors) ?
+                $this->addFlash('success', $this->trans('Successful update.', 'Admin.Notifications.Success')) :
+                $this->flashErrors($errors);
+
+        }
+
+        $textForm = $textForm->createView();
+
+        return $this->render(
+            '@Modules/{{moduleName}}/views/templates/admin/controller/{{serviceName}}_configuration_view.html.twig',
+            [
+                'form' => $textForm,
+            ]
+        );
+    }
+
+

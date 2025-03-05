@@ -1,0 +1,71 @@
+services:
+
+  # configuration generation
+  fop.console.module_generator.configuration.yaml_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\YamlFileGenerator
+    calls:
+      - [ setTemplateName, [ 'configuration.yml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+      - [ setFileNameModule, ['/admin/configuration.yml']]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }
+
+  fop.console.module_generator.configuration.form_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'configuration_form.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+      - [ setClassFolderName,[ 'src/Form/' ] ]
+      - [ setFileNameModule,[ 'ConfigurationFormType.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }
+
+  fop.console.module_generator.configuration.text_data_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'text_data_configuration.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+      - [ setClassFolderName,[ 'src/Configuration/' ] ]
+      - [ setFileNameModule,[ 'TextDataConfiguration.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }
+
+  fop.console.module_generator.configuration.text_data_provider_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'text_data_provider.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+      - [ setClassFolderName,[ 'src/Provider/' ] ]
+      - [ setFileNameModule,[ 'ConfigurationTextFormDataProvider.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }
+
+  fop.console.module_generator.configuration.controller_twig_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\TwigFileGenerator
+    calls:
+      - [ setTemplateName, [ 'template_configuration.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+      - [ setFileNameModule,[ 'configuration_view.html.twig' ] ]
+      - [ setModuleFolder,[ 'views/templates/admin/controller' ] ]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }
+
+  fop.console.module_generator.configuration.display_code_controller:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\CodeDisplayGenerator
+    calls:
+      - [ setTemplateName, [ 'code_controller.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/configuration' ] ]
+    tags:
+      - { name: fop.console.module_generator.configuration_generator }

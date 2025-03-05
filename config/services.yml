@@ -117,6 +117,42 @@ services:
     class: FOP\Console\Commands\Module\ModuleGenerate
     tags: [ console.command ]
 
+  fop.console.module.generate.grid.command:
+    class: FOP\Console\Commands\Module\ModuleGenerateGrid
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.grid_generator ] ]
+    tags: [ console.command ]
+
+  fop.console.module.generate.module.command:
+    class: FOP\Console\Commands\Module\ModuleGenerate
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.module_generator ] ]
+    tags: [ console.command ]
+
+  fop.console.module.generate.configuration.command:
+    class: FOP\Console\Commands\Module\ModuleGenerateConfiguration
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.configuration_generator ] ]
+    tags: [ console.command ]
+
+  fop.console.module.generate.front_controller.command:
+    class: FOP\Console\Commands\Module\ModuleGenerateFrontController
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.front_controller_generator ] ]
+    tags: [ console.command ]
+
+  fop.console.module.generate.controller.command:
+    class: FOP\Console\Commands\Module\ModuleGenerateController
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.controller_generator ] ]
+    tags: [ console.command ]
+
+  fop.console.module.generate.form.command:
+    class: FOP\Console\Commands\Module\ModuleGenerateForm
+    calls:
+      - [ setGeneratorServices, [ !tagged_iterator fop.console.module_generator.form_generator ] ]
+    tags: [ console.command ]
+
   fop.console.override.make.command:
     class: FOP\Console\Commands\Override\OverrideMake
     tags: [ console.command ]
@@ -144,3 +180,4 @@ services:
 
 imports:
   - { resource: overriders.yml }
+  - { resource: module.yml }

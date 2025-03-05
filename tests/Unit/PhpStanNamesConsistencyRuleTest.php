@@ -53,7 +53,7 @@ class PhpStanNamesConsistencyRuleTest extends RuleTestCase
         // this is because PhpStanNamesConsistencyRule::nodeIsInClassFopCommand() checks the FQDN and therefore it needs to be changed
         // with the namespace of the tested class (FOP\Console\Tests\Resources\Commands\Domain).
         /* @phpstan-ignore-next-line */
-        return new class($mockedValidatorService) extends PhpStanNamesConsistencyRule {
+        return new class ($mockedValidatorService) extends PhpStanNamesConsistencyRule {
             public const FOP_BASE_COMMAND_CLASS_NAME = 'FOP\Console\Tests\Resources\Commands\Command';
         };
     }

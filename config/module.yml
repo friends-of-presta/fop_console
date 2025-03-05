@@ -1,0 +1,115 @@
+imports:
+  - { resource: module_configuration.yml }
+  - { resource: module_grid.yml }
+  - { resource: module_front_controller.yml }
+  - { resource: module_controller.yml }
+  - { resource: module_form.yml }
+
+parameters:
+  templates_module_generator_base_path: /fop_console/src/Resources/templates/generate_module_command/module
+
+services:
+  fop.console.module_generator.file_generator:
+    abstract: true
+    class: FOP\Console\Generator\FileGenerator
+    arguments:
+      - '@twig'
+
+  # module
+
+  fop.console.module_generator.module.class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\MainModuleFileGenerator
+    calls:
+      - [ setTemplateName, [ 'main.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ '' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.composer_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ComposerStaticFileGenerator
+    calls:
+      - [ setTemplateName, [ 'composer.json.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ 'composer.json' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.front_phpunit_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\StaticFileGenerator
+    calls:
+      - [ setTemplateName, [ 'phpunit.front.xml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ 'phpunit.xml.front' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+  fop.console.module_generator.module.admin_phpunit_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\StaticFileGenerator
+    calls:
+      - [ setTemplateName, [ 'phpunit.admin.xml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ 'phpunit.xml.admin' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.test_bootstrap_admin_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\StaticFileGenerator
+    calls:
+      - [ setTemplateName, [ 'bootstrap.admin.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ '/tests/admin/bootstrap.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.test_bootstrap_front_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\StaticFileGenerator
+    calls:
+      - [ setTemplateName, [ 'bootstrap.front.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule,[ '/tests/front/bootstrap.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.route_yml_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\YamlFileGenerator
+    calls:
+      - [ setTemplateName, [ 'routes.yml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule, [ '/routes.yml' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+
+  fop.console.module_generator.module.admin_service_yml_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\YamlFileGenerator
+    calls:
+      - [ setTemplateName, [ 'services.yml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule, [ '/admin/services.yml' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }
+  fop.console.module_generator.module.front_service_yml_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\YamlFileGenerator
+    calls:
+      - [ setTemplateName, [ 'services.yml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%' ] ]
+      - [ setFileNameModule, [ '/front/services.yml' ] ]
+    tags:
+      - { name: fop.console.module_generator.module_generator }

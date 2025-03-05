@@ -409,13 +409,13 @@ final class GroupTransferCustomers extends Command
         $optionSeletedID = (int) str_replace($questionsKeyPrefix, '', $optionSeletedKey);
 
         switch ($type) {
-          case 'groups':
-            $groupName = $this->getGroupName($optionSeletedID);
-            $output->writeln('<info>You have just selected: ' . $groupName . '</info>');
-            break;
-          case 'actions':
-            $output->writeln('<info>You have just selected: ' . $questionOptions[$optionSeletedKey] . '</info>');
-            break;
+            case 'groups':
+                $groupName = $this->getGroupName($optionSeletedID);
+                $output->writeln('<info>You have just selected: ' . $groupName . '</info>');
+                break;
+            case 'actions':
+                $output->writeln('<info>You have just selected: ' . $questionOptions[$optionSeletedKey] . '</info>');
+                break;
         }
 
         return $optionSeletedID;

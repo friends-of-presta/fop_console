@@ -1,0 +1,48 @@
+<?php
+
+namespace {{nameSpace}}\Configuration;
+
+
+use PrestaShop\PrestaShop\Core\Configuration\DataConfigurationInterface;
+use PrestaShop\PrestaShop\Core\ConfigurationInterface;
+
+class {{ className }}TextDataConfiguration implements DataConfigurationInterface
+{
+
+    public const CONFIGNAME = 'CONFIGNAME';
+
+    /**
+     * @var ConfigurationInterface
+     */
+    private $configuration;
+
+    public function __construct(ConfigurationInterface $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    public function getConfiguration(): array
+    {
+        $return = [];
+
+        $return[self::CONFIGNAME] = $this->configuration->get(static::CONFIGNAME);
+
+        return $return;
+    }
+
+    public function updateConfiguration(array $configuration): array
+    {
+        $this->configuration->set(self::CONFIGNAME, $configuration[self::CONFIGNAME]);
+        return [];
+    }
+
+    /**
+     * Ensure the parameters passed are valid.
+     *
+     * @return bool Returns true if no exception are thrown
+     */
+    public function validateConfiguration(array $configuration): bool
+    {
+        return isset($configuration[self::CONFIGNAME]);
+    }
+}

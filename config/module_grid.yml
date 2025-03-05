@@ -1,0 +1,61 @@
+services:
+
+  # configuration generation
+  fop.console.module_generator.grid.yaml_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\YamlFileGenerator
+    calls:
+      - [ setTemplateName, [ 'grid.yml.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/grid' ] ]
+      - [ setFileNameModule, ['/admin/grid.yml']]
+    tags:
+      - { name: fop.console.module_generator.grid_generator }
+
+
+  fop.console.module_generator.grid.query_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'grid_query.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/grid' ] ]
+      - [ setClassFolderName,[ 'src/Grid/Query/' ] ]
+      - [ setFileNameModule,[ 'QueryBuilder.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.grid_generator }
+
+  fop.console.module_generator.grid.definition_class_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\ClassFileGenerator
+    calls:
+      - [ setTemplateName, [ 'grid_definition.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/grid' ] ]
+      - [ setClassFolderName,[ 'src/Grid/Definition/Factory/' ] ]
+      - [ setFileNameModule,[ 'GridDefinitionFactory.php' ] ]
+    tags:
+      - { name: fop.console.module_generator.grid_generator }
+
+
+  fop.console.module_generator.grid.controller_twig_file:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\TwigFileGenerator
+    calls:
+      - [ setTemplateName, [ 'template_grid.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/grid' ] ]
+      - [ setFileNameModule,[ 'grid.html.twig' ] ]
+      - [ setModuleFolder,[ 'views/templates/admin/controller' ] ]
+    tags:
+      - { name: fop.console.module_generator.grid_generator }
+
+  fop.console.module_generator.grid.display_code_controller:
+    public: true
+    parent: fop.console.module_generator.file_generator
+    class: FOP\Console\Generator\CodeDisplayGenerator
+    calls:
+      - [ setTemplateName, [ 'code_controller.php.twig' ] ]
+      - [ setTemplatesBaseFolder,[ '%templates_module_generator_base_path%/grid' ] ]
+    tags:
+      - { name: fop.console.module_generator.grid_generator }
