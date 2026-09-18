@@ -23,10 +23,20 @@ namespace FOP\Console\Commands\Environment;
 use FOP\Console\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class EnvironmentGetParameters extends Command
 {
+    private const SENSITIVE_KEYS = [
+        'database_password',
+        'mailer_password',
+        'secret',
+        'cookie_key',
+        'cookie_iv',
+        'new_cookie_key',
+    ];
+
     private $environmentKeys = [
         'database_host',
         'database_port',
@@ -54,6 +64,7 @@ class EnvironmentGetParameters extends Command
     {
         $this->setName('fop:environment:get-parameters')
             ->setDescription('Get your current configured parameters.')
+            ->addOption('show-sensitive', null, InputOption::VALUE_NONE, 'Display passwords and secret keys in clear text.')
             ->setHelp(
                 '<info>This command is made to get current prestashop install parameters values.' . PHP_EOL .
                 'Concerned parameters : ' . PHP_EOL .
@@ -74,7 +85,12 @@ class EnvironmentGetParameters extends Command
         foreach ($this->environmentKeys as $environmentKey) {
             if ($this->getContainer()->hasParameter($environmentKey)) {
                 $environmentValue = $this->getContainer()->getParameter($environmentKey);
-                if ($environmentValue === null) {
+                $mustHideValue = in_array($environmentKey, self::SENSITIVE_KEYS, true)
+                    && !empty($environmentValue)
+                    && !$input->getOption('show-sensitive');
+                if ($mustHideValue) {
+                    $ps_params[] = [$environmentKey, '<comment>********</comment>'];
+                } elseif ($environmentValue === null) {
                     $ps_params[] = [$environmentKey, '<info>NULL</info>'];
                 } elseif ($environmentValue === true) {
                     $ps_params[] = [$environmentKey, '<info>true</info>'];
