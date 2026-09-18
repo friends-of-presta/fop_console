@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace FOP\Console\Commands\About;
 
 use FOP\Console\Command;
-use GuzzleHttp\Client;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -46,27 +45,29 @@ final class AboutVersion extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
-        try {
-            parent::initialize($input, $output);
+        parent::initialize($input, $output);
 
-            // get module's information from the Core, not the Adapter, not the legacy, this is the correct way.
-            $this->moduleRepository = $this->getContainer()->get('prestashop.core.admin.module.repository');
+        // get module's information from the Core, not the Adapter, not the legacy, this is the correct way.
+        $isPs9 = version_compare(_PS_VERSION_, '9.0.0', '>=');
+        if ($isPs9) {
+            $this->getContainer()
+                ->get('PrestaShop\\PrestaShop\\Core\\Context\\ContextBuilderPreparer')
+                ->prepareLanguageId((int) \Configuration::get('PS_LANG_DEFAULT'));
+        }
 
-            // For v8, `ModuleRepositoryInterface` as been moved
-            $isPsBeforeV8 = version_compare(_PS_VERSION_, '8.0.0', '<');
-            $isModuleRepositoryExpectedType = $isPsBeforeV8 ?
-                /* @phpstan-ignore-next-line */
-                ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface) : ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface);
+        $repositoryService = $isPs9
+            ? 'PrestaShop\\PrestaShop\\Core\\Module\\ModuleRepository'
+            : 'prestashop.core.admin.module.repository';
+        $this->moduleRepository = $this->getContainer()->get($repositoryService);
 
-            if (!$isModuleRepositoryExpectedType) {
-                throw new \RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
-            }
-        } catch (\Exception $exception) {
-            $this->io->isVerbose()
-                ? $this->getApplication()->renderException($exception, $output)
-                : $output->write("<error> >>> Error on initialization : {$exception->getMessage()}</error> .");
+        // For v8, `ModuleRepositoryInterface` has been moved.
+        $isPsBeforeV8 = version_compare(_PS_VERSION_, '8.0.0', '<');
+        $isModuleRepositoryExpectedType = $isPsBeforeV8 ?
+            /* @phpstan-ignore-next-line */
+            ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface) : ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface);
 
-            exit(1);
+        if (!$isModuleRepositoryExpectedType) {
+            throw new \RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
         }
     }
 
@@ -87,21 +88,22 @@ final class AboutVersion extends Command
     private function getLastReleaseVersion(): string
     {
         try {
-            // file_get_contents() fails with a 403 error.
-            $HttpClient = new Client();
-            $response = $HttpClient->get(self::GITHUB_RELEASES_YAML_URL);
-            if ($response->getReasonPhrase() !== 'OK') {
-                throw new \Exception('Not a 200 Response.');
+            $context = stream_context_create([
+                'http' => [
+                    'header' => "Accept: application/vnd.github+json\r\nUser-Agent: friends-of-presta-fop-console\r\n",
+                    'timeout' => 5,
+                ],
+            ]);
+            $response = @file_get_contents(self::GITHUB_RELEASES_YAML_URL, false, $context);
+            if ($response === false) {
+                throw new \RuntimeException('Unable to retrieve the latest release from GitHub.');
             }
 
-            return json_decode($response->getBody()->getContents())->tag_name;
+            $release = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+
+            return (string) $release['tag_name'];
         } catch (\Exception $exception) {
             if ($this->io->isVerbose()) {
-                if (isset($response)) {
-                    dump($response->getReasonPhrase());
-                    dump($response->getHeaders());
-                    dump($response->getBody()->getContents());
-                }
                 $this->io->error($exception->getMessage());
             }
 
