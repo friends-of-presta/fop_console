@@ -22,14 +22,11 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Employee;
 
-use Employee;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Tools;
-use Validate;
 
 final class EmployeeChangePassword extends Command
 {
@@ -48,10 +45,10 @@ final class EmployeeChangePassword extends Command
         $email = $input->getOption('email');
         $password = $input->getOption('password');
 
-        if (null === $email || !Validate::isEmail($email)) {
+        if (null === $email || !\Validate::isEmail($email)) {
             $userQuestion = new Question('employee email ', null);
             $userQuestion->setValidator(function ($answer) {
-                if (!Validate::isEmail($answer)) {
+                if (!\Validate::isEmail($answer)) {
                     throw new \RuntimeException('Invalid email');
                 }
 
@@ -60,13 +57,13 @@ final class EmployeeChangePassword extends Command
             $email = $this->io->askQuestion($userQuestion);
         }
 
-        if (!Employee::employeeExists($email)) {
+        if (!\Employee::employeeExists($email)) {
             $this->io->error('There is no employee with this email.');
 
             return 1;
         }
 
-        if (null === $password || !Validate::isPlaintextPassword($password)) {
+        if (null === $password || !\Validate::isPlaintextPassword($password)) {
             $passwordQuestion = $this->getPasswordQuestion('password ');
             $password = $this->io->askQuestion($passwordQuestion);
 
@@ -81,9 +78,9 @@ final class EmployeeChangePassword extends Command
         }
 
         try {
-            $employee = new Employee();
+            $employee = new \Employee();
             $employee->getByEmail($email);
-            $employee->passwd = Tools::hash($password);
+            $employee->passwd = \Tools::hash($password);
             $employee->save();
         } catch (\Exception $e) {
             $this->io->error(
@@ -111,8 +108,8 @@ final class EmployeeChangePassword extends Command
     {
         $passwordQuestion = new Question($label, 'admin123456');
         $passwordQuestion->setValidator(function ($answer) {
-            if (!Validate::isPlaintextPassword($answer)) {
-                throw new \RuntimeException(sprintf('Your password need at least %d characters', Validate::PASSWORD_LENGTH));
+            if (!\Validate::isPlaintextPassword($answer)) {
+                throw new \RuntimeException(sprintf('Your password need at least %d characters', \Validate::PASSWORD_LENGTH));
             }
 
             return $answer;

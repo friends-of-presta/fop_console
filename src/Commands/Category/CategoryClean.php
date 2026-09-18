@@ -22,10 +22,7 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Category;
 
-use Category;
-use Configuration;
 use FOP\Console\Command;
-use Shop;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -70,19 +67,18 @@ final class CategoryClean extends Command
     {
         $force = $input->getOption('force');
 
-        if (1 < Shop::getTotalShops(false)) {
+        if (1 < \Shop::getTotalShops(false)) {
             if (!$force) {
                 $this->io->error('Currently this command don\'t work with MultiShop.'
                 . PHP_EOL . 'Use force (-f) option to run the command.');
 
                 return 1;
-            } else {
-                $this->io->warning('MultiShop Enable, Force Mode');
             }
+            $this->io->warning('MultiShop Enable, Force Mode');
         }
 
         $action = $input->getArgument('action');
-        $id_lang = $input->getOption('id-lang') ? (int) $input->getOption('id-lang') : (int) Configuration::get('PS_LANG_DEFAULT');
+        $id_lang = $input->getOption('id-lang') ? (int) $input->getOption('id-lang') : (int) \Configuration::get('PS_LANG_DEFAULT');
         $exclude = $input->getOption('exclude') ? explode(',', $input->getOption('exclude')) : [];
 
         switch ($action) {
@@ -124,12 +120,11 @@ final class CategoryClean extends Command
                     $this->io->title('All categories without product active are disable.');
 
                     return 0;
-                } else {
-                    $this->io->title('The following categories have been disabled');
-                    $this->io->text(implode(', ', $categories['empty']));
-
-                    return 0;
                 }
+                $this->io->title('The following categories have been disabled');
+                $this->io->text(implode(', ', $categories['empty']));
+
+                return 0;
 
             case 'enable-no-empty':
                 try {
@@ -144,22 +139,21 @@ final class CategoryClean extends Command
                     $this->io->title('All categories with active product are enable.');
 
                     return 0;
-                } else {
-                    $this->io->title('The following categories have been enabled');
-                    $this->io->text(implode(', ', $categories['noempty']));
-
-                    return 0;
                 }
+                $this->io->title('The following categories have been enabled');
+                $this->io->text(implode(', ', $categories['noempty']));
+
+                return 0;
 
             case 'toggle':
                 $helper = $this->getHelper('question');
                 $id_category = $input->getOption('id-category') ?? $helper->ask($input, $output, new Question('<question>Wich id_category you want to toggle</question>'));
-                if (!Category::categoryExists($id_category)) {
+                if (!\Category::categoryExists($id_category)) {
                     $this->io->error('Hum i don\'t think id_category ' . $id_category . ' exist');
 
                     return 1;
                 }
-                $category = new Category($id_category, $id_lang);
+                $category = new \Category($id_category, $id_lang);
 
                 if (0 === (int) $category->active) {
                     $category->active = true;
@@ -172,20 +166,18 @@ final class CategoryClean extends Command
                     $this->io->success('The category : ' . $category->name . ' is now enabled.');
 
                     return 0;
-                } else {
-                    $category->active = false;
-                    if (!$category->update()) {
-                        $this->io->error('Failed to update Category with ID : ' . $id_category);
+                }
+                $category->active = false;
+                if (!$category->update()) {
+                    $this->io->error('Failed to update Category with ID : ' . $id_category);
 
-                        return 1;
-                    }
-
-                    $this->io->success('The category : ' . $category->name . ' is now disabled.');
-
-                    return 0;
+                    return 1;
                 }
 
-                // no break
+                $this->io->success('The category : ' . $category->name . ' is now disabled.');
+
+                return 0;
+
             default:
                 $this->io->error("Action $action not allowed." . PHP_EOL . 'Possible actions : ' . $this->getPossibleActions());
 
@@ -209,13 +201,13 @@ final class CategoryClean extends Command
     {
         $categoriesToActive = [];
         $categoriesToDesactive = [];
-        $categories = Category::getCategories($id_lang, false, false);
-        $excludeDefault = [Configuration::get('PS_ROOT_CATEGORY'), Configuration::get('PS_HOME_CATEGORY')];
+        $categories = \Category::getCategories($id_lang, false, false);
+        $excludeDefault = [\Configuration::get('PS_ROOT_CATEGORY'), \Configuration::get('PS_HOME_CATEGORY')];
 
         foreach ($categories as $categorie) {
             if (!in_array($categorie['id_category'], $exclude) && !in_array($categorie['id_category'], $excludeDefault)) {
-                if (!Category::getChildren($categorie['id_category'], $id_lang, false)) {
-                    $categorieToCheck = new Category($categorie['id_category'], $id_lang);
+                if (!\Category::getChildren($categorie['id_category'], $id_lang, false)) {
+                    $categorieToCheck = new \Category($categorie['id_category'], $id_lang);
                     $NbProducts = $categorieToCheck->getProducts($id_lang, 1, 1);
 
                     if (!$NbProducts && 1 === (int) $categorieToCheck->active) {

@@ -25,7 +25,6 @@ use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Throwable;
 
 /**
  * Check health of our Service Container.
@@ -58,17 +57,17 @@ final class ContainerCheck extends Command
 
         foreach ($this->getContainerBuilder()->getServiceIds() as $serviceId) {
             if (
-                $this->getContainerBuilder()->has($serviceId) &&
-                !array_key_exists($serviceId, $this->getContainerBuilder()->getRemovedIds()) &&
-                !array_key_exists($serviceId, $this->getContainerBuilder()->getAliases()) &&
-                $this->getContainerBuilder()->getDefinition($serviceId)->isPublic() &&
-                !$this->getContainerBuilder()->getDefinition($serviceId)->isAbstract()
+                $this->getContainerBuilder()->has($serviceId)
+                && !array_key_exists($serviceId, $this->getContainerBuilder()->getRemovedIds())
+                && !array_key_exists($serviceId, $this->getContainerBuilder()->getAliases())
+                && $this->getContainerBuilder()->getDefinition($serviceId)->isPublic()
+                && !$this->getContainerBuilder()->getDefinition($serviceId)->isAbstract()
             ) {
                 try {
                     $this->getContainer()->get($serviceId);
-                } catch (Exception $exception) {
+                } catch (\Exception $exception) {
                     $services[] = [$serviceId, '<fg=red>' . $this->formatException($exception) . '</>'];
-                } catch (Throwable $error) {
+                } catch (\Throwable $error) {
                     $services[] = [$serviceId, '<fg=red>' . $this->formatException($error) . '</>'];
                     ++$errors;
                 }

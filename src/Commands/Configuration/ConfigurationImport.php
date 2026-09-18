@@ -22,9 +22,7 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Configuration;
 
-use Exception;
 use FOP\Console\Command;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -52,11 +50,11 @@ final class ConfigurationImport extends Command
 
             $source_file = $input->getOption('file');
             if (!file_exists($source_file)) {
-                throw new RuntimeException("File $source_file not found.");
+                throw new \RuntimeException("File $source_file not found.");
             }
             $configurations = json_decode(file_get_contents($source_file), true);
             if (false === $configurations) {
-                throw new Exception('Failed to decode json !');
+                throw new \Exception('Failed to decode json !');
             }
 
             if ($output->isVerbose()) {
@@ -72,7 +70,7 @@ final class ConfigurationImport extends Command
             $this->io->success('Configurations imported');
 
             return 0;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->io->error('Command ' . $this->getName() . ' aborted : ' . $exception->getMessage());
 
             return 1;

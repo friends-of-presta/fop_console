@@ -74,12 +74,12 @@ class FOPCommandFormatsValidatorTest extends TestCase
         $this->testValidate($commandFQCN, $commandName, $commandService, $expected);
     }
 
-    public function commandsFormatsProvider(): CSVFileIterator
+    public static function commandsFormatsProvider(): CSVFileIterator
     {
         return new CSVFileIterator('tests/Resources/commands-formats.csv');
     }
 
-    public function commandsFormatsProviderRealWorld(): CSVFileIterator
+    public static function commandsFormatsProviderRealWorld(): CSVFileIterator
     {
         return new CSVFileIterator('tests/Resources/commands-realworld.csv');
     }

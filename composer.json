@@ -1,6 +1,6 @@
 {
   "name": "friends-of-presta/fop_console",
-  "description": "Add some console commands for PrestaShop 1.7.5+",
+  "description": "Add console commands for PrestaShop 9.1+",
   "authors": [
     {
       "name": "Friends of Presta",
@@ -20,13 +20,16 @@
     }
   },
   "require": {
-    "php": "^7.2.5",
-    "laminas/laminas-code": "3.4.1",
+    "php": "^8.1",
+    "laminas/laminas-code": "^4.16",
     "ext-json": "*",
-    "nette/php-generator": "^3.6",
+    "nette/php-generator": "^4.1",
     "pbergman/tree-helper": "^1.0"
   },
   "config": {
+    "platform": {
+      "php": "8.1.0"
+    },
     "prepend-autoloader": false,
     "allow-plugins": {
       "phpro/grumphp": true
@@ -35,10 +38,12 @@
   "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "4.*",
-    "phpro/grumphp": "0.19.1",
-    "phpstan/phpstan": "1.*",
-    "phpunit/phpunit": "^7.0"
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "prestashop/php-dev-tools": "^5.0",
+    "phpro/grumphp": "^2.0",
+    "phpstan/phpstan": "^1.12",
+    "phpunit/phpunit": "^10.5",
+    "symfony/yaml": "^6.4"
   },
   "scripts": {
     "fop_check": [

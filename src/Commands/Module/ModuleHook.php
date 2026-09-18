@@ -53,7 +53,7 @@ class ModuleHook extends Command
         $moduleName = $input->getOption('module') ?? $helper->ask($input, $output, new Question('<question>Wich module you want graft ?(name)</question>'));
 
         $moduleInst = \Module::getInstanceByName($moduleName);
-        if (!($moduleInst instanceof \Module)) {
+        if (!$moduleInst instanceof \Module) {
             $this->io->getErrorStyle()->error('This module doesn\'t exist, please give the name of the module directory.');
 
             return 1;
@@ -67,10 +67,9 @@ class ModuleHook extends Command
             $this->io->getErrorStyle()->success('Your module ' . $moduleName . ' has been graft on hook ' . $hookName);
 
             return 0;
-        } else {
-            $this->io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
-
-            return 1;
         }
+        $this->io->getErrorStyle()->error('This hook doesn\'t exist, please check if this hook exist. Or create it !');
+
+        return 1;
     }
 }

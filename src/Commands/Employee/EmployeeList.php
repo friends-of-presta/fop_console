@@ -20,7 +20,6 @@
 
 namespace FOP\Console\Commands\Employee;
 
-use Configuration;
 use Db;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,14 +38,14 @@ final class EmployeeList extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        //Function Employee::getEmployees() has not enough information , use db query instead
+        // Function Employee::getEmployees() has not enough information , use db query instead
         $employeesQuery = 'SELECT e.email,e.firstname,e.lastname,e.active,e.last_connection_date,p.name
                            FROM ' . _DB_PREFIX_ . 'employee e
                            LEFT JOIN ' . _DB_PREFIX_ . 'profile_lang p ON (
-                           e.id_profile = p.id_profile AND p.id_lang=' . Configuration::get('PS_LANG_DEFAULT')
+                           e.id_profile = p.id_profile AND p.id_lang=' . \Configuration::get('PS_LANG_DEFAULT')
             . ')';
 
-        $employees = Db::getInstance()->executeS($employeesQuery);
+        $employees = \Db::getInstance()->executeS($employeesQuery);
         if ($employees) {
             $this->io->title('Registered employees');
             $values = [];
@@ -67,10 +66,9 @@ final class EmployeeList extends Command
             );
 
             return 0;
-        } else {
-            $this->io->error('No employee registered in this shop.');
-
-            return 1;
         }
+        $this->io->error('No employee registered in this shop.');
+
+        return 1;
     }
 }

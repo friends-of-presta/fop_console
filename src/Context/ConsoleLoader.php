@@ -20,9 +20,6 @@
 
 namespace FOP\Console\Context;
 
-use Configuration;
-use Currency;
-use Employee;
 use FOP\Console\Controllers\ConsoleController;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
 use PrestaShop\PrestaShop\Adapter\Shop\Context as ShopContext;
@@ -36,41 +33,39 @@ final class ConsoleLoader
 {
     private $legacyContext;
     private $shopContext;
-    private $rootDir;
 
-    public function __construct(LegacyContext $legacyContext, ShopContext $shopContext, $rootDir)
+    public function __construct(LegacyContext $legacyContext, ShopContext $shopContext)
     {
         $this->legacyContext = $legacyContext;
         $this->shopContext = $shopContext;
-        $this->rootDir = $rootDir;
-        require_once $rootDir . '/../config/config.inc.php';
+        require_once _PS_ROOT_DIR_ . '/config/config.inc.php';
     }
 
     public function loadConsoleContext(InputInterface $input)
     {
         if (!defined('_PS_ADMIN_DIR_')) {
-            define('_PS_ADMIN_DIR_', $this->rootDir);
+            define('_PS_ADMIN_DIR_', _PS_ROOT_DIR_);
         }
         $employeeId = $input->getOption('employee');
-        $shopId = $input->getOption('id_shop');
-        $shopGroupId = $input->getOption('id_shop_group');
+        $shopId = $input->hasOption('id_shop') ? $input->getOption('id_shop') : null;
+        $shopGroupId = $input->hasOption('id_shop_group') ? $input->getOption('id_shop_group') : null;
         if ($shopId && $shopGroupId) {
             throw new LogicException('Do not specify an ID shop and an ID group shop at the same time.');
         }
         $this->legacyContext->getContext()->controller = new ConsoleController();
         if (!$this->legacyContext->getContext()->employee) {
-            $this->legacyContext->getContext()->employee = new Employee((int) $employeeId);
+            $this->legacyContext->getContext()->employee = new \Employee((int) $employeeId);
         }
-        $shop = $this->legacyContext->getContext()->shop;
-        $shop::setContext(1);
         if ($shopId === null) {
             $shopId = 1;
         }
+        $shop = $this->legacyContext->getContext()->shop;
+        $shop::setContext($shop::CONTEXT_SHOP, (int) $shopId);
         $this->shopContext->setShopContext($shopId);
         $this->legacyContext->getContext()->shop = $shop;
         if ($shopGroupId !== null) {
             $this->shopContext->setShopGroupContext($shopGroupId);
         }
-        $this->legacyContext->getContext()->currency = new Currency((int) Configuration::get('PS_CURRENCY_DEFAULT') ?: null);
+        $this->legacyContext->getContext()->currency = new \Currency((int) \Configuration::get('PS_CURRENCY_DEFAULT') ?: null);
     }
 }

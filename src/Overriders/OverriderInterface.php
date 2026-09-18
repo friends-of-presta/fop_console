@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
-use Exception;
-
 interface OverriderInterface
 {
     /**
@@ -31,11 +29,11 @@ interface OverriderInterface
      *
      * Creates the file(s), do the job.
      *
-     * @throws Exception in case of hard fail. In case of soft fails just return message(s)
-     *
      * @see isSuccessful()
      *
      * @return array<string> messages. Error or success messages depends on $this->isSuccessful()
+     *
+     * @throws \Exception in case of hard fail. In case of soft fails just return message(s)
      */
     public function run(): array;
 

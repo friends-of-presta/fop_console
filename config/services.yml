@@ -2,12 +2,16 @@ services:
   _defaults:
     public: true
 
+  _instanceof:
+    FOP\Console\Command:
+      calls:
+        - [setContainer, ['@service_container']]
+
   fop.console.console_loader:
     class: FOP\Console\Context\ConsoleLoader
     arguments:
       - "@prestashop.adapter.legacy.context"
       - "@prestashop.adapter.shop.context"
-      - "%kernel.root_dir%"
 
   fop.console.cache.clear.command:
     class: FOP\Console\Commands\Cache\CacheClear

@@ -24,7 +24,6 @@ use Configuration;
 use FOP\Console\Command;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode;
 use PrestaShop\PrestaShop\Core\Crypto\Hashing;
-use ShopUrl;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -90,7 +89,7 @@ class EnvironmentSetupDev extends Command
         $this->helper = $this->getHelper('question');
         $this->dbi = \Db::getInstance();
         $this->crypto = new Hashing();
-        $this->isMultiShop = (bool) Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE');
+        $this->isMultiShop = (bool) \Configuration::get('PS_MULTISHOP_FEATURE_ACTIVE');
 
         $res = true;
 
@@ -101,11 +100,11 @@ class EnvironmentSetupDev extends Command
 
         $this->dbi->execute('START TRANSACTION');
 
-        //Get options value
+        // Get options value
         $ssl = (bool) $input->getOption('ssl');
 
-        $idShop = (int) $input->getOption('id_shop') !== 0 ? (int) $input->getOption('id_shop') : (int) Configuration::get('PS_SHOP_DEFAULT');
-        $shop = new ShopUrl($idShop);
+        $idShop = (int) $input->getOption('id_shop') !== 0 ? (int) $input->getOption('id_shop') : (int) \Configuration::get('PS_SHOP_DEFAULT');
+        $shop = new \ShopUrl($idShop);
 
         $host = $input->getOption('host') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the host you want for your env, currently  : ' . $shop->domain . ' Press enter for the same</question>'));
         $puri = $input->getOption('purl') ?? $this->helper->ask($input, $output, new Question('<question>Please, specify the physical url you want for your env, currently : ' . $shop->physical_uri . ' Press enter for the same</question>'));
@@ -124,65 +123,65 @@ class EnvironmentSetupDev extends Command
 
         $this->io->text('<info>Update table ps_configuration</info>');
 
-        //URL configuration
+        // URL configuration
         /** @phpstan-ignore-next-line */
         $res = $res && $this->updateUrlConfiguration($idShop, $host);
 
-        //SSL configuration
+        // SSL configuration
         $res = $res && $this->updateSslConfiguration($idShop, $ssl);
 
-        //URL configuration in shop_url
+        // URL configuration in shop_url
         $res = $res && $this->updateShopUrl($idShop, $host, $puri, $vuri);
 
-        //Regenerate htaccess
+        // Regenerate htaccess
         $this->io->text('<info>Regenerate htaccess</info>');
         $command = $this->getApplication()->find('fop:generate:htaccess');
         $command->initialize($input, $output);
         $returnCode = $command->execute($input, $output);
         $res = $res && !$returnCode;
 
-        //Change Employee BO pwd
+        // Change Employee BO pwd
         if ($modifyEmployeePwd) {
             $this->updateEmployeesPwd($input, $output);
         }
 
-        //Change all customer pwd
+        // Change all customer pwd
         if ($modifyCustomerPwd) {
             $this->updateCustomersPwd($input, $output);
         }
 
-        //debug mode on
+        // debug mode on
         $this->enableDebugMode();
 
-        //Disable maintenance mode
+        // Disable maintenance mode
         $this->disableMaintenanceMode();
 
-        //cache off
+        // cache off
         $this->io->text('<info>Disable cache</info>');
 
-        //smart cache js css
+        // smart cache js css
         $res = $res && $this->disableSmartCacheJsAndCss();
 
-        //global cache
+        // global cache
         $res = $res && $this->disableGlobalCache();
 
-        //smarty cache
+        // smarty cache
         $res = $res && $this->disableSmartyCache();
 
-        //Clear all cache
+        // Clear all cache
         $this->io->text('<info>Clear all cache</info>');
         $cacheClearChain = $this->getContainer()->get('prestashop.adapter.cache_clearer');
         $cacheClearChain->clearAllCaches();
 
         if (!$res) {
-            //If error ROLLBACK sql update
+            // If error ROLLBACK sql update
             $this->dbi->execute('ROLLBACK');
             $this->io->error('Error during setup');
 
             return 1;
         }
 
-        //If no error commit all sql update
+        // If no error commit all sql update
         $this->dbi->execute('COMMIT');
         $this->io->success('Setup finish correctly');
 
@@ -196,7 +195,7 @@ class EnvironmentSetupDev extends Command
      *
      * @return string
      */
-    protected function createQuestionString(string $question, string $default = null, string $separator = ':'): string
+    protected function createQuestionString(string $question, ?string $default = null, string $separator = ':'): string
     {
         return null !== $default ?
             sprintf('<fg=green>%s</fg=green> [<fg=yellow>%s</fg=yellow>]%s ', $question, $default, $separator) :
@@ -213,7 +212,7 @@ class EnvironmentSetupDev extends Command
      */
     protected function updateUrlConfiguration(int $idShop, string $url): bool
     {
-        //URL configuration
+        // URL configuration
         $this->io->text(sprintf('<info>set value %s for configuration name : PS_SHOP_DOMAIN and PS_SHOP_DOMAIN_SSL</info>', $url));
         $where = sprintf('name in ("%s","%s")', 'PS_SHOP_DOMAIN', 'PS_SHOP_DOMAIN_SSL');
         if ($idShop && $this->isMultiShop) {
@@ -333,7 +332,7 @@ class EnvironmentSetupDev extends Command
         }
 
         // 3. Rely on DebugMode
-        $debugMode = new \PrestaShop\PrestaShop\Adapter\Debug\DebugMode();
+        $debugMode = new DebugMode();
         if ($debugMode->isDebugModeEnabled()) {
             $this->io->write('<info>Debug mode enabled OK (untouched).</info>');
 

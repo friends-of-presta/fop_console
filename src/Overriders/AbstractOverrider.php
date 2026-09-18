@@ -22,7 +22,6 @@ declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
-use LogicException;
 use Symfony\Component\Filesystem\Filesystem;
 
 abstract class AbstractOverrider implements OverriderInterface
@@ -69,7 +68,7 @@ abstract class AbstractOverrider implements OverriderInterface
     final public function getPath(): string
     {
         if (is_null($this->path)) {
-            throw new LogicException('Overrider not initialized. Use ->init() before usage.');
+            throw new \LogicException('Overrider not initialized. Use ->init() before usage.');
         }
         if (!$this->fs->exists($this->path)) {
             throw new \RuntimeException("Path not found '{$this->path}'. Provide an existing file path to generate override.");

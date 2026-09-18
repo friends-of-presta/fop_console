@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
-use Context;
-
 final class ModuleTemplateOverrider extends AbstractOverrider implements OverriderInterface
 {
     /**
@@ -49,7 +47,7 @@ final class ModuleTemplateOverrider extends AbstractOverrider implements Overrid
     private function getThemePath(): string
     {
         // @todo Maybe it's better to rely on the directory property
-        return Context::getContext()->shop->theme->getName();
+        return \Context::getContext()->shop->theme->getName();
     }
 
     public function getDangerousConsequences(): ?string

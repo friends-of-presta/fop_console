@@ -25,7 +25,6 @@ namespace FOP\Console\Overriders;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 use Symfony\Component\Filesystem\Filesystem;
-use Tools;
 
 class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterface
 {
@@ -45,7 +44,7 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
         $fs->dumpFile($this->getTargetPath(), $fileGenerator->generate());
         $this->setSuccessful();
 
-        Tools::generateIndex();
+        \Tools::generateIndex();
 
         return ["{$this->getTargetPath()} created."];
     }

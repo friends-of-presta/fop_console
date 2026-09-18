@@ -14,9 +14,9 @@ jobs:
       - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '8.3'
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v4
       - name: Install composer dependencies
         run: composer install --no-dev -o
       - name: Clean-up project

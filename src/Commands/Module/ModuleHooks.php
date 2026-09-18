@@ -21,7 +21,6 @@
 namespace FOP\Console\Commands\Module;
 
 use FOP\Console\Command;
-use Module;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -44,9 +43,9 @@ final class ModuleHooks extends Command
 
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $moduleName = (string) $input->getArgument('name');  /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
+        $moduleName = (string) $input->getArgument('name');  /* @-phpstan-ignore-line - annotation disabled - not an error at level 5 */
 
-        if ($module = Module::getInstanceByName($moduleName)) {/** @-phpstan-ignore-line - annotation disabled - not an error at level 5 - not checked */
+        if ($module = \Module::getInstanceByName($moduleName)) {/** @-phpstan-ignore-line - annotation disabled - not an error at level 5 - not checked */
             $possibleHooksList = $module->getPossibleHooksList();
             $moduleHooks = [];
 
@@ -73,10 +72,9 @@ final class ModuleHooks extends Command
             }
 
             return 0;
-        } else {
-            $this->io->error('Error the module ' . $moduleName . ' doesn\'t exists');
-
-            return 1;
         }
+        $this->io->error('Error the module ' . $moduleName . ' doesn\'t exists');
+
+        return 1;
     }
 }

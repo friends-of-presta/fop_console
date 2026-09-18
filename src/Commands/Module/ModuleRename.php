@@ -20,12 +20,10 @@
 
 namespace FOP\Console\Commands\Module;
 
-use Exception;
 use FOP\Console\Command;
 use FOP\Console\Tools\FindAndReplaceTool;
 use Module;
 use PrestaShop\PrestaShop\Core\Addon\Module\ModuleManagerBuilder;
-use RuntimeException;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -147,7 +145,7 @@ final class ModuleRename extends Command
             $this->io->success('Success: your new module is ready!');
 
             return 0;
-        } catch (RuntimeException $exception) {
+        } catch (\RuntimeException $exception) {
             $this->io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
 
             return 1;
@@ -161,9 +159,9 @@ final class ModuleRename extends Command
         $oldModuleName = strtolower($oldModuleFullName['prefix'] . $oldModuleFullName['name']);
         $oldModuleFolderPath = _PS_MODULE_DIR_ . $oldModuleName . '/';
         if (!file_exists($oldModuleFolderPath)) {
-            throw new RuntimeException("The old module folder $oldModuleFolderPath wasn't found.");
+            throw new \RuntimeException("The old module folder $oldModuleFolderPath wasn't found.");
         }
-        $oldModule = Module::getInstanceByName($oldModuleName);
+        $oldModule = \Module::getInstanceByName($oldModuleName);
         if (!preg_match('/[A-Z]/', $oldModuleFullName['prefix'] . $oldModuleFullName['name'])) {
             if ($oldModule) {
                 $oldModuleClass = get_class($oldModule);
@@ -181,7 +179,7 @@ final class ModuleRename extends Command
 
                 $questionHelper = $this->getHelper('question');
                 if (!$questionHelper->ask($input, $output, $question)) {
-                    throw new RuntimeException('Execution aborted by user.');
+                    throw new \RuntimeException('Execution aborted by user.');
                 }
             }
         }
@@ -256,7 +254,7 @@ final class ModuleRename extends Command
 
             $questionHelper = $this->getHelper('question');
             if (!$questionHelper->ask($input, $output, $question)) {
-                throw new RuntimeException('Execution aborted by user.');
+                throw new \RuntimeException('Execution aborted by user.');
             }
         }
 
@@ -264,7 +262,7 @@ final class ModuleRename extends Command
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
         $keepOld = $input->getOption('keep-old');
         if ($oldModuleName === $newModuleName && $keepOld) {
-            throw new RuntimeException("You can't keep the old module when the new module name is equal to the old one.");
+            throw new \RuntimeException("You can't keep the old module when the new module name is equal to the old one.");
         }
 
         $this->newModuleInfos['prefix'] = $newModuleFullName['prefix'];
@@ -276,7 +274,7 @@ final class ModuleRename extends Command
         $newAuthor = $input->getOption('new-author');
         $oldAuthor = '';
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
-        $oldModule = Module::getInstanceByName($oldModuleName);
+        $oldModule = \Module::getInstanceByName($oldModuleName);
 
         if ($newAuthor) {
             if ($oldModule) {
@@ -346,7 +344,7 @@ final class ModuleRename extends Command
             foreach ($extraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
                 if (count($terms) != 2) {
-                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
+                    throw new \RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
 
                 array_push(
@@ -364,7 +362,7 @@ final class ModuleRename extends Command
             foreach ($casedExtraReplacements as $replacement) {
                 $terms = explode(',', $replacement);
                 if (count($terms) != 2) {
-                    throw new RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
+                    throw new \RuntimeException('Each extra replacement must be a pair of two words separated by a comma');
                 }
 
                 array_push(
@@ -418,7 +416,7 @@ final class ModuleRename extends Command
 
         $questionHelper = $this->getHelper('question');
         if (!$questionHelper->ask($input, $output, $question)) {
-            throw new RuntimeException('Execution aborted by user.');
+            throw new \RuntimeException('Execution aborted by user.');
         }
 
         return $replacePairs;
@@ -441,7 +439,7 @@ final class ModuleRename extends Command
 
             $questionHelper = $this->getHelper('question');
             if (!$questionHelper->ask($input, $output, $question)) {
-                throw new RuntimeException('Execution aborted by user.');
+                throw new \RuntimeException('Execution aborted by user.');
             }
 
             $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
@@ -458,7 +456,7 @@ final class ModuleRename extends Command
 
         $keepOld = $input->getOption('keep-old');
         $oldModuleName = strtolower($this->oldModuleInfos['prefix'] . $this->oldModuleInfos['name']);
-        $oldModule = Module::getInstanceByName($oldModuleName);
+        $oldModule = \Module::getInstanceByName($oldModuleName);
         if (!$keepOld && $oldModule && $moduleManager->isInstalled($oldModuleName)) {
             $this->io->newLine();
             $this->io->text("Uninstalling $oldModuleName module...");
@@ -529,7 +527,7 @@ final class ModuleRename extends Command
         chdir('../..');
 
         $newModuleName = strtolower($this->newModuleInfos['prefix'] . $this->newModuleInfos['name']);
-        $newModule = Module::getInstanceByName($newModuleName);
+        $newModule = \Module::getInstanceByName($newModuleName);
         if ($newModule) {
             $this->io->newLine();
             $this->io->text("Installing $newModuleName module...");
@@ -546,20 +544,20 @@ final class ModuleRename extends Command
      *
      * @return array{prefix: string, name: string}
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function getModuleFullName($input, $output, $moduleClassName)
     {
         $explodedName = explode(',', $moduleClassName);
         if (count($explodedName) > 2) {
-            throw new RuntimeException('Only one comma is accepted in module class name argument.');
+            throw new \RuntimeException('Only one comma is accepted in module class name argument.');
         }
 
         $fullName = [];
         $fullName['prefix'] = count($explodedName) == 2 ? $explodedName[0] : '';
         $fullName['name'] = $explodedName[count($explodedName) - 1];
         if (empty($fullName['name'])) {
-            throw new RuntimeException("Module name can't be empty.");
+            throw new \RuntimeException("Module name can't be empty.");
         }
 
         if (!empty($fullName['prefix'])) {
@@ -598,7 +596,7 @@ final class ModuleRename extends Command
             $returnLine = exec("rmdir /S /Q $filePath", $output, $return);
 
             if ($return !== 0) {
-                throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+                throw new \RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
             }
         } else {
             $process = new Process(['rm', '-rf', $filePath]);
@@ -618,7 +616,7 @@ final class ModuleRename extends Command
             $returnLine = exec("robocopy $sourcePath $destinationPath /E", $output, $return);
 
             if ($return !== 0 && $return !== 1) {
-                throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+                throw new \RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
             }
         } else {
             $process = new Process(['cp', '-R', $sourcePath, $destinationPath]);
@@ -665,10 +663,10 @@ final class ModuleRename extends Command
 
         try {
             if ($command->run(new ArrayInput($arguments), $output)) {
-                throw new RuntimeException("The module $moduleName couldn't be installed.");
+                throw new \RuntimeException("The module $moduleName couldn't be installed.");
             }
-        } catch (Exception $e) {
-            throw new RuntimeException("The new module $moduleName couldn't be installed:" . PHP_EOL . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \RuntimeException("The new module $moduleName couldn't be installed:" . PHP_EOL . $e->getMessage());
         }
     }
 
@@ -682,10 +680,10 @@ final class ModuleRename extends Command
 
         try {
             if ($command->run(new ArrayInput($arguments), $output)) {
-                throw new RuntimeException("The module $moduleName couldn't be uninstalled.");
+                throw new \RuntimeException("The module $moduleName couldn't be uninstalled.");
             }
-        } catch (Exception $e) {
-            throw new RuntimeException("The new module $moduleName couldn't be uninstalled." . PHP_EOL . $e->getMessage());
+        } catch (\Exception $e) {
+            throw new \RuntimeException("The new module $moduleName couldn't be uninstalled." . PHP_EOL . $e->getMessage());
         }
     }
 
@@ -697,7 +695,7 @@ final class ModuleRename extends Command
     private function handleUnsucessfullProcess(string $__FUNCTION__, Process $process)
     {
         if (!$process->isSuccessful()) {
-            throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
+            throw new \RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
         }
     }
 }

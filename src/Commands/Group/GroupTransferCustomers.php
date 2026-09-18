@@ -20,7 +20,6 @@
 
 namespace FOP\Console\Commands\Group;
 
-use Customer;
 use FOP\Console\Command;
 use Group;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -28,7 +27,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Validate;
 
 /**
  * This command transfers or add customers from one group to an other.
@@ -128,7 +126,7 @@ final class GroupTransferCustomers extends Command
             $this->io->table(
                 ['ID', 'Category name', 'Members Nb', 'Reduction (%)'],
                 $this->formatGroupsInformations(
-                    Group::getGroups($this->getDefautlLang(), false), // refresh groups to avoid old datas.
+                    \Group::getGroups($this->getDefautlLang(), false), // refresh groups to avoid old datas.
                     'table'
                 )
             );
@@ -151,14 +149,14 @@ final class GroupTransferCustomers extends Command
         int $idGroupFrom,
         int $IdGroupTo,
         int $actionAfter,
-        OutputInterface $output
+        OutputInterface $output,
     ): int {
-        $groupFrom = new Group($idGroupFrom);
-        $GroupTo = new Group($IdGroupTo);
+        $groupFrom = new \Group($idGroupFrom);
+        $GroupTo = new \Group($IdGroupTo);
         $hasError = 0;
 
-        if (!Validate::isLoadedObject($groupFrom)
-         || !Validate::isLoadedObject($GroupTo)) {
+        if (!\Validate::isLoadedObject($groupFrom)
+         || !\Validate::isLoadedObject($GroupTo)) {
             $output->writeln('<error>Invalid groups given </error>');
 
             return self::FAILURE;
@@ -170,7 +168,7 @@ final class GroupTransferCustomers extends Command
         $progress->start();
 
         foreach ($groupFromCustomers as $k => $v) {
-            $customer = new Customer($v['id_customer']);
+            $customer = new \Customer($v['id_customer']);
             $customerGroups = $customer->getGroups();
             $progress->advance();
 
@@ -234,7 +232,7 @@ final class GroupTransferCustomers extends Command
         $groupsInformations = [];
 
         foreach ($groups as $group) {
-            $groupObject = new Group((int) $group['id_group']);
+            $groupObject = new \Group((int) $group['id_group']);
             $nb = $groupObject->getCustomers(true);
 
             if ($nb <= 0 && $skipEmpty) {
@@ -263,7 +261,7 @@ final class GroupTransferCustomers extends Command
      */
     private function getGroupName(int $idGroup): string
     {
-        return (new Group($idGroup, $this->getDefautlLang()))->name;
+        return (new \Group($idGroup, $this->getDefautlLang()))->name;
     }
 
     /**
@@ -272,7 +270,7 @@ final class GroupTransferCustomers extends Command
      *
      * @return array
      */
-    private function getQuestionsOptions(string $type, string $groupFromName = null): array
+    private function getQuestionsOptions(string $type, ?string $groupFromName = null): array
     {
         $questionsOptions = [
             'optionsGroupFrom' => $this->formatGroupsInformations($this->getGroups(), 'question', true),
@@ -304,7 +302,7 @@ final class GroupTransferCustomers extends Command
         OutputInterface $output,
         string $groupFromName,
         string $groupToName,
-        string $selectedActionValue
+        string $selectedActionValue,
     ): bool {
         $helper = $this->getHelper('question');
 
@@ -388,7 +386,7 @@ final class GroupTransferCustomers extends Command
         string $questionsKeyPrefix,
         string $questionLabel,
         array $questionOptions,
-        string $type
+        string $type,
     ): int {
         $availableTypes = ['groups', 'actions'];
 
@@ -409,13 +407,13 @@ final class GroupTransferCustomers extends Command
         $optionSeletedID = (int) str_replace($questionsKeyPrefix, '', $optionSeletedKey);
 
         switch ($type) {
-          case 'groups':
-            $groupName = $this->getGroupName($optionSeletedID);
-            $output->writeln('<info>You have just selected: ' . $groupName . '</info>');
-            break;
-          case 'actions':
-            $output->writeln('<info>You have just selected: ' . $questionOptions[$optionSeletedKey] . '</info>');
-            break;
+            case 'groups':
+                $groupName = $this->getGroupName($optionSeletedID);
+                $output->writeln('<info>You have just selected: ' . $groupName . '</info>');
+                break;
+            case 'actions':
+                $output->writeln('<info>You have just selected: ' . $questionOptions[$optionSeletedKey] . '</info>');
+                break;
         }
 
         return $optionSeletedID;
