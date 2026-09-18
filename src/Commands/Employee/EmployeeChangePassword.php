@@ -63,7 +63,7 @@ final class EmployeeChangePassword extends Command
             return 1;
         }
 
-        if (null === $password || !\Validate::isPlaintextPassword($password)) {
+        if (null === $password || !$this->isPasswordValid($password)) {
             $passwordQuestion = $this->getPasswordQuestion('password ');
             $password = $this->io->askQuestion($passwordQuestion);
 
@@ -80,7 +80,7 @@ final class EmployeeChangePassword extends Command
         try {
             $employee = new \Employee();
             $employee->getByEmail($email);
-            $employee->passwd = \Tools::hash($password);
+            $employee->setWsPasswd($password);
             $employee->save();
         } catch (\Exception $e) {
             $this->io->error(
@@ -108,8 +108,8 @@ final class EmployeeChangePassword extends Command
     {
         $passwordQuestion = new Question($label, 'admin123456');
         $passwordQuestion->setValidator(function ($answer) {
-            if (!\Validate::isPlaintextPassword($answer)) {
-                throw new \RuntimeException(sprintf('Your password need at least %d characters', \Validate::PASSWORD_LENGTH));
+            if (!$this->isPasswordValid($answer)) {
+                throw new \RuntimeException('The password does not satisfy the configured password policy.');
             }
 
             return $answer;
@@ -117,5 +117,15 @@ final class EmployeeChangePassword extends Command
         $passwordQuestion->setHidden(true);
 
         return $passwordQuestion;
+    }
+
+    private function isPasswordValid(string $password): bool
+    {
+        if (method_exists(\Validate::class, 'isAcceptablePasswordLength')) {
+            return \Validate::isAcceptablePasswordLength($password)
+                && \Validate::isAcceptablePasswordScore($password);
+        }
+
+        return (bool) call_user_func([\Validate::class, 'isPlaintextPassword'], $password);
     }
 }
