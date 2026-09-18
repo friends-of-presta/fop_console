@@ -12,7 +12,6 @@ services:
     arguments:
       - "@prestashop.adapter.legacy.context"
       - "@prestashop.adapter.shop.context"
-      - "%kernel.root_dir%"
 
   fop.console.cache.clear.command:
     class: FOP\Console\Commands\Cache\CacheClear

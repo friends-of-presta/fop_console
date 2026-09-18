@@ -36,20 +36,17 @@ final class ConsoleLoader
 {
     private $legacyContext;
     private $shopContext;
-    private $rootDir;
-
-    public function __construct(LegacyContext $legacyContext, ShopContext $shopContext, $rootDir)
+    public function __construct(LegacyContext $legacyContext, ShopContext $shopContext)
     {
         $this->legacyContext = $legacyContext;
         $this->shopContext = $shopContext;
-        $this->rootDir = $rootDir;
-        require_once $rootDir . '/../config/config.inc.php';
+        require_once _PS_ROOT_DIR_ . '/config/config.inc.php';
     }
 
     public function loadConsoleContext(InputInterface $input)
     {
         if (!defined('_PS_ADMIN_DIR_')) {
-            define('_PS_ADMIN_DIR_', $this->rootDir);
+            define('_PS_ADMIN_DIR_', _PS_ROOT_DIR_);
         }
         $employeeId = $input->getOption('employee');
         $shopId = $input->getOption('id_shop');
