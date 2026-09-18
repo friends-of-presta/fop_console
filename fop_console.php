@@ -36,15 +36,15 @@ class Fop_Console extends Module
         $this->displayName = 'FoP Console';
         $this->description = $this->l('Set of command lines to perform daily or heavy tasks.');
         $this->ps_versions_compliancy = [
-            'min' => '1.7.5.0',
+            'min' => '9.1.0',
             'max' => _PS_VERSION_,
         ];
     }
 
     public function install()
     {
-        if (PHP_VERSION_ID < 70200) {
-            $this->_errors[] = $this->l('fop_console require at least php version 7.2.');
+        if (PHP_VERSION_ID < 80100) {
+            $this->_errors[] = $this->l('fop_console requires at least PHP 8.1.');
 
             return false;
         }

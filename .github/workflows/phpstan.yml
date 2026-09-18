@@ -5,48 +5,44 @@ jobs:
     name: PHPStan
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        presta-versions: [ '1.7.5.0', '1.7.5.2', '1.7.6.9', '1.7.7.8', '1.7.8.5' ]
-
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v4
 
       - name: Cache vendor folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: vendor
-          key: php-${{ hashFiles('composer.lock') }}
+          key: php-8.3-${{ hashFiles('composer.lock') }}
 
       - name: Cache composer folder
-        uses: actions/cache@v1
+        uses: actions/cache@v4
         with:
           path: ~/.composer/cache
           key: php-composer-cache
 
       - name: Cache Prestashop source code
         id: cache_prestashop_source
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ${{ runner.temp }}/prestashop/
-          key: ${{ runner.os }}-${{ matrix.presta-versions }}
+          key: ${{ runner.os }}-prestashop-9.1.5
 
       - name: "Setup PHP"
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '7.2'
+          php-version: '8.3'
 
       - name : "Install module dependencies"
         run: composer install
 
-      - name : "Extract Prestashop"
+      - name: "Checkout PrestaShop 9.1.5"
         if: steps.cache_prestashop_source.outputs.cache-hit != 'true'
-        run : |
-          echo "no cache for Prestashop ${{ matrix.presta-versions }} source. Fectching and extracting source code..."
-          wget https://github.com/PrestaShop/PrestaShop/releases/download/${{ matrix.presta-versions }}/prestashop_${{ matrix.presta-versions }}.zip --quiet --output-document ${{ runner.temp }}/prestashop.zip
-          unzip -q ${{ runner.temp }}/prestashop.zip -d ${{ runner.temp }}/prestashop_zip
-          unzip -q ${{ runner.temp }}/prestashop_zip/prestashop.zip -d ${{ runner.temp }}/prestashop
+        run: git clone --branch 9.1.5 --depth 1 https://github.com/PrestaShop/PrestaShop.git ${{ runner.temp }}/prestashop
+
+      - name: "Install PrestaShop dependencies"
+        working-directory: ${{ runner.temp }}/prestashop
+        run: composer install --no-dev --no-interaction --prefer-dist
 
       - name: "Run phpstan"
         run: _PS_ROOT_DIR_=${{ runner.temp }}/prestashop/ php ./vendor/bin/phpstan analyse ./
