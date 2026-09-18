@@ -24,6 +24,7 @@ namespace FOP\Console\Overriders;
 
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
+use PrestaShop\Autoload\PrestashopAutoload;
 use Symfony\Component\Filesystem\Filesystem;
 
 class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterface
@@ -44,7 +45,11 @@ class LegacyCoreOverrider extends AbstractOverrider implements OverriderInterfac
         $fs->dumpFile($this->getTargetPath(), $fileGenerator->generate());
         $this->setSuccessful();
 
-        \Tools::generateIndex();
+        if (method_exists(\Tools::class, 'generateIndex')) {
+            call_user_func([\Tools::class, 'generateIndex']);
+        } else {
+            PrestashopAutoload::getInstance()->generateIndex();
+        }
 
         return ["{$this->getTargetPath()} created."];
     }

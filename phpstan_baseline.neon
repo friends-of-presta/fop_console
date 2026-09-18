@@ -56,11 +56,6 @@ parameters:
 			path: src/Commands/Module/ModuleUnhook.php
 
 		-
-			message: "#^Call to an undefined static method Tools\\:\\:generateIndex\\(\\)\\.$#"
-			count: 1
-			path: src/Overriders/LegacyCoreOverrider.php
-
-		-
 			message: "#^Variable \\$matches on left side of \\?\\? always exists and is not nullable\\.$#"
 			count: 1
 			path: tests/Validator/FOPCommandFormatsValidator.php
