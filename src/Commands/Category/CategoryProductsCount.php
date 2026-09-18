@@ -107,7 +107,7 @@ final class CategoryProductsCount extends Command
             fclose($fp);
         }
 
-        return 1;
+        return 0;
     }
 
     /**
