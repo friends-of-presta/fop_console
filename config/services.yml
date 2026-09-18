@@ -2,6 +2,11 @@ services:
   _defaults:
     public: true
 
+  _instanceof:
+    FOP\Console\Command:
+      calls:
+        - [setContainer, ['@service_container']]
+
   fop.console.console_loader:
     class: FOP\Console\Context\ConsoleLoader
     arguments:

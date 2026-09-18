@@ -20,19 +20,37 @@
 
 namespace FOP\Console;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Symfony Command with legacy support.
  */
-abstract class Command extends ContainerAwareCommand
+abstract class Command extends SymfonyCommand
 {
-    /** @var \Symfony\Component\Console\Style\SymfonyStyle */
+    /** @var SymfonyStyle */
     protected $io;
+
+    /** @var ContainerInterface */
+    private $container;
+
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
+    }
+
+    protected function getContainer(): ContainerInterface
+    {
+        if ($this->container === null) {
+            throw new \LogicException('The service container has not been injected into this command.');
+        }
+
+        return $this->container;
+    }
 
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {

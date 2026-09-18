@@ -64,12 +64,14 @@ class FindAndReplaceToolTest extends TestCase
     {
         $filesReplacePairsDir = 'files-replace-pairs/';
         $modulesPaths = (new Finder())->in('tests/Resources/csv/' . $filesReplacePairsDir);
+        $testedModules = 0;
 
         foreach ($modulesPaths as $modulePath) {
             $module = $modulePath->getRelativePathname();
             if (!file_exists(_PS_MODULE_DIR_ . $module)) {
                 continue;
             }
+            ++$testedModules;
 
             $csvFilesReplacePairs = iterator_to_array($this->csvProvider($filesReplacePairsDir . $module . '/found'));
             $expectedFilesReplacePairs = [];
@@ -95,6 +97,10 @@ class FindAndReplaceToolTest extends TestCase
             }
 
             $this->assertEquals($expectedFilesReplacePairs, $actualFilesReplacePairs);
+        }
+
+        if ($testedModules === 0) {
+            $this->markTestSkipped('No module fixture is installed.');
         }
     }
 

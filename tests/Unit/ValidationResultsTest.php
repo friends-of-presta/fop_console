@@ -27,10 +27,10 @@ use PHPUnit\Framework\TestCase;
 
 class ValidationResultsTest extends TestCase
 {
-    /** @var \FOP\Console\Tests\Validator\ValidationResults */
+    /** @var ValidationResults */
     private $validationResults;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->validationResults = new ValidationResults();
     }
@@ -57,7 +57,9 @@ class ValidationResultsTest extends TestCase
         $this->validationResults->addResult(new ValidationResult(false, 'This is another failure message'));
 
         // results can be accessed using a foreach or iterator_to_array()
-        $this->assertContainsOnly(ValidationResult::class, iterator_to_array($this->validationResults));
+        foreach ($this->validationResults as $validationResult) {
+            $this->assertInstanceOf(ValidationResult::class, $validationResult);
+        }
     }
 
     public function testIsValidationSuccessfulReturnsTrueIfContainsOnlyPositiveResults()

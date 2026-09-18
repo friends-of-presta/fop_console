@@ -20,10 +20,10 @@
     }
   },
   "require": {
-    "php": "^7.2.5",
-    "laminas/laminas-code": "3.4.1",
+    "php": "^7.2.5 || ^8.0",
+    "laminas/laminas-code": "^3.5.1 || ^4.0",
     "ext-json": "*",
-    "nette/php-generator": "^3.6",
+    "nette/php-generator": "^3.6.9 || ^4.0",
     "pbergman/tree-helper": "^1.0"
   },
   "config": {
@@ -35,10 +35,11 @@
   "license": "AFL-3.0",
   "type": "prestashop-module",
   "require-dev": {
-    "prestashop/php-dev-tools": "4.*",
-    "phpro/grumphp": "0.19.1",
+    "friendsofphp/php-cs-fixer": "^3.0",
+    "prestashop/php-dev-tools": "^5.0",
+    "phpro/grumphp": "^0.19.1 || ^1.15 || ^2.0",
     "phpstan/phpstan": "1.*",
-    "phpunit/phpunit": "^7.0"
+    "phpunit/phpunit": "^7.0 || ^10.5"
   },
   "scripts": {
     "fop_check": [
