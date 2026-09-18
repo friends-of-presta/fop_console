@@ -49,8 +49,8 @@ final class ConsoleLoader
             define('_PS_ADMIN_DIR_', _PS_ROOT_DIR_);
         }
         $employeeId = $input->getOption('employee');
-        $shopId = $input->getOption('id_shop');
-        $shopGroupId = $input->getOption('id_shop_group');
+        $shopId = $input->hasOption('id_shop') ? $input->getOption('id_shop') : null;
+        $shopGroupId = $input->hasOption('id_shop_group') ? $input->getOption('id_shop_group') : null;
         if ($shopId && $shopGroupId) {
             throw new LogicException('Do not specify an ID shop and an ID group shop at the same time.');
         }
