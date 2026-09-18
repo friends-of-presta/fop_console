@@ -58,11 +58,11 @@ final class ConsoleLoader
         if (!$this->legacyContext->getContext()->employee) {
             $this->legacyContext->getContext()->employee = new Employee((int) $employeeId);
         }
-        $shop = $this->legacyContext->getContext()->shop;
-        $shop::setContext(1);
         if ($shopId === null) {
             $shopId = 1;
         }
+        $shop = $this->legacyContext->getContext()->shop;
+        $shop::setContext($shop::CONTEXT_SHOP, (int) $shopId);
         $this->shopContext->setShopContext($shopId);
         $this->legacyContext->getContext()->shop = $shop;
         if ($shopGroupId !== null) {
