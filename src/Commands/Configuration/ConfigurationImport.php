@@ -52,9 +52,13 @@ final class ConfigurationImport extends Command
             if (!file_exists($source_file)) {
                 throw new \RuntimeException("File $source_file not found.");
             }
-            $configurations = json_decode(file_get_contents($source_file), true);
-            if (false === $configurations) {
-                throw new \Exception('Failed to decode json !');
+            $contents = file_get_contents($source_file);
+            if ($contents === false) {
+                throw new \RuntimeException("File $source_file cannot be read.");
+            }
+            $configurations = json_decode($contents, true);
+            if (!is_array($configurations) || JSON_ERROR_NONE !== json_last_error()) {
+                throw new \RuntimeException('Failed to decode JSON: ' . json_last_error_msg());
             }
 
             if ($output->isVerbose()) {
@@ -70,7 +74,7 @@ final class ConfigurationImport extends Command
             $this->io->success('Configurations imported');
 
             return 0;
-        } catch (\Exception $exception) {
+        } catch (\Throwable $exception) {
             $this->io->error('Command ' . $this->getName() . ' aborted : ' . $exception->getMessage());
 
             return 1;
