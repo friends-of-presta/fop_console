@@ -22,10 +22,8 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\About;
 
-use Exception;
 use FOP\Console\Command;
 use GuzzleHttp\Client;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -61,9 +59,9 @@ final class AboutVersion extends Command
                 ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Addon\Module\ModuleRepositoryInterface) : ($this->moduleRepository instanceof \PrestaShop\PrestaShop\Core\Module\ModuleRepositoryInterface);
 
             if (!$isModuleRepositoryExpectedType) {
-                throw new RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
+                throw new \RuntimeException('Failed to get the ModuleRepository prestashop.core.admin.module.repository');
             }
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->io->isVerbose()
                 ? $this->getApplication()->renderException($exception, $output)
                 : $output->write("<error> >>> Error on initialization : {$exception->getMessage()}</error> .");

@@ -22,7 +22,6 @@ namespace FOP\Console\Commands\Cache;
 
 use FOP\Console\Command;
 use PrestaShop\PrestaShop\Adapter\Debug\DebugMode as DebugAdapter;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -62,7 +61,7 @@ final class CacheClear extends Command
             $this->deleteOldCacheDirectory();
 
             return 0;
-        } catch (RuntimeException $exception) {
+        } catch (\RuntimeException $exception) {
             $this->io->error("Error processing {$this->getName()}:\u{a0}" . $exception->getMessage());
 
             return 1;
@@ -73,17 +72,17 @@ final class CacheClear extends Command
     {
         $cache_directory = $this->getCacheDirectoryBasePath();
         if (!is_writable($cache_directory)) {
-            throw new RuntimeException("Cache directory not writable : [$cache_directory]");
+            throw new \RuntimeException("Cache directory not writable : [$cache_directory]");
         }
     }
 
     private function renameCurrentCacheDirectory()
     {
         if ($this->isWindows()) {
-            //sleep(1);
+            // sleep(1);
             if (!@rename($this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath())) {
                 // be carefull on widows, if cache folder is open in windows explorer, you will have an access denied error 5
-                throw new RuntimeException('Error renaming cache dir to cache_old, check that cache dir or cache file are not open.');
+                throw new \RuntimeException('Error renaming cache dir to cache_old, check that cache dir or cache file are not open.');
             }
         } else {
             $process = new Process(['mv', $this->getCacheDirectoryBasePath(), $this->getCacheDirectoryOldPath()]);
@@ -100,10 +99,10 @@ final class CacheClear extends Command
                 $return = 0;
                 $returnLine = exec('rmdir /S /Q ' . $this->getCacheDirectoryOldPath(), $output, $return);
                 if ($return !== 0) {
-                    throw new RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
+                    throw new \RuntimeException('Error doing ' . __FUNCTION__ . ' : ' . PHP_EOL . ' : ' . print_r($output, true));
                 }
             } else {
-                $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/*.'/'*/]); // final slash needed
+                $process = new Process(['rm', '-rf', $this->getCacheDirectoryOldPath()/* .'/' */]); // final slash needed
                 $process->run();
                 $this->handleUnsucessfullProcess(__FUNCTION__, $process);
             }
@@ -125,12 +124,12 @@ final class CacheClear extends Command
     /**
      * @return string Cache directory path without env final directory (eg. dev|prod) without trailing slash
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     private function getCacheDirectoryBasePath(): string
     {
         if (!defined('_PS_CACHE_DIR_')) {
-            throw new RuntimeException('Cache directory path not defined in _PS_CACHE_DIR_');
+            throw new \RuntimeException('Cache directory path not defined in _PS_CACHE_DIR_');
         }
         $path = _PS_CACHE_DIR_;
         if ($this->isWindows()) {
@@ -148,7 +147,7 @@ final class CacheClear extends Command
     private function handleUnsucessfullProcess(string $__FUNCTION__, Process $process)
     {
         if (!$process->isSuccessful()) {
-            throw new RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
+            throw new \RuntimeException("Error doing $__FUNCTION__ : " . PHP_EOL . ' : ' . $process->getErrorOutput());
         }
     }
 

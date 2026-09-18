@@ -23,15 +23,12 @@ declare(strict_types=1);
 namespace FOP\Console\Commands\Configuration;
 
 use Db;
-use DbQuery;
 use FOP\Console\Command;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
-use Throwable;
 
 final class ConfigurationExport extends Command
 {
@@ -104,7 +101,7 @@ final class ConfigurationExport extends Command
                 : $this->writeToFile($configuration_values, $output_file);
 
             return 0;
-        } catch (Throwable $exception) {
+        } catch (\Throwable $exception) {
             $this->io->error("{$this->getName()} : {$exception->getMessage()}");
 
             return 1;
@@ -151,12 +148,12 @@ final class ConfigurationExport extends Command
     {
         $json_export = json_encode($configuration_values, JSON_PRETTY_PRINT);
         if (false === $json_export) {
-            throw new RuntimeException('Failed to json encode configuration');
+            throw new \RuntimeException('Failed to json encode configuration');
         }
 
         $fs = new Filesystem();
         if (false === $this->overwrite_existing_file && $fs->exists($output_file)) {
-            throw new RuntimeException('Output file exists, command aborted.');
+            throw new \RuntimeException('Output file exists, command aborted.');
         }
         $fs->dumpFile($output_file, $json_export);
 
@@ -201,17 +198,17 @@ final class ConfigurationExport extends Command
      */
     private function queryConfigurationsLike(string $key_like_term): array
     {
-        $query = new DbQuery();
+        $query = new \DbQuery();
         $query->select('name, value')
             ->from('configuration')
             ->where(sprintf('name LIKE "%s"', $key_like_term));
 
-//        $db = $this->getContainer()->get('prestashop.adapter.legacy_db'); // not on ps 1.7.5
-        $db = Db::getInstance();
+        //        $db = $this->getContainer()->get('prestashop.adapter.legacy_db'); // not on ps 1.7.5
+        $db = \Db::getInstance();
         $results = $db->executeS($query);
         if (!is_array($results)) {
             dump($query->build(), $db->getMsgError());
-            throw new RuntimeException('sql query error : see dump above.');
+            throw new \RuntimeException('sql query error : see dump above.');
         }
 
         return array_column($results, 'value', 'name');

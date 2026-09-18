@@ -20,7 +20,6 @@
 
 namespace FOP\Console\Overriders;
 
-use Exception;
 use Laminas\Code\Generator\ClassGenerator;
 use Laminas\Code\Generator\FileGenerator;
 
@@ -30,8 +29,8 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
     {
         $override_class = ClassGenerator::fromArray(
             ['name' => $this->getModuleOverrideClassName(),
-             'extendedclass' => $this->getModuleClassName(),
-                ]
+                'extendedclass' => $this->getModuleClassName(),
+            ]
         );
 
         $fileGenerator = new FileGenerator();
@@ -62,7 +61,7 @@ class ModuleOverrider extends AbstractOverrider implements OverriderInterface
             ? $relative_path_start
             : strrpos($this->getPath(), 'modules' . DIRECTORY_SEPARATOR);
         if (false === $relative_path_start) {
-            throw new Exception(sprintf('"modules/" not found in path "%s"', $this->getPath()));
+            throw new \Exception(sprintf('"modules/" not found in path "%s"', $this->getPath()));
         }
 
         $file_and_folder = substr($this->getPath(), (int) $relative_path_start);

@@ -21,7 +21,6 @@
 namespace FOP\Console\Commands\Product;
 
 use FOP\Console\Command;
-use Product;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -44,7 +43,7 @@ final class ProductLatest extends Command
     {
         $this->io->title('Legacy Latest Products listing');
 
-        $products = Product::getNewProducts(1);
+        $products = \Product::getNewProducts(1);
         if (false === $products) {
             $this->io->text('There\'s currently no "new" products in the shop.');
 
@@ -68,7 +67,7 @@ final class ProductLatest extends Command
     private function formatProductInformation(array $products): array
     {
         $productsInformation = [];
-        /** @var Product $product */
+        /** @var \Product $product */
         foreach ($products as $product) {
             $productsInformation[] = [
                 'ID' => $product['id_product'],

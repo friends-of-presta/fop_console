@@ -149,9 +149,9 @@ class ModuleGenerate extends Command
         $js_front_controller_code =
             $this->twig->render($this->baseViewFolder . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR .
                 'front_controller.js.twig', [
-                'module_name' => $module_name,
-                'front_controller_name' => $front_controller_name,
-            ]);
+                    'module_name' => $module_name,
+                    'front_controller_name' => $front_controller_name,
+                ]);
         $this->filesystem->dumpFile(
             $js_folder . DIRECTORY_SEPARATOR . $front_controller_name . '.js',
             $js_front_controller_code

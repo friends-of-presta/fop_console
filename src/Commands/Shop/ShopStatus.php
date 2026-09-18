@@ -55,38 +55,36 @@ final class ShopStatus extends Command
             );
 
             return 0;
-        } else {
-            $shop = new Shop($id_shop);
-            if (null !== $shop->id) {
-                if ($action == 'enable') {
-                    $shop->active = true;
-                    $shop->save();
-                    $this->io->text('Shop ' . $shop->id . ' enabled');
+        }
+        $shop = new \Shop($id_shop);
+        if (null !== $shop->id) {
+            if ($action == 'enable') {
+                $shop->active = true;
+                $shop->save();
+                $this->io->text('Shop ' . $shop->id . ' enabled');
 
-                    return 0;
-                } elseif ($action == 'disable') {
-                    $shop->active = false;
-                    $shop->save();
-                    $this->io->text('Shop ' . $shop->id . ' disabled');
+                return 0;
+            } elseif ($action == 'disable') {
+                $shop->active = false;
+                $shop->save();
+                $this->io->text('Shop ' . $shop->id . ' disabled');
 
-                    return 0;
-                } else {
-                    $this->io->title(sprintf('Information for shop "%s"', $shop->name));
-
-                    $this->io->table(
-                        ['ID', 'Name', 'Theme', 'Activated?', 'Deleted?'],
-                        [
-                            [$shop->id, $shop->name, $shop->theme_name, $shop->active ? '✔' : '✘', $shop->deleted ? '✔' : '✘'],
-                        ]
-                    );
-
-                    return 0;
-                }
+                return 0;
             }
-            $this->io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
+            $this->io->title(sprintf('Information for shop "%s"', $shop->name));
+
+            $this->io->table(
+                ['ID', 'Name', 'Theme', 'Activated?', 'Deleted?'],
+                [
+                    [$shop->id, $shop->name, $shop->theme_name, $shop->active ? '✔' : '✘', $shop->deleted ? '✔' : '✘'],
+                ]
+            );
 
             return 0;
         }
+        $this->io->error(sprintf('Information for Shop with the id "%s" not found: did you set a valid "id_shop" ?', $id_shop));
+
+        return 0;
     }
 
     /**

@@ -25,7 +25,7 @@ use Controller;
 /**
  * Controller used in Console environment.
  */
-class ConsoleController extends Controller
+class ConsoleController extends \Controller
 {
     public function __construct()
     {
@@ -112,5 +112,4 @@ class ConsoleController extends Controller
     {
         return '';
     }
-
 }

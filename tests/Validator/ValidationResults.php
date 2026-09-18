@@ -22,17 +22,14 @@ declare(strict_types=1);
 
 namespace FOP\Console\Tests\Validator;
 
-use ArrayIterator;
 use FOP\Console\Tests\Validator\Exception\CantValidateEmptyValidationResults;
-use Iterator;
-use IteratorAggregate;
 
 /**
  * Class ValidationResults
  *
- * @implements IteratorAggregate<ValidationResult>
+ * @implements \IteratorAggregate<ValidationResult>
  */
-class ValidationResults implements IteratorAggregate
+class ValidationResults implements \IteratorAggregate
 {
     /**
      * @var array<int, ValidationResult>
@@ -53,9 +50,9 @@ class ValidationResults implements IteratorAggregate
     /**
      * @return \Iterator<ValidationResult>
      */
-    public function getIterator(): Iterator
+    public function getIterator(): \Iterator
     {
-        return new ArrayIterator($this->results);
+        return new \ArrayIterator($this->results);
     }
 
     public function addResult(ValidationResult $result): void
@@ -64,7 +61,7 @@ class ValidationResults implements IteratorAggregate
     }
 
     /**
-     * @return array<int, \FOP\Console\Tests\Validator\ValidationResult>
+     * @return array<int, ValidationResult>
      */
     public function getFailures(): array
     {

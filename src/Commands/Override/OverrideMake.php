@@ -63,7 +63,7 @@ class OverrideMake extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $path = (string) $input->getArgument('path'); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5*/
+        $path = (string) $input->getArgument('path'); /* @-phpstan-ignore-line - annotation disabled - not an error at level 5 */
 
         try {
             // gather overriders
@@ -99,7 +99,7 @@ class OverrideMake extends Command
             empty($error_messages) ?: $this->io->warning($error_messages);
 
             return 0;
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->io->error(["Override for '$path' failed", $exception->getMessage()]);
             // Caught Exception get rethrown at high verbosity (-vvv)
             if (OutputInterface::VERBOSITY_DEBUG === $output->getVerbosity()) {

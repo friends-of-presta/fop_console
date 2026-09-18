@@ -24,7 +24,6 @@ use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tools;
 
 final class GenerateRobots extends Command
 {
@@ -51,7 +50,7 @@ final class GenerateRobots extends Command
     {
         $input->getOption('executeHook') ? $executeHook = true : $executeHook = false;
 
-        if (true !== Tools::generateRobotsFile($executeHook)) {
+        if (true !== \Tools::generateRobotsFile($executeHook)) {
             $this->io->error('An error occurs while generating robots.txt file');
 
             return 1;

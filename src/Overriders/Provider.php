@@ -20,8 +20,6 @@
 
 namespace FOP\Console\Overriders;
 
-use Exception;
-
 class Provider
 {
     /**
@@ -34,14 +32,14 @@ class Provider
      *
      * @param array<OverriderInterface> $overriders
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct(array $overriders)
     {
         // check that provided Overriders are really Overriders.
         array_walk($overriders, function ($overrider) {
             if (!$overrider instanceof OverriderInterface) {
-                throw new Exception(__CLASS__ . ' parameter $overrider must contain ' . OverriderInterface::class . ' instances only.');
+                throw new \Exception(__CLASS__ . ' parameter $overrider must contain ' . OverriderInterface::class . ' instances only.');
             }
         });
         $this->overriders = $overriders;

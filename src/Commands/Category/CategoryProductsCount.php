@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace FOP\Console\Commands\Category;
 
-use Category;
-use Exception;
 use FOP\Console\Command;
 use PBergman\Console\Helper\TreeHelper;
 use PrestaShop\PrestaShop\Adapter\LegacyContext;
@@ -57,7 +55,7 @@ final class CategoryProductsCount extends Command
     {
         $categoryId = $input->getArgument('id-category')
             ? intval($input->getArgument('id-category'))
-            : Category::getRootCategory()->id
+            : \Category::getRootCategory()->id
         ;
 
         $this->languageId = intval($input->getOption('id-lang'));
@@ -69,7 +67,7 @@ final class CategoryProductsCount extends Command
                 if ($legacyContext) {
                     $this->languageId = $legacyContext->getContext()->language->id;
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
             }
         }
 
@@ -81,7 +79,7 @@ final class CategoryProductsCount extends Command
 
         $outputPathname = $input->getOption('output');
 
-        $nestedCategories = Category::getNestedCategories($categoryId);
+        $nestedCategories = \Category::getNestedCategories($categoryId);
         if (!is_array($nestedCategories) || !key_exists($categoryId, $nestedCategories)) {
             $this->io->error('No categories to display.');
 
@@ -119,7 +117,7 @@ final class CategoryProductsCount extends Command
      */
     private function formatCategoriesToTree(array $category)
     {
-        $categoryObject = new Category((int) $category['id_category'], $this->languageId);
+        $categoryObject = new \Category((int) $category['id_category'], $this->languageId);
         $categoryLabel = $this->getCategoryLabel(
             $categoryObject->name,
             $this->getCategoryProductsCount($categoryObject)
@@ -148,7 +146,7 @@ final class CategoryProductsCount extends Command
     private function formatCategoriesToCSV(array $category, int $maxDepth)
     {
         $categoryId = (int) $category['id_category'];
-        $categoryObject = new Category($categoryId, $this->languageId);
+        $categoryObject = new \Category($categoryId, $this->languageId);
         $productsCount = $this->getCategoryProductsCount($categoryObject);
         $categoryLabel = $this->getCategoryLabel($categoryObject->name, $productsCount);
         $depth = $categoryObject->level_depth;
@@ -185,7 +183,7 @@ final class CategoryProductsCount extends Command
         return (int) $category['level_depth'];
     }
 
-    public function getCategoryProductsCount(Category $category): int
+    public function getCategoryProductsCount(\Category $category): int
     {
         return intval($category->getProducts($this->languageId, 0, 0, null, null, true));
     }

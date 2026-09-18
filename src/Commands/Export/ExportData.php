@@ -20,10 +20,7 @@
 
 namespace FOP\Console\Commands\Export;
 
-use Customer;
 use FOP\Console\Command;
-use Order;
-use Product;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -59,15 +56,15 @@ final class ExportData extends Command
 
         switch ($objectModel) {
             case 'Product':
-                $objects = Product::getProducts(1, 0, $limit, 'id_product', 'ASC');
+                $objects = \Product::getProducts(1, 0, $limit, 'id_product', 'ASC');
                 break;
 
             case 'Customer':
-                $objects = Customer::getCustomers();
+                $objects = \Customer::getCustomers();
                 break;
 
             case 'Order':
-                $objects = Order::getOrdersWithInformations();
+                $objects = \Order::getOrdersWithInformations();
                 break;
 
             default:

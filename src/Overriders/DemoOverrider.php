@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace FOP\Console\Overriders;
 
-use RuntimeException;
-
 /**
  * This is a demo Overrider.
  * It does nothing but serve as example.
@@ -58,7 +56,7 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
      *
      * @return array<string>
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function run(): array
     {
@@ -85,12 +83,12 @@ final class DemoOverrider extends AbstractOverrider implements OverriderInterfac
             $this->setUnsuccessful();
 
             return ['Error. Oops something happen',
-                    'Try with "classes/README.md_success_maybe" for another result.', ];
+                'Try with "classes/README.md_success_maybe" for another result.', ];
         }
 
         // something unexpected happened !
         // just Throw exception ( MakeOverride handle it )
-        throw new RuntimeException(__CLASS__ . ' has failed. Try with "fop:override classes/README.md_success" .');
+        throw new \RuntimeException(__CLASS__ . ' has failed. Try with "fop:override classes/README.md_success" .');
         // @todo Maybe add an OverriderException
     }
 

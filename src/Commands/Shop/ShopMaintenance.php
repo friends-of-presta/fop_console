@@ -20,7 +20,6 @@
 
 namespace FOP\Console\Commands\Shop;
 
-use Configuration;
 use FOP\Console\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -63,9 +62,9 @@ final class ShopMaintenance extends Command
         $action = $input->getArgument('action');
         $ipaddress = trim($input->getArgument('ipaddress'));
         $ips = false;
-        $isMaintenanceModeEnabled = !(bool) Configuration::get('PS_SHOP_ENABLE');
+        $isMaintenanceModeEnabled = !(bool) \Configuration::get('PS_SHOP_ENABLE');
 
-        //check if action is allowed
+        // check if action is allowed
         if (!in_array($action, self::ALLOWED_COMMAND)) {
             $this->io->error('Action not allowed');
 
@@ -80,25 +79,25 @@ final class ShopMaintenance extends Command
             }
         }
 
-        //Define Toggle action
+        // Define Toggle action
         if ($action == 'toggle') {
             (true === $isMaintenanceModeEnabled) ? $action = 'disable' : $action = 'enable';
         }
 
-        //Enable maintenance mode
+        // Enable maintenance mode
         if ($action == 'enable') {
-            Configuration::updateValue('PS_SHOP_ENABLE', 0);
+            \Configuration::updateValue('PS_SHOP_ENABLE', 0);
             $this->io->success('Maintenance mode enabled');
         }
-        //Disable maintenance mode
+        // Disable maintenance mode
         if ($action == 'disable') {
-            Configuration::updateValue('PS_SHOP_ENABLE', 1);
+            \Configuration::updateValue('PS_SHOP_ENABLE', 1);
             $this->io->success('Maintenance mode disabled');
         }
 
         // maintenance ip managment
         if ($action == 'addip' || $action == 'addmyip' || $action == 'ips') {
-            $ips = explode(',', str_replace(' ', '', Configuration::get('PS_MAINTENANCE_IP')));
+            $ips = explode(',', str_replace(' ', '', \Configuration::get('PS_MAINTENANCE_IP')));
         }
 
         // list ips
@@ -122,7 +121,7 @@ final class ShopMaintenance extends Command
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
-                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
+                \Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
                 $this->io->success('Ip address ' . $ipaddress . ' added');
             }
         }
@@ -144,7 +143,7 @@ final class ShopMaintenance extends Command
             } else {
                 // all good, add ip to the list
                 $ips[] = $ipaddress;
-                Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
+                \Configuration::updateValue('PS_MAINTENANCE_IP', implode(',', $ips));
                 $this->io->success('Ip address ' . $ipaddress . ' added');
             }
         }

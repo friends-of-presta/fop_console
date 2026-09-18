@@ -25,7 +25,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
-use Validate;
 
 final class HookAdd extends Command
 {
@@ -115,7 +114,7 @@ final class HookAdd extends Command
     private function getHookNameValidator(): \Closure
     {
         return function ($answer) {
-            if (!Validate::isHookName($answer) || preg_match('#^hook#i', $answer)) {
+            if (!\Validate::isHookName($answer) || preg_match('#^hook#i', $answer)) {
                 throw new \RuntimeException('The hook name is invalid, it should match the pattern /^[a-zA-Z0-9_-]+$/ and can\'t start with "hook"');
             }
 
