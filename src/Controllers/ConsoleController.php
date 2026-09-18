@@ -113,12 +113,4 @@ class ConsoleController extends Controller
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function buildContainer()
-    {
-        // @todo: Should we return the back office container here ?
-        return null;
-    }
 }
